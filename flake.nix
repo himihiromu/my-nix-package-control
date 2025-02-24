@@ -1,35 +1,75 @@
 {
-  description = "Nix configuration of ymgyt";
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
 
-    home-manager = {
-      url = "github:nix-community/home-manager/release-23.05";
+    vim-src = {
+      url = "github:vim/vim";
+      flake = false;
+    };
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs =
-    { nixpkgs
-    , home-manager
-    , ...
-    }: {
+  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, ... }:
+  flake-utils.lib.eachDefaultSystem (
+    system:
+    let
+      pkgs = nixpkgs.legacyPackages.${system}.extend (neovim-nightly-overlay.overlays.default);
+    in
+    {
+      formatter = pkgs.nixfmt-rfc-style;
+      packages.my-packages = pkgs.buildEnv {
+        name = "my-packages-list";
+        paths = with pkgs; [
+          git
+          curl
+          nixfmt-rfc-style
+          neovim
+        ];
+      };
       nixosConfigurations = {
-        xps15 = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-
+        nixos = nixpkgs.lib.nixosSystem {
+          system = system;
           modules = [
-            ./hosts/xps15
-
-            home-manager.nixosModules.home-manager
+            nixos-wsl.nixosModules.default
             {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.ymgyt = import ./home/linux;
+              system.stateVersion = "24.05";
+              wsl.enable = true;
             }
           ];
         };
       };
-    };
+      apps.update = {
+        type = "app";
+        program = toString (
+          pkgs.writeShellScript "update-script" ''
+            set -e
+            echo "Updating flake..."
+            nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
+            echo "Updating profile..."
+            nix --extra-experimental-features nix-command --extra-experimental-features flakes profile upgrade my-packages
+            echo "Update complete!"
+          ''
+        );
+      };
+      apps.install = {
+        type = "app";
+        program = toString (
+          pkgs.writeShellScript "update-script" ''
+            set -e
+            echo "Updating flake..."
+            nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
+            echo "Updating profile..."
+            nix --extra-experimental-features nix-command --extra-experimental-features flakes profile install my-packages
+            echo "Update complete!"
+          ''
+        );
+      };
+    }
+  );
 }
+

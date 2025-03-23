@@ -12,9 +12,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-utils.url = "github:numtide/flake-utils";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, ... }:
+  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, ... }:
   flake-utils.lib.eachDefaultSystem (
     system:
     let
@@ -42,6 +50,17 @@
             }
           ];
         };
+      };
+      homeConfigurations = {
+        myHomeConfig = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgs;
+          extraSpecialArgs = {inherit inputs;};
+          modules = [./home-manager/default.nix];
+        };
+      };
+      darwinConfigurations.kawarimidoll-darwin = nix-darwin.lib.darwinSystem {
+        system = system;
+        modules = [ ./nix-darwin/default.nix ];
       };
       apps.update = {
         type = "app";

@@ -63,7 +63,10 @@
         darwinConfigurations = {
           mac-config = nix-darwin.lib.darwinSystem {
             system = system;
-            modules = [ import ./nix-darwin/default.nix { inherit pkgs username;} ];
+            modules = [ 
+              # ./configuration.nix
+              (import ./nix-darwin/default.nix { inherit pkgs;})
+            ];
           };
         };
       };

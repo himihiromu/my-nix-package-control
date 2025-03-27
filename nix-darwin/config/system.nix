@@ -11,11 +11,11 @@
       };
       alf = {
         # firewallを有効化
-        globalstate = true;
+        globalstate = 1;
         # ファイアウォールへのリクエストのログ記録を有効化
-        loggingenabled = true;
+        loggingenabled = 1;
         # ダウンロードされた署名付きソフトウェアが外部からの接続を受け入れるのを自動的に許可
-        allowdownloadsignedenabled = true;
+        allowdownloadsignedenabled = 1;
       };
       controlcenter = {
         # AirDropの表示
@@ -79,7 +79,9 @@
         NSWindowShouldDragOnGesture = true;
         # スプリングローディングの有効化
         "com.apple.springing.enabled" = true;
-        "com.apple.springing.delay" = 0;
+        "com.apple.springing.delay" = 0.0;
+        # 2本指でスワイプ
+        AppleEnableSwipeNavigateWithScrolls = true;
       };
       WindowManager = {
         # stage managerの有効化
@@ -138,31 +140,31 @@
         appswitcher-all-displays = true;
         persistent-apps = [
           {
-            app = "file:///System/Applications/Launchpad.app/";
+            app = "/System/Applications/Launchpad.app/";
           }
           {
-            app = "file:///Applications/Safari.app/";
+            app = "/Applications/Safari.app/";
           }
           {
-            app = "file:///System/Applications/Mail.app/";
+            app = "/System/Applications/Mail.app/";
           }
           {
-            app = "file:///System/Applications/Photos.app/";
+            app = "/System/Applications/Photos.app/";
           }
           {
-            app = "file:///System/Applications/Calendar.app/";
+            app = "/System/Applications/Calendar.app/";
           }
           {
-            app = "file:///System/Applications/Reminders.app/";
+            app = "/System/Applications/Reminders.app/";
           }
           {
-            app = "file:///System/Applications/Notes.app/";
+            app = "/System/Applications/Notes.app/";
           }
           {
-            app = "file:///System/Applications/App%20Store.app/";
+            app = "/System/Applications/App Store.app/";
           }
           {
-            app = "file:///System/Applications/System%20Preferences.app/";
+            app = "/System/Applications/System Settings.app/";
           }
         ];
         # ホットコーナー設定(便利そうなものがあれば使いたい)
@@ -179,8 +181,6 @@
         SecondClickThreshold = 0;
         # 副クリックの有効化
         TrackpadRightClick = true;
-
-        AppleEnableSwipeNavigateWithScrolls = true;
       };
       CustomUserPreferences."com.apple.AppleMultitouchTrackpad" = {
 

@@ -1,12 +1,12 @@
 { pkgs, ... }:
 {
   nix = {
-    optimise.automatic = true;
+    enable = false;
+    nrBuildUsers = 350;
+    optimise.automatic = false;
     settings = {
       experimental-features = "nix-command flakes";
       max-jobs = 8;
     };
-    services.nix-daemon.enable = true;
-    nix.package = pkgs.nix;
   };
 }

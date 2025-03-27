@@ -194,7 +194,7 @@
         ShowDayOfMonth = true;
         # 曜日表示
         ShowDayOfWeek = true;
-      }
+      };
     };
   };
 }

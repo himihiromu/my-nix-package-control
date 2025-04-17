@@ -9,10 +9,7 @@
     };
     taps = [
       "gcenx/wine"
-      "homebrew/cask"
-      "homebrew/services"
       "oven-sh/bun"
-      "rhyeal/aws-rotate-iam-keys"
       "nikitabobko/tap"
     ];
     casks = [
@@ -21,10 +18,10 @@
       "amazon-q"
       "jetbrains-toolbox"
       "aquaskk"
-      "microsoft-auto-update"
+      # "microsoft-auto-update"
       "chrome-remote-desktop-host"
-      "microsoft-office"
-      "docker"
+      # "microsoft-office"
+      # "docker"
       "stoplight-studio"
       "firefox"
       "visual-studio-code"

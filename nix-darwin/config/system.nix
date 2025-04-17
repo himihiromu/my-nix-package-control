@@ -164,7 +164,7 @@
             app = "/System/Applications/App Store.app/";
           }
           {
-            app = "/System/Applications/System Settings.app/";
+            app = "/System/Applications/System Preferences.app/";
           }
         ];
         # ホットコーナー設定(便利そうなものがあれば使いたい)

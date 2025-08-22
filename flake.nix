@@ -12,37 +12,67 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-utils.url = "github:numtide/flake-utils";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, ... }:
+  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, ... }@inputs:
   flake-utils.lib.eachDefaultSystem (
     system:
     let
+      inherit (import ./user-options/options.nix) username;
       pkgs = nixpkgs.legacyPackages.${system}.extend (neovim-nightly-overlay.overlays.default);
     in
     {
       formatter = pkgs.nixfmt-rfc-style;
-      packages.my-packages = pkgs.buildEnv {
-        name = "my-packages-list";
-        paths = with pkgs; [
-          git
-          curl
-          nixfmt-rfc-style
-          neovim
-        ];
-      };
-      nixosConfigurations = {
-        nixos = nixpkgs.lib.nixosSystem {
-          system = system;
-          modules = [
-            nixos-wsl.nixosModules.default
-            {
-              system.stateVersion = "24.05";
-              wsl.enable = true;
-            }
+      packages = {
+        my-package = pkgs.buildEnv {
+          name = "my-packages-list";
+          paths = with pkgs; [
+            git
+            curl
+            nixfmt-rfc-style
+            neovim
           ];
         };
+        nixosConfigurations = {
+          nixos = nixpkgs.lib.nixosSystem {
+            system = system;
+            modules = [
+              nixos-wsl.nixosModules.default
+              {
+                system.stateVersion = "24.05";
+                wsl.enable = true;
+              }
+            ];
+          };
+        };
+        homeConfigurations = {
+          myHomeConfig = home-manager.lib.homeManagerConfiguration {
+            pkgs = pkgs;
+            extraSpecialArgs = {inherit inputs;};
+            modules = [./home-manager/default.nix];
+          };
+        };
+        darwinConfigurations = {
+          mac-config = nix-darwin.lib.darwinSystem {
+            system = system;
+            modules = [ 
+              # ./configuration.nix
+              (import ./nix-darwin/default.nix { inherit pkgs;})
+            ];
+          };
+        };
       };
+      #   inherit system;
+      #   modules = [ home-manager.darwinModules.home-manager ./nix-darwin/default.nix ];
+      # };
       apps.update = {
         type = "app";
         program = toString (

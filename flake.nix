@@ -21,7 +21,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-
   outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, ... }@inputs:
   flake-utils.lib.eachDefaultSystem (
     system:
@@ -98,6 +97,18 @@
             echo "Update complete!"
           ''
         );
+      };
+      legacyPackages = {
+        inherit (pkgs) home-manager;
+        homeConfigurations."${username}" = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgs;
+          extraSpecialArgs = {
+            inherit inputs;
+          };
+          modules = [
+            ./home/home.nix
+          ];
+        };
       };
     }
   );

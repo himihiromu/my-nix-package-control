@@ -7,6 +7,9 @@
       upgrade = true;
       cleanup = "uninstall";
     };
+    caskArgs = {
+      appdir = "~/Applications";
+    };
     taps = [
       "gcenx/wine"
       "oven-sh/bun"

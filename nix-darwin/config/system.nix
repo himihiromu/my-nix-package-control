@@ -1,6 +1,7 @@
 { pkgs }:
 {
   system = {
+    primaryUser = "mac42";
     stateVersion = 4;
     defaults = {
       ActivityMonitor = {
@@ -8,14 +9,6 @@
         IconType = 5;
         # すべてのプロセス(階層表示)
         ShowCategory = 101;
-      };
-      alf = {
-        # firewallを有効化
-        globalstate = 1;
-        # ファイアウォールへのリクエストのログ記録を有効化
-        loggingenabled = 1;
-        # ダウンロードされた署名付きソフトウェアが外部からの接続を受け入れるのを自動的に許可
-        allowdownloadsignedenabled = 1;
       };
       controlcenter = {
         # AirDropの表示
@@ -140,7 +133,7 @@
         appswitcher-all-displays = true;
         persistent-apps = [
           {
-            app = "/System/Applications/Launchpad.app/";
+            app = "/System/Applications/Apps.app/";
           }
           {
             app = "/Applications/Safari.app/";
@@ -196,5 +189,10 @@
         ShowDayOfWeek = true;
       };
     };
+  };
+  networking.applicationFirewall = {
+    allowSignedApp = true;
+    enable = true;
+    blockAllIncoming = false;
   };
 }

@@ -20,14 +20,23 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+  
+    zed = {
+      url = "github:zed-industries/zed";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, ... }@inputs:
+  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, zed, ... }@inputs:
   flake-utils.lib.eachDefaultSystem (
     system:
     let
       inherit (import ./user-options/options.nix) username;
       inherit (import ./user-options/options.nix) isDesktop;
-      pkgs = nixpkgs.legacyPackages.${system}.extend (neovim-nightly-overlay.overlays.default);
+      pkgs = (
+        nixpkgs.legacyPackages.${system}.extend (
+          neovim-nightly-overlay.overlays.default
+        )
+      ).extend (zed.overlays.default);
     in
     {
       formatter = pkgs.nixfmt-rfc-style;

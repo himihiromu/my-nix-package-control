@@ -14,8 +14,13 @@ let
   machinePackage = 
     if isMac then (import ./install-package/darwin.nix {inherit pkgs;}).installPackages
     else [];
+  zed = import ./install-package/zed.nix { inherit pkgs; inherit isDesktop; };
 in
 {
+  imports = [
+    zed
+  ];
+
   nixpkgs = {
     config = {
       allowUnfree = true;

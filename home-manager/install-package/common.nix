@@ -1,0 +1,25 @@
+{
+  pkgs
+}:
+{
+  installPackages = with pkgs; [
+    vim
+    git
+    gh
+    ghq
+    peco
+    docker
+    fish
+    curl
+    chezmoi
+    wireguard-tools
+    wireguard-go
+    htop
+    neovim
+    bat
+    ripgrep
+    zoxide
+    yazi
+    pik
+  ];
+}

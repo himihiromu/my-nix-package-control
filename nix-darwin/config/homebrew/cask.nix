@@ -1,0 +1,25 @@
+{
+  installPackages = [
+    "cursor"
+    "raycast"
+    "amazon-q"
+    "jetbrains-toolbox"
+    "aquaskk"
+    "chrome-remote-desktop-host"
+    "docker"
+    "stoplight-studio"
+    "firefox"
+    "visual-studio-code"
+    "floorp"
+    "vivaldi"
+    "geektool"
+    "warp"
+    "gimp"
+    "wave"
+    "google-chrome"
+    "zed"
+    "google-japanese-ime"
+    "yabai"
+    "zoom"
+  ];
+}

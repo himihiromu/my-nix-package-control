@@ -20,13 +20,23 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+  
+    zed = {
+      url = "github:zed-industries/zed";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, ... }@inputs:
+  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, zed, ... }@inputs:
   flake-utils.lib.eachDefaultSystem (
     system:
     let
       inherit (import ./user-options/options.nix) username;
-      pkgs = nixpkgs.legacyPackages.${system}.extend (neovim-nightly-overlay.overlays.default);
+      inherit (import ./user-options/options.nix) isDesktop;
+      pkgs = (
+        nixpkgs.legacyPackages.${system}.extend (
+          neovim-nightly-overlay.overlays.default
+        )
+      ).extend (zed.overlays.default);
     in
     {
       formatter = pkgs.nixfmt-rfc-style;
@@ -55,16 +65,30 @@
         homeConfigurations = {
           myHomeConfig = home-manager.lib.homeManagerConfiguration {
             pkgs = pkgs;
-            extraSpecialArgs = {inherit inputs;};
-            modules = [./home-manager/default.nix];
+            
+            modules = [
+              (import ./home-manager/default.nix { 
+                inherit inputs;
+                inherit username;
+                inherit pkgs;
+                inherit system;
+                inherit isDesktop;
+              })
+            ];
           };
         };
         darwinConfigurations = {
           mac-config = nix-darwin.lib.darwinSystem {
             system = system;
             modules = [ 
-              # ./configuration.nix
-              (import ./nix-darwin/default.nix { inherit pkgs;})
+              { system.primaryUser = username; }
+              (import ./nix-darwin/default.nix { 
+                inherit inputs;
+                inherit username;
+                inherit pkgs;
+                inherit system;
+                inherit isDesktop;
+              })
             ];
           };
         };

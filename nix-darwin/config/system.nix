@@ -1,5 +1,10 @@
-{ pkgs }:
-{
+{ pkgs, system }:
+let
+  appListPath =
+    if system == "x86_64-darwin" then "/System/Applications/Launchpad.app/"
+    else if system == "aarch64-darwin" then "/System/Applications/Apps.app/"
+    else "/System/Applications/Apps.app/";
+in {
   system = {
     stateVersion = 4;
     defaults = {
@@ -8,14 +13,6 @@
         IconType = 5;
         # すべてのプロセス(階層表示)
         ShowCategory = 101;
-      };
-      alf = {
-        # firewallを有効化
-        globalstate = 1;
-        # ファイアウォールへのリクエストのログ記録を有効化
-        loggingenabled = 1;
-        # ダウンロードされた署名付きソフトウェアが外部からの接続を受け入れるのを自動的に許可
-        allowdownloadsignedenabled = 1;
       };
       controlcenter = {
         # AirDropの表示
@@ -140,7 +137,7 @@
         appswitcher-all-displays = true;
         persistent-apps = [
           {
-            app = "/System/Applications/Launchpad.app/";
+            app = appListPath;
           }
           {
             app = "/Applications/Safari.app/";
@@ -164,7 +161,7 @@
             app = "/System/Applications/App Store.app/";
           }
           {
-            app = "/System/Applications/System Preferences.app/";
+            app = "/System/Applications/System Settings.app/";
           }
         ];
         # ホットコーナー設定(便利そうなものがあれば使いたい)
@@ -196,5 +193,11 @@
         ShowDayOfWeek = true;
       };
     };
+  };
+  networking.applicationFirewall = {
+    enable = true;
+    # ダウンロードされた署名付きソフトウェアが外部からの接続を受け入れるのを自動的に許可
+    allowSignedApp = true;
+    blockAllIncoming = false;
   };
 }

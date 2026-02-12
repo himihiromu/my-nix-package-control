@@ -1,6 +1,7 @@
 {
   installPackages = [
     "cursor"
+    "clipy"
     "raycast"
     "amazon-q"
     "jetbrains-toolbox"
@@ -19,7 +20,6 @@
     "google-chrome"
     "zed"
     "google-japanese-ime"
-    "yabai"
     "zoom"
   ];
 }

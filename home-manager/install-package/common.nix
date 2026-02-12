@@ -21,5 +21,14 @@
     zoxide
     yazi
     pik
+    just
+    jq
+    fzf
+    direnv
+    keifu
+    filetree
+    nushell
+    ripgrep
+    direnv
   ];
 }

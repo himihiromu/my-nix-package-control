@@ -32,11 +32,50 @@
     let
       inherit (import ./user-options/options.nix) username;
       inherit (import ./user-options/options.nix) isDesktop;
+      rustCratesOverlay = final: prev: {
+        keifu = prev.rustPlatform.buildRustPackage {
+          pname = "keifu";
+          version = "0.1.5";
+
+          src = prev.fetchCrate {
+            pname = "keifu";
+            version = "0.1.5";
+            sha256 = "sha256-fo0c68H65/6GqOCQrkAEHvVssBL5n7ZL/XVcm4VIijo=";
+          };
+
+          cargoHash = "sha256-AyyLl9ZLMMikaeDvJhFXwAWgivi89gOqz52eyJZQTXQ=";
+
+          nativeBuildInputs = [ prev.pkg-config ];
+          buildInputs = [ prev.openssl ];
+
+          env = {
+            OPENSSL_NO_VENDOR = "1";
+            OPENSSL_DIR = "${prev.openssl.dev}";
+            OPENSSL_LIB_DIR = "${prev.openssl.out}/lib";
+            OPENSSL_INCLUDE_DIR = "${prev.openssl.dev}/include";
+          };
+        };
+
+        filetree = prev.rustPlatform.buildRustPackage {
+          pname = "filetree";
+          version = "0.3.5";
+
+          src = prev.fetchCrate {
+            pname = "filetree";
+            version = "0.3.5";
+            sha256 = "sha256-27LsAG15Rr6Gbm/oL+tIeDrU/xa52bbEocPWInx8cl8=";
+          };
+
+          cargoHash = "sha256-TZWIa4L70WpvGwTi8DIadKwXEubxn3OciSaWf9UULZA=";
+        };
+      };
       pkgs = (
-        nixpkgs.legacyPackages.${system}.extend (
-          neovim-nightly-overlay.overlays.default
-        )
-      ).extend (zed.overlays.default);
+        (
+          nixpkgs.legacyPackages.${system}.extend (
+            neovim-nightly-overlay.overlays.default
+          )
+        ).extend (zed.overlays.default)
+      ).extend rustCratesOverlay;
     in
     {
       formatter = pkgs.nixfmt-rfc-style;
@@ -121,18 +160,6 @@
             echo "Update complete!"
           ''
         );
-      };
-      legacyPackages = {
-        inherit (pkgs) home-manager;
-        homeConfigurations."${username}" = home-manager.lib.homeManagerConfiguration {
-          pkgs = pkgs;
-          extraSpecialArgs = {
-            inherit inputs;
-          };
-          modules = [
-            ./home/home.nix
-          ];
-        };
       };
     }
   );

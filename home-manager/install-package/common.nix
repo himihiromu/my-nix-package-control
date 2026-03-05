@@ -15,14 +15,15 @@
     wireguard-tools
     wireguard-go
     htop
-    neovim
     bat
+    bun
     ripgrep
     zoxide
     yazi
     pik
     just
     jq
+    fd
     fzf
     direnv
     keifu

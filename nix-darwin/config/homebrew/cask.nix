@@ -3,7 +3,7 @@
     "cursor"
     "clipy"
     "raycast"
-    "amazon-q"
+    "kiro-cli"
     "jetbrains-toolbox"
     "aquaskk"
     "chrome-remote-desktop-host"

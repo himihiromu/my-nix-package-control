@@ -9,7 +9,6 @@
     ghq
     peco
     docker
-    fish
     curl
     chezmoi
     wireguard-tools
@@ -29,7 +28,7 @@
     keifu
     filetree
     nushell
-    ripgrep
-    direnv
+    eza
+    dust
   ];
 }

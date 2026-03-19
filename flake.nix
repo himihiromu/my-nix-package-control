@@ -75,7 +75,12 @@
       };
       pkgs = (
         (
-          nixpkgs.legacyPackages.${system}.extend (
+          (import nixpkgs {
+            inherit system;
+            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
+              "zsh-abbr"
+            ];
+          }).extend (
             neovim-nightly-overlay.overlays.default
           )
         ).extend (zed.overlays.default)

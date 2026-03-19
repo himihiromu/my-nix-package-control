@@ -5,10 +5,10 @@ let
   # security = import ./config/security.nix { inherit username; };
   # services = import ./config/services;
   # time = import ./config/time.nix;
-  system = import ./config/system.nix { inherit pkgs; inherit system; };
+  system_config = import ./config/system.nix { inherit pkgs; inherit system; };
   homebrew = import ./config/homebrew/default.nix { inherit pkgs; inherit isDesktop;};
   nixConfig = import ./config/nix-config.nix { inherit pkgs; };
-  
+
 in
 {
   imports = [
@@ -18,7 +18,7 @@ in
     nixConfig
     # security
     # services
-    system
+    system_config
     # time
   ];
   system.stateVersion = 4;

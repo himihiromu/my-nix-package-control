@@ -3,6 +3,7 @@
   username,
   system,
   isDesktop,
+  nixvim,
   ...
 }:
 let
@@ -15,10 +16,13 @@ let
     if isMac then (import ./install-package/darwin.nix {inherit pkgs;}).installPackages
     else [];
   zed = import ./install-package/zed.nix { inherit pkgs; inherit isDesktop; };
+  nix-vim-package = import ./install-package/neovim.nix { inherit pkgs; };
 in
 {
   imports = [
     zed
+    nixvim.homeManagerModules.nixvim
+    nix-vim-package
   ];
 
   nixpkgs = {

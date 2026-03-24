@@ -77,16 +77,18 @@ in {
         # スプリングローディングの有効化
         "com.apple.springing.enabled" = true;
         "com.apple.springing.delay" = 0.0;
-        # 2本指でスワイプ
-        AppleEnableSwipeNavigateWithScrolls = true;
+        # 2本指スワイプでのページナビゲーションを無効化(3本指スワイプを使用するため)
+        AppleEnableSwipeNavigateWithScrolls = false;
       };
       WindowManager = {
         # stage managerの有効化
         GloballyEnabled = true;
         # Mission Control時に同一アプリをグループ化
         AppWindowGroupingBehavior = true;
-        # 最近利用したアプリをstage manager上で非表示化
-        AutoHide = true;
+        # 最近利用したアプリをstage manager上で表示(左端ホバーで表示)
+        AutoHide = false;
+        # デスクトップクリックでウィンドウが隠れるのを防止
+        EnableStandardClickToShowDesktop = false;
       };
       finder = {
         # 隠しファイルを表示
@@ -180,7 +182,8 @@ in {
         TrackpadRightClick = true;
       };
       CustomUserPreferences."com.apple.AppleMultitouchTrackpad" = {
-
+        # 3本指でスワイプしてページ間を移動(戻る/進む)
+        TrackpadThreeFingerHorizSwipeGesture = 1;
       };
       menuExtraClock = {
         # 24時間表示

@@ -129,6 +129,18 @@
         "type": "github"
       }
     },
+    "local-options": {
+      "flake": false,
+      "locked": {
+        "path": "./user-options/options.nix",
+        "type": "path"
+      },
+      "original": {
+        "path": "./user-options/options.nix",
+        "type": "path"
+      },
+      "parent": []
+    },
     "neovim-nightly-overlay": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -280,6 +292,7 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
+        "local-options": "local-options",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nix-darwin": "nix-darwin",
         "nixos-wsl": "nixos-wsl",

@@ -22,7 +22,7 @@ in
 {
   imports = [
     zed
-    nixvim.homeManagerModules.nixvim
+    nixvim.homeModules.nixvim
     nix-vim-package
     fish-package
   ];

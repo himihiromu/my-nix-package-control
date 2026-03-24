@@ -15,6 +15,7 @@
     };
 
     plugins = {
+      web-devicons.enable = true;
       which-key.enable = true;
       bufferline.enable = true;
 
@@ -22,7 +23,11 @@
         enable = true;
         servers = {
           lua_ls.enable = true;
-          rust_analyzer.enable = true;
+          rust_analyzer = {
+            enable = true;
+            installCargo = false;
+            installRustc = false;
+          };
           pyright.enable = true;
           ts_ls.enable = true;
           nil_ls.enable = true;

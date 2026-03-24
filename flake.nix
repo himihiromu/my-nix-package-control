@@ -20,7 +20,6 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-  
     zed = {
       url = "github:zed-industries/zed";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -29,13 +28,20 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # 実行時に --override-input で差し替える
+    local-options = {
+      url = "path:./user-options/options.nix";
+      flake = false;
+    };
   };
-  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, zed, nixvim, ... }@inputs:
+  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, zed, nixvim, local-options, ... }@inputs:
   flake-utils.lib.eachDefaultSystem (
     system:
     let
-      inherit (import ./user-options/options.nix) username;
-      inherit (import ./user-options/options.nix) isDesktop;
+      options = import local-options;
+      inherit (options) username;
+      inherit (options) isDesktop;
       rustCratesOverlay = final: prev: {
         keifu = prev.rustPlatform.buildRustPackage {
           pname = "keifu";
@@ -113,9 +119,9 @@
         homeConfigurations = {
           myHomeConfig = home-manager.lib.homeManagerConfiguration {
             pkgs = pkgs;
-            
+
             modules = [
-              (import ./home-manager/default.nix { 
+              (import ./home-manager/default.nix {
                 inherit inputs;
                 inherit username;
                 inherit pkgs;
@@ -129,9 +135,9 @@
         darwinConfigurations = {
           mac-config = nix-darwin.lib.darwinSystem {
             system = system;
-            modules = [ 
+            modules = [
               { system.primaryUser = username; }
-              (import ./nix-darwin/default.nix { 
+              (import ./nix-darwin/default.nix {
                 inherit inputs;
                 inherit username;
                 inherit pkgs;

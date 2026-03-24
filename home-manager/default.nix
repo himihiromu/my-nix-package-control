@@ -34,7 +34,8 @@ in
   };
   home = {
     username = username;
-    homeDirectory = "/Users/${username}";
+    homeDirectory = if isMac then "/Users/${username}"
+      else "/home/${username}";
 
     file = if isMac then {
       ".lima/_config/default.yaml".source = ../config/lima/default.yaml;

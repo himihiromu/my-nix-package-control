@@ -20,10 +20,7 @@
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    zed = {
-      url = "github:zed-industries/zed";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -35,7 +32,7 @@
       flake = false;
     };
   };
-  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, zed, nixvim, local-options, ... }@inputs:
+  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, nixvim, local-options, ... }@inputs:
   flake-utils.lib.eachDefaultSystem (
     system:
     let
@@ -89,7 +86,7 @@
           }).extend (
             neovim-nightly-overlay.overlays.default
           )
-        ).extend (zed.overlays.default)
+        )
       ).extend rustCratesOverlay;
     in
     {

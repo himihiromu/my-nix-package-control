@@ -1,0 +1,95 @@
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
+
+    vim-src = {
+      url = "github:vim/vim";
+      flake = false;
+    };
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    flake-utils.url = "github:numtide/flake-utils";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, ... }@inputs:
+  let
+    inherit (import ./user-options/options.nix) username;
+    system = "x86_64-linux";  # You can change this to your system
+    pkgs = nixpkgs.legacyPackages.${system}.extend (neovim-nightly-overlay.overlays.default);
+  in
+  {
+    homeConfigurations = {
+      "${username}" = home-manager.lib.homeManagerConfiguration {
+        pkgs = pkgs;
+        extraSpecialArgs = { inherit inputs; };
+        modules = [ ./home-manager/default.nix ];
+      };
+    };
+  } // flake-utils.lib.eachDefaultSystem (
+    system:
+    let
+      pkgs = nixpkgs.legacyPackages.${system}.extend (neovim-nightly-overlay.overlays.default);
+    in
+    {
+      formatter = pkgs.nixfmt-rfc-style;
+      packages = {
+        my-package = pkgs.buildEnv {
+          name = "my-packages-list";
+          paths = with pkgs; [
+            git
+            curl
+            nixfmt-rfc-style
+            neovim
+          ];
+        };
+      };
+      #   inherit system;
+      #   modules = [ home-manager.darwinModules.home-manager ./nix-darwin/default.nix ];
+      # };
+      apps.update = {
+        type = "app";
+        program = toString (
+          pkgs.writeShellScript "update-script" ''
+            set -e
+            echo "Updating flake..."
+            nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
+            echo "Update complete!"
+          ''
+        );
+      };
+      apps.home-switch = {
+        type = "app";
+        program = toString (
+          pkgs.writeShellScript "home-switch-script" ''
+            set -e
+            echo "Switching Home Manager configuration for ${username}..."
+            nix --extra-experimental-features nix-command --extra-experimental-features flakes run home-manager/master -- switch --flake .#${username}
+            echo "Home configuration applied!"
+          ''
+        );
+      };
+      apps.home-build = {
+        type = "app";
+        program = toString (
+          pkgs.writeShellScript "home-build-script" ''
+            set -e
+            echo "Building Home Manager configuration for ${username}..."
+            nix --extra-experimental-features nix-command --extra-experimental-features flakes build .#homeConfigurations.${username}.activationPackage
+            echo "Build complete! Result is in ./result"
+          ''
+        );
+      };
+    }
+  );
+}
+

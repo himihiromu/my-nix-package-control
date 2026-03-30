@@ -1,10 +1,10 @@
 {
   # general
-  username = builtins.getEnv "USER";
+  username = "himihiromu";
 
   # git
-  gitUsername = builtins.getEnv "GIT_USERNAME";
-  gitEmail = builtins.getEnv "GIT_EMAIL";
+  gitUsername = "himihiromu";
+  gitEmail = "himihiromu@icloud.com";
 
   # open_ai
   openaiKey = builtins.getEnv "OPENAI_KEY";

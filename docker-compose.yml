@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  nixos-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nixos-test-env
+    volumes:
+      # ホストのflake.nixや設定ファイルをマウント
+      - ./:/workspace
+      # Nixストアをボリュームとして永続化（ビルドキャッシュのため）
+      - nix-store:/nix
+    environment:
+      # Nix Flakesを有効化
+      - NIX_CONFIG=experimental-features = nix-command flakes
+    stdin_open: true
+    tty: true
+    command: bash
+
+volumes:
+  nix-store:
+    driver: local

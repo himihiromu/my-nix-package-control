@@ -8,7 +8,10 @@ git config --global --add safe.directory /workspace 2>/dev/null || true
 
 export USER="${USER:-tester}"
 export HOME="/tmp/home-manager-test-home"
+export GIT_CONFIG_GLOBAL="$HOME/.gitconfig"
 mkdir -p "$HOME"
+
+git config --global --add safe.directory /workspace 2>/dev/null || true
 
 SYSTEM="$(nix eval --impure --raw --expr builtins.currentSystem)"
 TARGET=".#packages.${SYSTEM}.homeConfigurations.myHomeConfig.activationPackage"

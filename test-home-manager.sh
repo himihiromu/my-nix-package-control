@@ -6,6 +6,10 @@ cd /workspace
 
 git config --global --add safe.directory /workspace 2>/dev/null || true
 
+export USER="${USER:-tester}"
+export HOME="/tmp/home-manager-test-home"
+mkdir -p "$HOME"
+
 SYSTEM="$(nix eval --impure --raw --expr builtins.currentSystem)"
 TARGET_PREFIX=".#packages.${SYSTEM}.homeConfigurations.myHomeConfig"
 

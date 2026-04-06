@@ -1,10 +1,11 @@
 FROM nixos/nix:latest
 
 # flakes を有効化し、Docker 上での最小テストに必要なコマンドだけを入れる
+# `nixos/nix` 側で入っている git-minimal と衝突するため、ここでは git を追加しない。
 RUN mkdir -p /etc/nix && \
     printf 'experimental-features = nix-command flakes\n' >> /etc/nix/nix.conf && \
     nix-channel --update && \
-    nix-env -iA nixpkgs.bash nixpkgs.git nixpkgs.curl nixpkgs.jq nixpkgs.coreutils
+    nix-env -iA nixpkgs.bash nixpkgs.curl nixpkgs.jq nixpkgs.coreutils
 
 WORKDIR /workspace
 

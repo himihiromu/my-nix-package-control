@@ -18,8 +18,13 @@ echo "1. Current system:"
 echo "${SYSTEM}"
 
 echo
-echo "2. Available home configurations:"
-nix eval --json ".#packages.${SYSTEM}.homeConfigurations" 2>/dev/null | jq -r 'keys[]' 2>/dev/null || echo "No home configurations found"
+echo "2. Checking Home Manager target exists:"
+if nix eval "${TARGET_PREFIX}.activationPackage.drvPath" >/dev/null; then
+  echo "myHomeConfig target found ✓"
+else
+  echo "myHomeConfig target not found ✗"
+  exit 1
+fi
 
 echo
 echo "3. Checking Home Manager target evaluation:"
@@ -28,7 +33,7 @@ echo "Home Manager target evaluation ✓"
 
 echo
 echo "4. Testing Home Manager build:"
-nix build "${TARGET_PREFIX}.activationPackage" --no-link 2>&1 | head -20
+nix build "${TARGET_PREFIX}.activationPackage" --no-link
 
 echo
 echo "======================================"

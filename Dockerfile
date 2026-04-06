@@ -1,20 +1,15 @@
 FROM nixos/nix:latest
 
-# 必要なパッケージとflakes機能の有効化
-RUN nix-channel --update && \
-    echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
+# flakes を有効化し、テスト実行に必要な最小ツールだけを入れる
+RUN mkdir -p /etc/nix && \
+    printf 'experimental-features = nix-command flakes\n' >> /etc/nix/nix.conf && \
+    nix-channel --update && \
+    nix-env -iA nixpkgs.bash nixpkgs.git nixpkgs.curl nixpkgs.jq nixpkgs.coreutils
 
-# 作業ディレクトリの設定
 WORKDIR /workspace
 
-# gitとcurlとjqをインストール（flakeの依存関係のため）
-RUN nix-env -iA nixpkgs.git nixpkgs.curl nixpkgs.jq
+# ホスト側のリポジトリを volume mount して使う前提。
+# ここではイメージを軽く保つため COPY は行わない。
+SHELL ["/root/.nix-profile/bin/bash", "-lc"]
 
-# ホストのファイルをコンテナにコピー
-COPY . .
-
-# デフォルトシェルをbashに設定
-SHELL ["/bin/bash", "-c"]
-
-# コンテナ起動時のコマンド
-CMD ["bash"]
+CMD ["/root/.nix-profile/bin/bash"]

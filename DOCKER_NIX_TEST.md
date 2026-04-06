@@ -1,72 +1,44 @@
 # Docker Nix Test Environment
 
-このディレクトリには、Nixの環境構築をテストするためのDocker環境が用意されています。
+Docker 上で `flake.nix` の評価と Home Manager のビルド確認を行うための最小テスト環境です。
 
-## セットアップ
-
-### 1. Dockerコンテナのビルドと起動
+## 起動
 
 ```bash
-# コンテナのビルドと起動
-docker-compose up -d --build
-
-# コンテナに入る
-docker-compose exec nixos-test bash
+docker compose up -d --build
 ```
 
-### 2. テストの実行
-
-コンテナ内で以下のコマンドを実行してNix環境をテストできます：
+コンテナへ入る場合:
 
 ```bash
-# テストスクリプトの実行
-./test-nix-env.sh
-
-# または個別にコマンドを実行
-nix flake show
-nix flake check --no-build
+docker compose exec nixos-test /root/.nix-profile/bin/bash
 ```
 
-### 3. Flakeコマンドの実行例
+## テスト実行
 
+### Nix / flake の基本確認
 ```bash
-# パッケージのビルド
-nix build .#my-package
-
-# アプリの実行
-nix run .#update
-nix run .#install
-
-# 開発シェルの起動（設定されている場合）
-nix develop
+docker compose exec nixos-test /workspace/test-nix-env.sh
 ```
 
-## ファイル構成
-
-- `Dockerfile`: NixOSベースのDockerイメージ定義
-- `docker-compose.yml`: Docker Compose設定
-- `test-nix-env.sh`: Nix環境のテストスクリプト
-- `flake.nix`: Nix Flake設定ファイル
-
-## トラブルシューティング
-
-### Flakesが有効でない場合
-
-コンテナ内で以下を実行：
+### Home Manager のビルド確認
 ```bash
-echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+docker compose exec nixos-test /workspace/test-home-manager.sh
 ```
 
-### コンテナの再起動
-
+### Home Manager の適用
 ```bash
-docker-compose down
-docker-compose up -d --build
+docker compose exec nixos-test /workspace/apply-home-manager.sh
 ```
 
-### キャッシュのクリア
+## 想定する用途
 
-```bash
-docker-compose down -v  # ボリュームも削除
-docker-compose up -d --build
-```
+- Docker 上で flake の評価が通るか確認する
+- Home Manager 設定のビルド可否を確認する
+- ローカル環境を直接汚さずに Nix 実行テストを行う
+
+## 補足
+
+- イメージ build 時に repository 全体は COPY せず、volume mount 前提で扱います
+- コンテナ内 shell は `/root/.nix-profile/bin/bash` を利用します
+- Nix store は volume 化してキャッシュを保持します

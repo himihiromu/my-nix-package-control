@@ -1,0 +1,23 @@
+services:
+  nixos-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nixos-test-env
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+      - nix-store:/nix
+    environment:
+      NIX_CONFIG: experimental-features = nix-command flakes
+      USER: ${USER:-tester}
+      GIT_USERNAME: ${GIT_USERNAME:-}
+      GIT_EMAIL: ${GIT_EMAIL:-}
+      OPENAI_KEY: ${OPENAI_KEY:-}
+    stdin_open: true
+    tty: true
+    command: /root/.nix-profile/bin/bash
+
+volumes:
+  nix-store:
+    driver: local

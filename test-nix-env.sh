@@ -4,6 +4,8 @@ set -euo pipefail
 
 cd /workspace
 
+git config --global --add safe.directory /workspace 2>/dev/null || true
+
 echo "======================================"
 echo "Nix Environment Test Script"
 echo "======================================"

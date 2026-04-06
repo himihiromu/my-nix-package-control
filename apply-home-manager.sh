@@ -4,6 +4,8 @@ set -euo pipefail
 
 cd /workspace
 
+git config --global --add safe.directory /workspace 2>/dev/null || true
+
 SYSTEM="$(nix eval --impure --raw --expr builtins.currentSystem)"
 TARGET=".#packages.${SYSTEM}.homeConfigurations.myHomeConfig.activationPackage"
 

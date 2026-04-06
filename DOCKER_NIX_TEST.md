@@ -36,3 +36,4 @@ docker compose exec nixos-test /workspace/apply-home-manager.sh
 - `user-options/options.nix` は変更せず、環境変数入力をそのまま利用します
 - `USER`, `GIT_USERNAME`, `GIT_EMAIL`, `OPENAI_KEY` は必要に応じて `docker compose` 側から渡します
 - main ブランチの `home-manager` ディレクトリ構成は維持したまま、Docker テスト導線だけを追加します
+- volume mount した `/workspace` は Git safe.directory として扱うよう、各テストスクリプト内で設定しています

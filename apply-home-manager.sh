@@ -15,7 +15,7 @@ echo "======================================"
 
 echo
 echo "1. Building Home Manager configuration..."
-nix build "${TARGET}"
+nix build --option build-users-group '' "${TARGET}"
 
 echo
 echo "2. Activating Home Manager configuration..."

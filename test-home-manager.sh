@@ -19,7 +19,7 @@ echo "${SYSTEM}"
 
 echo
 echo "2. Checking Home Manager target exists:"
-if nix eval "${TARGET_PREFIX}.activationPackage.drvPath" >/dev/null; then
+if nix eval --option build-users-group '' "${TARGET_PREFIX}.activationPackage.drvPath" >/dev/null; then
   echo "myHomeConfig target found ✓"
 else
   echo "myHomeConfig target not found ✗"
@@ -28,12 +28,12 @@ fi
 
 echo
 echo "3. Checking Home Manager target evaluation:"
-nix eval "${TARGET_PREFIX}.activationPackage.drvPath" >/dev/null
+nix eval --option build-users-group '' "${TARGET_PREFIX}.activationPackage.drvPath" >/dev/null
 echo "Home Manager target evaluation ✓"
 
 echo
 echo "4. Testing Home Manager build:"
-nix build "${TARGET_PREFIX}.activationPackage" --no-link
+nix build --option build-users-group '' "${TARGET_PREFIX}.activationPackage" --no-link
 
 echo
 echo "======================================"

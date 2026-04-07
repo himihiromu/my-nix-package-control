@@ -1,6 +1,6 @@
 # Docker Nix Test Environment
 
-Docker 上で `flake.nix` の評価と Home Manager のビルド確認を行うための最小テスト環境です。
+Docker 上で `flake.nix` の評価と Home Manager の build 確認を行うための最小テスト環境です。
 
 ## 起動
 
@@ -36,12 +36,12 @@ docker compose exec nixos-test /workspace/test-home-manager.sh
 ```
 
 このスクリプトで確認すること:
-- `packages.${system}.homeConfigurations.myHomeConfig` が存在すること
-- `activationPackage` の評価が通ること
-- `activationPackage` の build が通ること
+- `nix run nixpkgs#home-manager` が利用できること
+- `home-manager build --flake .#myHomeConfig` の評価が通ること
+- `home-manager build --flake .#myHomeConfig` の build が通ること
 
 成功の目安:
-- `myHomeConfig target found ✓`
+- `home-manager command available ✓`
 - `Home Manager target evaluation ✓`
 - 最後に `Test complete!` が出ること
 

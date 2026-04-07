@@ -11,10 +11,8 @@ export HOME="/tmp/home-manager-test-home"
 export GIT_CONFIG_GLOBAL="$HOME/.gitconfig"
 mkdir -p "$HOME"
 
-git config --global --add safe.directory /workspace 2>/dev/null || true
-
 SYSTEM="$(nix eval --impure --raw --expr builtins.currentSystem)"
-TARGET_PREFIX=".#packages.${SYSTEM}.homeConfigurations.myHomeConfig"
+TARGET_FLAKE='.#myHomeConfig'
 
 echo "======================================"
 echo "Home Manager Configuration Test"
@@ -25,22 +23,25 @@ echo "1. Current system:"
 echo "${SYSTEM}"
 
 echo
-echo "2. Checking Home Manager target exists:"
-if nix eval --option build-users-group '' "${TARGET_PREFIX}.activationPackage.drvPath" >/dev/null; then
-  echo "myHomeConfig target found ✓"
-else
-  echo "myHomeConfig target not found ✗"
-  exit 1
-fi
+echo "2. Checking Home Manager command availability:"
+nix run --option build-users-group '' nixpkgs#home-manager -- --version >/dev/null
+echo "home-manager command available ✓"
 
 echo
 echo "3. Checking Home Manager target evaluation:"
-nix eval --option build-users-group '' "${TARGET_PREFIX}.activationPackage.drvPath" >/dev/null
+nix run --option build-users-group '' nixpkgs#home-manager -- build \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  --flake "${TARGET_FLAKE}" \
+  --dry-run >/dev/null
 echo "Home Manager target evaluation ✓"
 
 echo
 echo "4. Testing Home Manager build:"
-nix build --option build-users-group '' "${TARGET_PREFIX}.activationPackage" --no-link
+nix run --option build-users-group '' nixpkgs#home-manager -- build \
+  --extra-experimental-features nix-command \
+  --extra-experimental-features flakes \
+  --flake "${TARGET_FLAKE}"
 
 echo
 echo "======================================"

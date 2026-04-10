@@ -7,6 +7,7 @@ RUN mkdir -p /etc/nix && \
     printf 'experimental-features = nix-command flakes\n' >> /etc/nix/nix.conf && \
     nix-channel --update && \
     nix-env -iA nixpkgs.bash nixpkgs.curl nixpkgs.jq nixpkgs.coreutils && \
+    rm -rf /homeless-shelter && \
     if command -v groupadd >/dev/null 2>&1 && command -v useradd >/dev/null 2>&1; then \
       groupadd -g 30000 nixbld && \
       for i in $(seq 1 10); do useradd -u $((30000 + i)) -g nixbld -M -d /var/empty -s /usr/sbin/nologin "nixbld${i}" || true; done && \

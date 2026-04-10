@@ -4,14 +4,13 @@ set -euo pipefail
 
 cd /workspace
 
-git config --global --add safe.directory /workspace 2>/dev/null || true
-
 export USER="${USER:-tester}"
 export HOME="/tmp/home-manager-test-home"
 export GIT_CONFIG_GLOBAL="$HOME/.gitconfig"
+export GIT_CONFIG_COUNT=1
+export GIT_CONFIG_KEY_0=safe.directory
+export GIT_CONFIG_VALUE_0=/workspace
 mkdir -p "$HOME"
-
-git config --global --add safe.directory /workspace 2>/dev/null || true
 
 SYSTEM="$(nix eval --impure --raw --expr builtins.currentSystem)"
 TARGET=".#packages.${SYSTEM}.homeConfigurations.myHomeConfig.activationPackage"

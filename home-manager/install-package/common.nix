@@ -30,5 +30,7 @@
     nushell
     eza
     dust
+    tmux
+    bruno
   ];
 }

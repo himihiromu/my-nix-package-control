@@ -1,5 +1,4 @@
 { pkgs, ... }:
-
 {
   programs.nixvim = {
     enable = true;
@@ -18,6 +17,8 @@
       web-devicons.enable = true;
       which-key.enable = true;
       bufferline.enable = true;
+      nvim-tree.enable = true;
+      fff.enable = true;
 
       lsp = {
         enable = true;
@@ -61,5 +62,16 @@
         };
       };
     };
+
+    keymaps = [
+      {
+        mode = "n";
+        key = "<leader>f";
+        action = "<cmd>lua require('fff').find_files()<CR>";
+        options = {
+          desc = "FFF: find files";
+        };
+      }
+    ];
   };
 }

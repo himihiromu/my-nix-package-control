@@ -37,11 +37,6 @@ in
     homeDirectory = if isMac then "/Users/${username}"
       else "/home/${username}";
 
-    file = if isMac then {
-      ".lima/_config/default.yaml".source = ../config/lima/default.yaml;
-    }
-    else {};
-
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     stateVersion = "24.05";
 

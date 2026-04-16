@@ -32,5 +32,6 @@
     dust
     tmux
     bruno
+    pandoc
   ];
 }

@@ -33,6 +33,5 @@
     tmux
     bruno
     pandoc
-    takt
   ];
 }

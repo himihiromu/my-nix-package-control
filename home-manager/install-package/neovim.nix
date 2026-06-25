@@ -14,6 +14,14 @@
     };
 
     plugins = {
+      skkeleton = {
+        enable = true;
+        settings = {
+          globalDictionaries = [ "${pkgs.skk-dicts}/share/skk/SKK-JISYO.L" ];
+          eggLikeNewline = true;
+        };
+      };
+
       web-devicons.enable = true;
       which-key.enable = true;
       bufferline.enable = true;
@@ -70,6 +78,14 @@
         action = "<cmd>lua require('fff').find_files()<CR>";
         options = {
           desc = "FFF: find files";
+        };
+      }
+      {
+        mode = ["i" "c"];
+        key = "<C-j>";
+        action = "<Plug>(skkeleton-enable)";
+        options = {
+          desc = "SKK: skkeletonを起動";
         };
       }
     ];

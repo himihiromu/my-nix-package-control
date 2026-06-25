@@ -13,6 +13,25 @@
       clipboard = "unnamedplus";
     };
 
+    extraPlugins = with pkgs.vimPlugins; [
+      skkkeleton-vim
+      denops-vim
+    ];
+
+    extraConfigLua = ''
+      vim.g['skkeleton#config'] = {
+        globalDictionaries = { '${pkgs.skk-dicts}/share/skk/SKK-JISYO.L' },
+        eggLikeNewline = true,
+      }
+      vim.fn['skkeleton#register_keymap']('input', { ['l'] = 'disable' })
+    '';
+
+    extraConfigVim = ''
+      " skkeleton: C-jで起動
+      imap <C-j> <Plug>(skkeleton-enable)
+      cmap <C-j> <Plug>(skkeleton-enable)
+    '';
+
     plugins = {
       web-devicons.enable = true;
       which-key.enable = true;

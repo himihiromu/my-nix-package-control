@@ -25,7 +25,6 @@
     fd
     fzf
     direnv
-    keifu
     nushell
     eza
     dust

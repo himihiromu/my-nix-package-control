@@ -26,7 +26,6 @@
     fzf
     direnv
     keifu
-    filetree
     nushell
     eza
     dust

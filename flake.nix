@@ -26,6 +26,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    takt = {
+      url = "github:nrslib/takt";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # 実行時に --override-input で差し替える
     local-options = {
       url = "path:./user-options/options.nix";

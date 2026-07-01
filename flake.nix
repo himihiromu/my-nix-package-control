@@ -224,6 +224,17 @@
             echo "kotlin version: $(kotlin -version)"
           '';
         };
+        csharp = pkgs.mkShell {
+          buildInputs = [
+            pkgs.dotnet-sdk
+            pkgs.omnisharp-roslyn
+            # pkgs.dotnet-aspnetcore  # Web開発時に追加
+          ];
+          shellHook = ''
+            echo "dotnet version: $(dotnet --version)"
+            echo "OmniSharp version: $(omnisharp --version)"
+          '';
+        };
       };
       #   inherit system;
       #   modules = [ home-manager.darwinModules.home-manager ./nix-darwin/default.nix ];

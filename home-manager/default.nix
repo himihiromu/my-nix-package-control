@@ -4,6 +4,7 @@
   system,
   isDesktop,
   nixvim,
+  inputs,
   ...
 }:
 let

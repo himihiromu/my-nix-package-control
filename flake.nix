@@ -166,6 +166,7 @@
             pkgs.nodejs_24
             pkgs.pnpm
             pkgs.bun
+            pkgs.yarn
             pkgs.typescript-language-server
             pkgs.typescript
           ];
@@ -174,6 +175,7 @@
             echo "npm version: $(npm --version)"
             echo "pnpm version: $(pnpm --version)"
             echo "bun version: $(bun --version)"
+            echo "yarn version: $(yarn --version)"
           '';
         };
         java21 = pkgs.mkShell {

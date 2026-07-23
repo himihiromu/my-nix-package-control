@@ -31,5 +31,6 @@
     tmux
     bruno
     pandoc
+    claude-code
   ];
 }

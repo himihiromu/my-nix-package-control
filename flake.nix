@@ -87,6 +87,7 @@
             inherit system;
             config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
               "zsh-abbr"
+              "claude-code"
             ];
           }).extend (
             neovim-nightly-overlay.overlays.default

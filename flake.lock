@@ -250,6 +250,7 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_2",
         "nixvim": "nixvim",
+        "takt": "takt",
         "vim-src": "vim-src"
       }
     },
@@ -280,6 +281,26 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "takt": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1784759392,
+        "narHash": "sha256-oiasBugbXFzTvUBknYUpGUZv89X/0lqlDItFWwbOUIw=",
+        "owner": "nrslib",
+        "repo": "takt",
+        "rev": "3e450964642b1a678b61fab3750d3e3588739934",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nrslib",
+        "repo": "takt",
         "type": "github"
       }
     },

@@ -18,7 +18,7 @@ let
     else [];
   zed = import ./install-package/zed.nix { inherit pkgs; inherit isDesktop; };
   nix-vim-package = import ./install-package/neovim.nix { inherit pkgs; };
-  fish-package = import ./install-package/fish.nix { inherit pkgs; };
+  shell = import ./shell;
   takt-package = import ./install-package/takt.nix { inherit inputs; inherit pkgs; };
 in
 {
@@ -26,7 +26,7 @@ in
     zed
     nixvim.homeModules.nixvim
     nix-vim-package
-    fish-package
+    shell
     takt-package
   ];
 

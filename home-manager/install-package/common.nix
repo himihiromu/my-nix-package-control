@@ -17,16 +17,11 @@
     bat
     bun
     ripgrep
-    zoxide
-    yazi
     pik
     just
     jq
     fd
-    fzf
-    direnv
     nushell
-    eza
     dust
     tmux
     bruno

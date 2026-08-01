@@ -13,21 +13,15 @@ let
     if (builtins.toString system) == "x86_64-darwin" then true
     else if (builtins.toString system) == "aarch64-darwin" then true
     else false;
-  isLinuxDesktop = isDesktop && !isMac;
+  isLinux = pkgs.stdenv.isLinux;
   machinePackage =
     if isMac then (import ./install-package/darwin.nix {inherit pkgs;}).installPackages
-    else [];
-  linuxDesktopPackage =
-    if isLinuxDesktop then (import ./install-package/linux/desktop.nix {inherit pkgs;}).installPackages
-    else [];
-  linuxMultimediaPackage =
-    if isLinuxDesktop then (import ./install-package/linux/multimedia.nix {inherit pkgs;}).installPackages
+    else if isLinux then (import ./install-package/linux {inherit pkgs;}).installPackages
     else [];
   zed = import ./install-package/zed.nix { inherit pkgs; inherit isDesktop; };
   nix-vim-package = import ./install-package/neovim.nix { inherit pkgs; };
   shell = import ./shell;
   takt-package = import ./install-package/takt.nix { inherit inputs; inherit pkgs; };
-  linuxServices = import ./install-package/linux/services.nix { inherit pkgs; };
 in
 {
   imports = [
@@ -36,7 +30,7 @@ in
     nix-vim-package
     shell
     takt-package
-  ] ++ (if isLinuxDesktop then [ linuxServices ] else []);
+  ] ++ (if isLinux then [ (import ./install-package/linux/services.nix { inherit pkgs; }) ] else []);
 
   nixpkgs = {
     config = {
@@ -51,7 +45,7 @@ in
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     stateVersion = "24.05";
 
-    packages = commonPackage ++ machinePackage ++ linuxDesktopPackage ++ linuxMultimediaPackage;
+    packages = commonPackage ++ machinePackage;
   };
 
   programs.home-manager.enable = true;

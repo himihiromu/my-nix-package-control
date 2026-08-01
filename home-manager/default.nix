@@ -19,7 +19,7 @@ let
     else false;
   machinePackage =
     if isMac then (import ./install-package/darwin.nix {inherit pkgs;}).installPackages
-    else if isLinux then (import ./install-package/linux {inherit pkgs;}).installPackages
+    else if isLinux then (import ./linux {inherit pkgs;}).installPackages
     else [];
   zed = import ./install-package/zed.nix { inherit pkgs; inherit isDesktop; };
   nix-vim-package = import ./install-package/neovim.nix { inherit pkgs; };
@@ -33,7 +33,7 @@ in
     nix-vim-package
     shell
     takt-package
-  ] ++ (if isLinux then [ (import ./install-package/linux/services.nix { inherit pkgs; }) ] else []);
+  ] ++ (if isLinux then [ (import ./linux/services.nix { inherit pkgs; }) ] else []);
 
   nixpkgs = {
     config = {

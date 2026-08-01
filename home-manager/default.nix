@@ -13,7 +13,10 @@ let
     if (builtins.toString system) == "x86_64-darwin" then true
     else if (builtins.toString system) == "aarch64-darwin" then true
     else false;
-  isLinux = pkgs.stdenv.isLinux;
+  isLinux =
+    if (builtins.toString system) == "x86_64-linux" then true
+    else if (builtins.toString system) == "aarch64-linux" then true
+    else false;
   machinePackage =
     if isMac then (import ./install-package/darwin.nix {inherit pkgs;}).installPackages
     else if isLinux then (import ./install-package/linux {inherit pkgs;}).installPackages

@@ -6,5 +6,13 @@
     # Recording
     gpu-screen-recorder
     obs-studio
+
+    # Screenshot
+    grimblast
+    satty
+
+    # Audio
+    pamixer
+    pavucontrol
   ];
 }

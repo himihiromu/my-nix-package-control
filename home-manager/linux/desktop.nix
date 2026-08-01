@@ -20,39 +20,15 @@
     nemo
 
     # Wallpaper
-    hyprpaper
     waypaper
-
-    # Lock
-    hyprlock
-
-    # Idle
-    hypridle
-
-    # Notification
-    swaynotificationcenter
 
     # Status Bar
     waybar
 
-    # PolicyKit
-    hyprpolkitagent
-
-    # Portal
-    xdg-desktop-portal-hyprland
+    # Notification
+    swaynotificationcenter
 
     # Brightness
     brightnessctl
-
-    # Color Picker
-    hyprpicker
-
-    # Audio
-    pamixer
-    pavucontrol
-
-    # Screenshot
-    grimblast
-    satty
   ];
 }

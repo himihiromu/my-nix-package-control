@@ -108,13 +108,32 @@
           ];
         };
         nixosConfigurations = {
-          nixos = nixpkgs.lib.nixosSystem {
+          # WSL2 on Windows
+          nixos-wsl = nixpkgs.lib.nixosSystem {
             system = system;
             modules = [
               nixos-wsl.nixosModules.default
               {
                 system.stateVersion = "24.05";
                 wsl.enable = true;
+              }
+            ];
+          };
+          # Bare metal (single host)
+          nixos = nixpkgs.lib.nixosSystem {
+            system = system;
+            modules = [
+              ./nixos/configuration.nix
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.users.himihiromu = import ./home-manager/default.nix {
+                  inherit inputs;
+                  inherit username;
+                  inherit pkgs;
+                  inherit system;
+                  inherit isDesktop;
+                  inherit nixvim;
+                };
               }
             ];
           };

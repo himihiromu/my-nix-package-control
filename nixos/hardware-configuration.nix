@@ -4,5 +4,8 @@
 
 {
   imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
-  boot.loader.grub.device = "/dev/sda";
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+  };
 }

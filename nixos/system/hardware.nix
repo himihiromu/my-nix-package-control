@@ -1,6 +1,12 @@
 { config, pkgs, ... }:
 
 {
+  # UEFI boot loader (the generated hardware file only defines /boot).
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+  };
+
   # AMD CPU Microcode
   hardware.cpu.amd.updateMicrocode = true;
 
@@ -14,9 +20,6 @@
     enable = true;
     enable32Bit = true;
   };
-
-  # Latest stable kernel
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_6_12;
 
   # Bluetooth
   hardware.bluetooth = {

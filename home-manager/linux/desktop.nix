@@ -10,11 +10,11 @@
     vicinae
 
     # Browser
-    zen-browser
     chromium
 
     # Clipboard
     clipse
+    wl-clipboard
 
     # File Manager
     nemo
@@ -30,5 +30,9 @@
 
     # Brightness
     brightnessctl
+
+    # Desktop integration
+    networkmanagerapplet
+    qt6Packages.qt6ct
   ];
 }

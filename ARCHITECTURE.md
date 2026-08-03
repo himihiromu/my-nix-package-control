@@ -71,6 +71,15 @@ Home Manager による設定ファイル生成は極力行わない。
 ## ディレクトリ構成
 
 ```
+nixos/                          # NixOS ホスト設定（bare metal）
+├── configuration.nix           # エントリポイント
+├── hardware-configuration.nix  # インストーラー生成ファイル
+└── system/
+    ├── hardware.nix            # AMD CPU/GPU, Firmware, Bluetooth
+    ├── desktop.nix             # Hyprland, greetd, PipeWire, Locale, Fonts, Fcitx5
+    ├── services.nix            # NetworkManager, Firewall, Docker, Avahi
+    └── nix.nix                  # nix settings, GC, Store optimise
+
 home-manager/
 ├── default.nix              # エントリポイント。OS判定してパッケージを組み立て
 ├── desktop/
@@ -85,6 +94,45 @@ home-manager/
 │   └── darwin.nix            # macOS専用パッケージ
 └── shell/                    # シェル設定
 ```
+
+## NixOS モジュール責務
+
+### nix.nix
+
+Nix daemon の設定とメンテナンス。
+
+- `nix.settings` — experimental-features, trusted-users, substituters
+- `nix.gc` — 自動ガベージコレクション（weekly, 30d）
+- `nix.optimise` — 自動ストア最適化（weekly）
+
+### hardware.nix
+
+ハードウェアサポート。
+
+- AMD CPU Microcode, AMDGPU, Mesa（32bit含む）
+- 最新安定Kernel
+- Bluetooth, Redistributable Firmware
+
+### desktop.nix
+
+デスクトップ環境。デスクトップアプリは含めない。
+
+- Hyprland（system-wide enable）
+- greetd + tuigreet
+- PipeWire（ALSA/PulseAudio/JACK互換）
+- xdg.portal, polkit
+- Locale（ja_JP / en_US）, Timezone（Asia/Tokyo）
+- Fonts（Noto, Noto CJK, Noto Color Emoji, JetBrainsMono Nerd）
+- Fcitx5 + Mozc + SKK
+- xdg-user-dirs
+
+### services.nix
+
+OS基盤サービス。
+
+- NetworkManager, Firewall
+- Docker（rootless）
+- systemd-timesyncd, Avahi
 
 ## 実装ルール
 

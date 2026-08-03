@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, username, ... }:
 
 {
   nix.settings = {
@@ -8,7 +8,7 @@
     ];
 
     trusted-users = [
-      "@wheel"
+      username
     ];
 
     substituters = [

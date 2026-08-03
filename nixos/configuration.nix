@@ -1,16 +1,11 @@
 # NixOS Entry Point
 # 設定は極力書かず、エントリーポイントとして利用する
 
-{
-  config,
-  pkgs,
-  username,
-  ...
-}:
+{ config, pkgs, username, ... }:
 
 {
   imports = [
-    ./auto-create/hardware-configuration.nix
+    ./hardware-configuration.nix
     ./system/hardware.nix
     ./system/desktop.nix
     ./system/services.nix

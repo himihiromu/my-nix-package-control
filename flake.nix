@@ -123,10 +123,11 @@
           nixos = nixpkgs.lib.nixosSystem {
             system = system;
             modules = [
+              { _module.args = { inherit username isDesktop; }; }
               ./nixos/configuration.nix
               home-manager.nixosModules.home-manager
               {
-                home-manager.users.himihiromu = import ./home-manager/default.nix {
+                home-manager.users.${username} = import ./home-manager/default.nix {
                   inherit inputs;
                   inherit username;
                   inherit pkgs;

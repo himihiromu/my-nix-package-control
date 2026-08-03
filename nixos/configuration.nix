@@ -1,7 +1,7 @@
 # NixOS Entry Point
 # 設定は極力書かず、エントリーポイントとして利用する
 
-{ config, pkgs, ... }:
+{ config, pkgs, username, ... }:
 
 {
   imports = [
@@ -16,7 +16,7 @@
   networking.hostName = "nixos";
 
   # User
-  users.users.himihiromu = {
+  users.users.${username} = {
     isNormalUser = true;
     extraGroups = [
       "wheel"

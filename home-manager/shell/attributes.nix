@@ -13,6 +13,8 @@ let
       nix-direnv.enable = true;
     };
 
+    yazi.shellWrapperName = "y";
+
     zoxide = {
       options = [
         "--cmd"

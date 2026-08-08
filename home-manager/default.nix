@@ -8,23 +8,38 @@
   ...
 }:
 let
-  commonPackage = (import ./install-package/common.nix {inherit pkgs;}).installPackages;
+  commonPackage = (import ./install-package/common.nix { inherit pkgs; }).installPackages;
   isMac =
-    if (builtins.toString system) == "x86_64-darwin" then true
-    else if (builtins.toString system) == "aarch64-darwin" then true
-    else false;
+    if (builtins.toString system) == "x86_64-darwin" then
+      true
+    else if (builtins.toString system) == "aarch64-darwin" then
+      true
+    else
+      false;
   isLinux =
-    if (builtins.toString system) == "x86_64-linux" then true
-    else if (builtins.toString system) == "aarch64-linux" then true
-    else false;
+    if (builtins.toString system) == "x86_64-linux" then
+      true
+    else if (builtins.toString system) == "aarch64-linux" then
+      true
+    else
+      false;
   machinePackage =
-    if isMac then (import ./install-package/darwin.nix {inherit pkgs;}).installPackages
-    else if isLinux then (import ./linux {inherit pkgs;}).installPackages
-    else [];
-  zed = import ./install-package/zed.nix { inherit pkgs; inherit isDesktop; };
+    if isMac then
+      (import ./install-package/darwin.nix { inherit pkgs; }).installPackages
+    else if isLinux then
+      (import ./linux { inherit pkgs; }).installPackages
+    else
+      [ ];
+  zed = import ./install-package/zed.nix {
+    inherit pkgs;
+    inherit isDesktop;
+  };
   nix-vim-package = import ./install-package/neovim.nix { inherit pkgs; };
   shell = import ./shell;
-  takt-package = import ./install-package/takt.nix { inherit inputs; inherit pkgs; };
+  takt-package = import ./install-package/takt.nix {
+    inherit inputs;
+    inherit pkgs;
+  };
 in
 {
   imports = [
@@ -33,17 +48,12 @@ in
     nix-vim-package
     shell
     takt-package
-  ] ++ (if isLinux then [ (import ./linux/services.nix { inherit pkgs; }) ] else []);
+  ]
+  ++ (if isLinux then [ ./linux/services.nix ] else [ ]);
 
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-    };
-  };
   home = {
     username = username;
-    homeDirectory = if isMac then "/Users/${username}"
-      else "/home/${username}";
+    homeDirectory = if isMac then "/Users/${username}" else "/home/${username}";
 
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     stateVersion = "24.05";

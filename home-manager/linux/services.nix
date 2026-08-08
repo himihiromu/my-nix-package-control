@@ -1,8 +1,164 @@
 # Hyprland GUI環境の常駐サービス設定
-# services.*.enable のみ管理する
-# 必要になったタイミングで追加する
-{ pkgs, ... }:
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  wallpaperDirectory = "${config.home.homeDirectory}/Pictures/Wallpapers";
+  defaultWallpaper = "${wallpaperDirectory}/hyprland-wall0.png";
+  waypaperConfig = pkgs.writeText "waypaper-config.ini" ''
+    [Settings]
+    folder = ${wallpaperDirectory}
+    backend = hyprpaper
+    fill = fill
+    sort = name
+    monitors = All
+    wallpaper = ${defaultWallpaper}
+    use_xdg_state = True
+  '';
+  waypaperInitialState = pkgs.writeText "waypaper-state.ini" ''
+    [State]
+    folder = ${wallpaperDirectory}
+    monitors = All
+    wallpaper = ${defaultWallpaper}
+  '';
+in
+{
+  home.file = {
+    "Pictures/Wallpapers/hyprland-wall0.png".source = "${pkgs.hyprland}/share/hypr/wall0.png";
+    "Pictures/Wallpapers/hyprland-wall1.png".source = "${pkgs.hyprland}/share/hypr/wall1.png";
+    "Pictures/Wallpapers/hyprland-wall2.png".source = "${pkgs.hyprland}/share/hypr/wall2.png";
+  };
+
+  # Keep Waypaper's chosen wallpaper in its mutable state file while managing
+  # the backend and wallpaper directory declaratively.
+  home.activation.waypaperConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    run mkdir -p "$HOME/.config/waypaper"
+    run install -m 0644 ${waypaperConfig} "$HOME/.config/waypaper/config.ini"
+    run mkdir -p "$HOME/.local/state/waypaper"
+    if [[ -e "$HOME/.local/state/waypaper/state.ini" ]]; then
+      run ${pkgs.gnused}/bin/sed -i \
+        's|^folder = .*|folder = ${wallpaperDirectory}|' \
+        "$HOME/.local/state/waypaper/state.ini"
+    else
+      run install -m 0644 ${waypaperInitialState} "$HOME/.local/state/waypaper/state.ini"
+    fi
+  '';
+
+  services.hyprpaper = {
+    enable = true;
+    settings = {
+      ipc = true;
+      splash = false;
+      wallpaper = [
+        {
+          monitor = "";
+          path = defaultWallpaper;
+          fit_mode = "cover";
+        }
+      ];
+    };
+  };
+
+  programs.waybar = {
+    enable = true;
+    settings = [
+      {
+        height = 30;
+        spacing = 4;
+        modules-left = [
+          "hyprland/workspaces"
+          "hyprland/submap"
+          "mpris"
+        ];
+        modules-center = [ "hyprland/window" ];
+        modules-right = [
+          "idle_inhibitor"
+          "wireplumber"
+          "network"
+          "cpu"
+          "memory"
+          "temperature"
+          "hyprland/language"
+          "clock"
+          "tray"
+        ];
+
+        "hyprland/window".max-length = 80;
+        "hyprland/language".format = "{short}";
+        mpris = {
+          format = "{player_icon} {dynamic}";
+          format-paused = "{status_icon} {dynamic}";
+          dynamic-len = 40;
+          player-icons.default = "▶";
+          status-icons.paused = "⏸";
+        };
+        idle_inhibitor = {
+          format = "{icon}";
+          format-icons = {
+            activated = "";
+            deactivated = "";
+          };
+        };
+        wireplumber = {
+          format = "{volume}% {icon}";
+          format-muted = "󰖁";
+          format-icons = [
+            ""
+            ""
+            ""
+          ];
+          on-click = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+          on-click-right = "pavucontrol";
+          on-scroll-up = "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+";
+          on-scroll-down = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
+        };
+        network = {
+          format-wifi = "{essid} ({signalStrength}%) ";
+          format-ethernet = "{ipaddr}/{cidr} 󰈀";
+          format-disconnected = "Disconnected ⚠";
+          tooltip-format = "{ifname} via {gwaddr}";
+        };
+        cpu = {
+          format = "{usage}% ";
+          tooltip = false;
+        };
+        memory.format = "{}% ";
+        temperature = {
+          hwmon-path-abs = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";
+          input-filename = "temp1_input";
+          critical-threshold = 80;
+          format = "{temperatureC}°C ";
+        };
+        clock = {
+          tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+          format-alt = "{:%Y-%m-%d}";
+        };
+        tray.spacing = 10;
+      }
+    ];
+    systemd = {
+      enable = true;
+      target = "graphical-session.target";
+    };
+  };
+
+  systemd.user.services.vicinae = {
+    Unit = {
+      Description = "Vicinae launcher server";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.vicinae}/bin/vicinae server";
+      Environment = "USER_LAYER_SHELL=1";
+      Restart = "on-failure";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   services.hypridle = {
     enable = true;
     settings = {
@@ -44,13 +200,15 @@
     enable = true;
     systemd.enable = false; # UWSM owns the graphical user session.
     settings = {
-      monitor = ",preferred,auto,1";
+      monitor = [
+        "DP-2,preferred,0x0,1"
+        "HDMI-A-2,preferred,1920x0,1"
+      ];
       "$mod" = "SUPER";
       "$terminal" = "ghostty";
       "$fileManager" = "nemo";
       exec-once = [
         "fcitx5 -d --replace"
-        "waybar"
         "swaync"
         "nm-applet --indicator"
       ];
@@ -72,11 +230,14 @@
         "$mod, E, exec, uwsm app -- $fileManager"
         "$mod, Space, exec, vicinae toggle"
         "$mod, Q, killactive"
+        "$mod, W, killactive"
         "$mod, F, fullscreen"
         "$mod, V, togglefloating"
         "$mod, L, exec, loginctl lock-session"
         "$mod SHIFT, E, exit"
-        ", Print, exec, grimblast copy area"
+        ", Print, exec, grimblast save area - | satty --filename - --copy-command wl-copy --early-exit --actions-on-escape exit"
+        "SHIFT, Print, exec, grimblast copy area"
+        "$mod SHIFT, C, exec, hyprpicker --autocopy"
         "$mod, 1, workspace, 1"
         "$mod, 2, workspace, 2"
         "$mod, 3, workspace, 3"

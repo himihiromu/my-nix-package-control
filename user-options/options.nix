@@ -1,6 +1,6 @@
 {
   # general
-  username = builtins.getEnv"USER";
+  username = builtins.getEnv "USER";
   isDesktop = false;
 
   # git

@@ -49,7 +49,15 @@ in
     shell
     takt-package
   ]
-  ++ (if isLinux then [ ./linux/services.nix ] else [ ]);
+  ++ (
+    if isLinux then
+      [
+        ./linux/services.nix
+        ./linux/user-dirs.nix
+      ]
+    else
+      [ ]
+  );
 
   home = {
     username = username;

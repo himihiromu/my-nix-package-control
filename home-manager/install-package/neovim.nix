@@ -2,6 +2,7 @@
 {
   programs.nixvim = {
     enable = true;
+    nixpkgs.source = pkgs.path;
 
     opts = {
       number = true;

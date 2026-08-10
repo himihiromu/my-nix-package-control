@@ -88,6 +88,7 @@ in
 
   wayland.windowManager.hyprland = {
     enable = true;
+    configType = "hyprlang";
     systemd.enable = false; # UWSM owns the graphical user session.
     settings = {
       monitor = [

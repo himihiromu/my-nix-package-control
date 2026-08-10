@@ -1,7 +1,12 @@
 # NixOS Entry Point
 # 設定は極力書かず、エントリーポイントとして利用する
 
-{ config, pkgs, username, ... }:
+{
+  config,
+  pkgs,
+  username,
+  ...
+}:
 
 {
   imports = [

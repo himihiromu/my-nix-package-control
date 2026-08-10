@@ -1,8 +1,54 @@
 # Hyprland GUI環境の常駐サービス設定
-# services.*.enable のみ管理する
-# 必要になったタイミングで追加する
-{ pkgs, ... }:
 {
+  config,
+  pkgs,
+  ...
+}:
+let
+  wallpaperDirectory = "${config.home.homeDirectory}/Pictures/Wallpapers";
+  defaultWallpaper = "${wallpaperDirectory}/hyprland-wall0.png";
+in
+{
+  imports = [ ./waybar.nix ];
+
+  home.file = {
+    "Pictures/Wallpapers/hyprland-wall0.png".source = "${pkgs.hyprland}/share/hypr/wall0.png";
+    "Pictures/Wallpapers/hyprland-wall1.png".source = "${pkgs.hyprland}/share/hypr/wall1.png";
+    "Pictures/Wallpapers/hyprland-wall2.png".source = "${pkgs.hyprland}/share/hypr/wall2.png";
+  };
+
+  # Chezmoi owns Waypaper's static configuration.
+  xdg.configFile."waypaper/config.ini".enable = false;
+
+  services.hyprpaper = {
+    enable = true;
+    settings = {
+      ipc = true;
+      splash = false;
+      wallpaper = [
+        {
+          monitor = "";
+          path = defaultWallpaper;
+          fit_mode = "cover";
+        }
+      ];
+    };
+  };
+
+  systemd.user.services.vicinae = {
+    Unit = {
+      Description = "Vicinae launcher server";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.vicinae}/bin/vicinae server";
+      Environment = "USER_LAYER_SHELL=1";
+      Restart = "on-failure";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   services.hypridle = {
     enable = true;
     settings = {
@@ -42,15 +88,18 @@
 
   wayland.windowManager.hyprland = {
     enable = true;
+    configType = "hyprlang";
     systemd.enable = false; # UWSM owns the graphical user session.
     settings = {
-      monitor = ",preferred,auto,1";
+      monitor = [
+        "DP-2,preferred,0x0,1"
+        "HDMI-A-2,preferred,1920x0,1"
+      ];
       "$mod" = "SUPER";
       "$terminal" = "ghostty";
       "$fileManager" = "nemo";
       exec-once = [
         "fcitx5 -d --replace"
-        "waybar"
         "swaync"
         "nm-applet --indicator"
       ];
@@ -72,11 +121,14 @@
         "$mod, E, exec, uwsm app -- $fileManager"
         "$mod, Space, exec, vicinae toggle"
         "$mod, Q, killactive"
+        "$mod, W, killactive"
         "$mod, F, fullscreen"
         "$mod, V, togglefloating"
         "$mod, L, exec, loginctl lock-session"
         "$mod SHIFT, E, exit"
-        ", Print, exec, grimblast copy area"
+        ", Print, exec, grimblast save area - | satty --filename - --copy-command wl-copy --early-exit --actions-on-escape exit"
+        "SHIFT, Print, exec, grimblast copy area"
+        "$mod SHIFT, C, exec, hyprpicker --autocopy"
         "$mod, 1, workspace, 1"
         "$mod, 2, workspace, 2"
         "$mod, 3, workspace, 3"

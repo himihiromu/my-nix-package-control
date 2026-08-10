@@ -96,14 +96,14 @@
       ).extend rustCratesOverlay;
     in
     {
-      formatter = pkgs.nixfmt-rfc-style;
+      formatter = pkgs.nixfmt;
       packages = {
         my-package = pkgs.buildEnv {
           name = "my-packages-list";
           paths = with pkgs; [
             git
             curl
-            nixfmt-rfc-style
+            nixfmt
             neovim
           ];
         };
@@ -296,4 +296,3 @@
     }
   );
 }
-

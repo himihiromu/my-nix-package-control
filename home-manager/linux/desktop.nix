@@ -1,6 +1,4 @@
-{
-  pkgs,
-}:
+{ pkgs }:
 {
   installPackages = with pkgs; [
     # Terminal
@@ -22,14 +20,14 @@
     # Wallpaper
     waypaper
 
-    # Status Bar
-    waybar
-
     # Notification
     swaynotificationcenter
 
     # Brightness
     brightnessctl
+
+    # Mouse configuration
+    piper
 
     # Desktop integration
     networkmanagerapplet

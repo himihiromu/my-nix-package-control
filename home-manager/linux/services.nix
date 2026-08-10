@@ -1,19 +1,12 @@
 # Hyprland GUI環境の常駐サービス設定
 {
   config,
-  lib,
   pkgs,
   ...
 }:
 let
   wallpaperDirectory = "${config.home.homeDirectory}/Pictures/Wallpapers";
   defaultWallpaper = "${wallpaperDirectory}/hyprland-wall0.png";
-  waypaperInitialState = pkgs.writeText "waypaper-state.ini" ''
-    [State]
-    folder = ${wallpaperDirectory}
-    monitors = All
-    wallpaper = ${defaultWallpaper}
-  '';
 in
 {
   imports = [ ./waybar.nix ];
@@ -26,18 +19,6 @@ in
 
   # Chezmoi owns Waypaper's static configuration.
   xdg.configFile."waypaper/config.ini".enable = false;
-
-  # Keep Waypaper's chosen wallpaper in its mutable state file.
-  home.activation.waypaperState = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    run mkdir -p "$HOME/.local/state/waypaper"
-    if [[ -e "$HOME/.local/state/waypaper/state.ini" ]]; then
-      run ${pkgs.gnused}/bin/sed -i \
-        's|^folder = .*|folder = ${wallpaperDirectory}|' \
-        "$HOME/.local/state/waypaper/state.ini"
-    else
-      run install -m 0644 ${waypaperInitialState} "$HOME/.local/state/waypaper/state.ini"
-    fi
-  '';
 
   services.hyprpaper = {
     enable = true;

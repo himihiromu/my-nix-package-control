@@ -8,16 +8,6 @@
 let
   wallpaperDirectory = "${config.home.homeDirectory}/Pictures/Wallpapers";
   defaultWallpaper = "${wallpaperDirectory}/hyprland-wall0.png";
-  waypaperConfig = pkgs.writeText "waypaper-config.ini" ''
-    [Settings]
-    folder = ${wallpaperDirectory}
-    backend = hyprpaper
-    fill = fill
-    sort = name
-    monitors = All
-    wallpaper = ${defaultWallpaper}
-    use_xdg_state = True
-  '';
   waypaperInitialState = pkgs.writeText "waypaper-state.ini" ''
     [State]
     folder = ${wallpaperDirectory}
@@ -34,11 +24,11 @@ in
     "Pictures/Wallpapers/hyprland-wall2.png".source = "${pkgs.hyprland}/share/hypr/wall2.png";
   };
 
-  # Keep Waypaper's chosen wallpaper in its mutable state file while managing
-  # the backend and wallpaper directory declaratively.
-  home.activation.waypaperConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    run mkdir -p "$HOME/.config/waypaper"
-    run install -m 0644 ${waypaperConfig} "$HOME/.config/waypaper/config.ini"
+  # Chezmoi owns Waypaper's static configuration.
+  xdg.configFile."waypaper/config.ini".enable = false;
+
+  # Keep Waypaper's chosen wallpaper in its mutable state file.
+  home.activation.waypaperState = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     run mkdir -p "$HOME/.local/state/waypaper"
     if [[ -e "$HOME/.local/state/waypaper/state.ini" ]]; then
       run ${pkgs.gnused}/bin/sed -i \

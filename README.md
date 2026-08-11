@@ -8,9 +8,13 @@ NixOS + Home Manager + nix-darwin + chezmoi で Linux/macOS 環境を管理す�
 |--------|------|----------------|
 | nixos | Bare metal（単一ホスト） | `.#nixos` |
 | nixos-wsl | WSL2 on Windows | `.#nixos-wsl` |
-| mac-config | macOS（nix-darwin） | `.#mac-config` |
+| mac-config-aarch64 | macOS（nix-darwin、Apple Silicon） | `.#mac-config-aarch64` |
+| mac-config-x86_64 | macOS（nix-darwin、Intel） | `.#mac-config-x86_64` |
 | myHomeConfig | Linux Home Manager 単体（x86_64） | `.#myHomeConfig` |
-| myHomeConfig-darwin | macOS Home Manager単体（Apple Silicon） | `.#myHomeConfig-darwin` |
+| myHomeConfig-darwin-aarch64 | macOS Home Manager単体（Apple Silicon） | `.#myHomeConfig-darwin-aarch64` |
+| myHomeConfig-darwin-x86_64 | macOS Home Manager単体（Intel） | `.#myHomeConfig-darwin-x86_64` |
+
+互換性のため、既存の `mac-config` と `myHomeConfig-darwin` はApple Silicon向けの別名として残している。
 
 ## セットアップの入口
 
@@ -50,7 +54,11 @@ $ sudo nixos-rebuild switch --flake .#nixos-wsl
 ## nix-darwin (macOS)
 
 ```shell
-$ sudo nix run nix-darwin -- switch --flake .#mac-config
+# Apple Silicon
+$ sudo nix run nix-darwin -- switch --flake .#mac-config-aarch64
+
+# Intel
+$ sudo nix run nix-darwin -- switch --flake .#mac-config-x86_64
 ```
 
 ## Home Manager（単体）

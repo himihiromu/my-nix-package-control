@@ -1,6 +1,8 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # nixpkgs unstable no longer supports Intel macOS.
+    nixpkgs-darwin-x86_64.url = "github:NixOS/nixpkgs/nixpkgs-26.05-darwin";
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
 
     vim-src = {
@@ -16,14 +18,26 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager-x86_64 = {
+      url = "github:nix-community/home-manager/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs-darwin-x86_64";
+    };
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-darwin-x86_64 = {
+      url = "github:LnL7/nix-darwin/nix-darwin-26.05";
+      inputs.nixpkgs.follows = "nixpkgs-darwin-x86_64";
     };
 
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixvim-x86_64 = {
+      url = "github:nix-community/nixvim/nixos-26.05";
+      inputs.nixpkgs.follows = "nixpkgs-darwin-x86_64";
     };
 
     takt = {
@@ -41,12 +55,16 @@
     {
       self,
       nixpkgs,
+      nixpkgs-darwin-x86_64,
       nixos-wsl,
       neovim-nightly-overlay,
       flake-utils,
       home-manager,
+      home-manager-x86_64,
       nix-darwin,
+      nix-darwin-x86_64,
       nixvim,
+      nixvim-x86_64,
       local-options,
       ...
     }@inputs:
@@ -90,15 +108,15 @@
           cargoHash = "sha256-TZWIa4L70WpvGwTi8DIadKwXEubxn3OciSaWf9UULZA=";
         };
       };
-      mkPkgs =
-        system:
+      mkPkgsFor =
+        nixpkgsInput: system:
         (
           (
-            (import nixpkgs {
+            (import nixpkgsInput {
               inherit system;
               config.allowUnfreePredicate =
                 pkg:
-                builtins.elem (nixpkgs.lib.getName pkg) [
+                builtins.elem (nixpkgsInput.lib.getName pkg) [
                   "zsh-abbr"
                   "claude-code"
                 ];
@@ -107,6 +125,7 @@
           )
         ).extend
           rustCratesOverlay;
+      mkPkgs = mkPkgsFor nixpkgs;
     in
     (flake-utils.lib.eachDefaultSystem (
       system:
@@ -253,12 +272,15 @@
     // (
       let
         linuxSystem = "x86_64-linux";
-        darwinSystem = "aarch64-darwin";
+        darwinAarch64System = "aarch64-darwin";
+        darwinX86_64System = "x86_64-darwin";
         linuxPkgs = mkPkgs linuxSystem;
-        darwinPkgs = mkPkgs darwinSystem;
         mkHomeConfiguration =
-          system: pkgs:
-          home-manager.lib.homeManagerConfiguration {
+          nixpkgsInput: homeManagerInput: nixvimInput: system:
+          let
+            pkgs = mkPkgsFor nixpkgsInput system;
+          in
+          homeManagerInput.lib.homeManagerConfiguration {
             inherit pkgs;
             modules = [
               (import ./home-manager/default.nix {
@@ -267,12 +289,42 @@
                   username
                   system
                   isDesktop
-                  nixvim
                   pkgs
+                  ;
+                nixvim = nixvimInput;
+              })
+            ];
+          };
+        mkDarwinConfiguration =
+          nixpkgsInput: nixDarwinInput: system:
+          let
+            pkgs = mkPkgsFor nixpkgsInput system;
+          in
+          nixDarwinInput.lib.darwinSystem {
+            inherit system;
+            modules = [
+              { system.primaryUser = username; }
+              (import ./nix-darwin/default.nix {
+                inherit
+                  inputs
+                  username
+                  isDesktop
+                  pkgs
+                  system
                   ;
               })
             ];
           };
+        darwinAarch64HomeConfiguration =
+          mkHomeConfiguration nixpkgs home-manager nixvim
+            darwinAarch64System;
+        darwinX86_64HomeConfiguration =
+          mkHomeConfiguration nixpkgs-darwin-x86_64 home-manager-x86_64 nixvim-x86_64
+            darwinX86_64System;
+        darwinAarch64Configuration = mkDarwinConfiguration nixpkgs nix-darwin darwinAarch64System;
+        darwinX86_64Configuration =
+          mkDarwinConfiguration nixpkgs-darwin-x86_64 nix-darwin-x86_64
+            darwinX86_64System;
       in
       {
         nixosConfigurations = {
@@ -310,20 +362,20 @@
         };
 
         homeConfigurations = {
-          myHomeConfig = mkHomeConfiguration linuxSystem linuxPkgs;
-          myHomeConfig-darwin = mkHomeConfiguration darwinSystem darwinPkgs;
+          myHomeConfig = mkHomeConfiguration nixpkgs home-manager nixvim linuxSystem;
+          myHomeConfig-darwin-aarch64 = darwinAarch64HomeConfiguration;
+          myHomeConfig-darwin-x86_64 = darwinX86_64HomeConfiguration;
+
+          # Backward-compatible alias for the existing Apple Silicon entry point.
+          myHomeConfig-darwin = darwinAarch64HomeConfiguration;
         };
 
-        darwinConfigurations.mac-config = nix-darwin.lib.darwinSystem {
-          system = darwinSystem;
-          modules = [
-            { system.primaryUser = username; }
-            (import ./nix-darwin/default.nix {
-              inherit inputs username isDesktop;
-              pkgs = darwinPkgs;
-              system = darwinSystem;
-            })
-          ];
+        darwinConfigurations = {
+          mac-config-aarch64 = darwinAarch64Configuration;
+          mac-config-x86_64 = darwinX86_64Configuration;
+
+          # Backward-compatible alias for the existing Apple Silicon entry point.
+          mac-config = darwinAarch64Configuration;
         };
       }
     );

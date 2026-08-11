@@ -9,7 +9,20 @@ NixOS + Home Manager + nix-darwin + chezmoi で Linux/macOS 環境を管理す�
 | nixos | Bare metal（単一ホスト） | `.#nixos` |
 | nixos-wsl | WSL2 on Windows | `.#nixos-wsl` |
 | mac-config | macOS（nix-darwin） | `.#mac-config` |
-| myHomeConfig | Home Manager 単体 | `.#myHomeConfig` |
+| myHomeConfig | Linux Home Manager 単体（x86_64） | `.#myHomeConfig` |
+| myHomeConfig-darwin | macOS Home Manager単体（Apple Silicon） | `.#myHomeConfig-darwin` |
+
+## セットアップの入口
+
+新しい端末では、dotfilesリポジトリのflake appからchezmoiを対話的に初期化する。
+
+```shell
+$ nix run github:himihiromu/dotfiles
+```
+
+chezmoiのLinuxセットアップスクリプトが`/etc/NIXOS`の有無を判定し、NixOSでは
+`nixosConfigurations.nixos`、それ以外では`homeConfigurations.myHomeConfig`を適用する。
+このリポジトリからchezmoiを呼び戻さず、セットアップ処理を一方向に保つ。
 
 ## NixOS (Bare Metal)
 

@@ -37,13 +37,22 @@
       flake = false;
     };
   };
-  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, nixvim, local-options, ... }@inputs:
-  flake-utils.lib.eachDefaultSystem (
-    system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixos-wsl,
+      neovim-nightly-overlay,
+      flake-utils,
+      home-manager,
+      nix-darwin,
+      nixvim,
+      local-options,
+      ...
+    }@inputs:
     let
       options = import local-options;
-      inherit (options) username;
-      inherit (options) isDesktop;
+      inherit (options) username isDesktop;
       rustCratesOverlay = final: prev: {
         keifu = prev.rustPlatform.buildRustPackage {
           pname = "keifu";
@@ -81,36 +90,194 @@
           cargoHash = "sha256-TZWIa4L70WpvGwTi8DIadKwXEubxn3OciSaWf9UULZA=";
         };
       };
-      pkgs = (
+      mkPkgs =
+        system:
         (
-          (import nixpkgs {
-            inherit system;
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
-              "zsh-abbr"
-              "claude-code"
-            ];
-          }).extend (
-            neovim-nightly-overlay.overlays.default
+          (
+            (import nixpkgs {
+              inherit system;
+              config.allowUnfreePredicate =
+                pkg:
+                builtins.elem (nixpkgs.lib.getName pkg) [
+                  "zsh-abbr"
+                  "claude-code"
+                ];
+            }).extend
+            (neovim-nightly-overlay.overlays.default)
           )
-        )
-      ).extend rustCratesOverlay;
+        ).extend
+          rustCratesOverlay;
     in
-    {
-      formatter = pkgs.nixfmt;
-      packages = {
-        my-package = pkgs.buildEnv {
-          name = "my-packages-list";
-          paths = with pkgs; [
-            git
-            curl
-            nixfmt
-            neovim
-          ];
+    (flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = mkPkgs system;
+      in
+      {
+        formatter = pkgs.nixfmt;
+        packages = {
+          my-package = pkgs.buildEnv {
+            name = "my-packages-list";
+            paths = with pkgs; [
+              git
+              curl
+              nixfmt
+              neovim
+            ];
+          };
         };
+        devShells = {
+          python = pkgs.mkShell {
+            buildInputs = [
+              pkgs.python314
+              pkgs.uv
+            ];
+            shellHook = ''
+              echo "uv version: $(uv --version)"
+              echo "python version: $(python --version)"
+            '';
+          };
+          js = pkgs.mkShell {
+            buildInputs = [
+              pkgs.nodejs_24
+              pkgs.pnpm
+              pkgs.bun
+              pkgs.yarn
+              pkgs.typescript-language-server
+              pkgs.typescript
+            ];
+            shellHook = ''
+              echo "node version: $(node --version)"
+              echo "npm version: $(npm --version)"
+              echo "pnpm version: $(pnpm --version)"
+              echo "bun version: $(bun --version)"
+              echo "yarn version: $(yarn --version)"
+            '';
+          };
+          java21 = pkgs.mkShell {
+            buildInputs = [
+              pkgs.gradle_9
+              pkgs.maven
+              pkgs.javaPackages.compiler.semeru-bin.jdk-21
+            ];
+            shellHook = ''
+              echo "gradle version: $(gradle --version)"
+              echo "maven version: $(maven --version)"
+              echo "java version: $(java --version)"
+              echo "javac version: $(javac --version)"
+            '';
+          };
+          java8 = pkgs.mkShell {
+            buildInputs = [
+              pkgs.gradle_9
+              pkgs.maven
+              pkgs.javaPackages.compiler.semeru-bin.jdk-8
+            ];
+            shellHook = ''
+              echo "gradle version: $(gradle --version)"
+              echo "maven version: $(maven --version)"
+              echo "java version: $(java --version)"
+              echo "javac version: $(javac --version)"
+            '';
+          };
+          go = pkgs.mkShell {
+            buildInputs = [
+              pkgs.go
+              pkgs.gotools
+              pkgs.golangci-lint
+            ];
+            shellHook = ''
+              echo "go version: $(go version)"
+              echo "golangci-lint version: $(golangci-lint --version)"
+              echo $GOPATH
+            '';
+          };
+          kotlin = pkgs.mkShell {
+            buildInputs = [
+              pkgs.kotlin
+              pkgs.gradle_9
+              pkgs.maven
+              pkgs.javaPackages.compiler.semeru-bin.jdk-21
+            ];
+            shellHook = ''
+              echo "gradle version: $(gradle --version)"
+              echo "maven version: $(mvn -v)"
+              echo "java version: $(java --version)"
+              echo "javac version: $(javac --version)"
+              echo "kotlin version: $(kotlin -version)"
+            '';
+          };
+          csharp = pkgs.mkShell {
+            buildInputs = [
+              pkgs.dotnet-sdk
+              pkgs.omnisharp-roslyn
+              # pkgs.dotnet-aspnetcore  # Web開発時に追加
+            ];
+            shellHook = ''
+              echo "dotnet version: $(dotnet --version)"
+              echo "OmniSharp version: $(omnisharp --version)"
+            '';
+          };
+        };
+        #   inherit system;
+        #   modules = [ home-manager.darwinModules.home-manager ./nix-darwin/default.nix ];
+        # };
+        apps.update = {
+          type = "app";
+          program = toString (
+            pkgs.writeShellScript "update-script" ''
+              set -e
+              echo "Updating flake..."
+              nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
+              echo "Updating profile..."
+              nix --extra-experimental-features nix-command --extra-experimental-features flakes profile upgrade my-packages
+              echo "Update complete!"
+            ''
+          );
+        };
+        apps.install = {
+          type = "app";
+          program = toString (
+            pkgs.writeShellScript "update-script" ''
+              set -e
+              echo "Updating flake..."
+              nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
+              echo "Updating profile..."
+              nix --extra-experimental-features nix-command --extra-experimental-features flakes profile install my-packages
+              echo "Update complete!"
+            ''
+          );
+        };
+      }
+    ))
+    // (
+      let
+        linuxSystem = "x86_64-linux";
+        darwinSystem = "aarch64-darwin";
+        linuxPkgs = mkPkgs linuxSystem;
+        darwinPkgs = mkPkgs darwinSystem;
+        mkHomeConfiguration =
+          system: pkgs:
+          home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [
+              (import ./home-manager/default.nix {
+                inherit
+                  inputs
+                  username
+                  system
+                  isDesktop
+                  nixvim
+                  pkgs
+                  ;
+              })
+            ];
+          };
+      in
+      {
         nixosConfigurations = {
-          # WSL2 on Windows
           nixos-wsl = nixpkgs.lib.nixosSystem {
-            system = system;
+            system = linuxSystem;
             modules = [
               nixos-wsl.nixosModules.default
               {
@@ -119,180 +286,45 @@
               }
             ];
           };
-          # Bare metal (single host)
+
           nixos = nixpkgs.lib.nixosSystem {
-            system = system;
+            system = linuxSystem;
             modules = [
               { _module.args = { inherit username isDesktop; }; }
               ./nixos/configuration.nix
               home-manager.nixosModules.home-manager
               {
                 home-manager.users.${username} = import ./home-manager/default.nix {
-                  inherit inputs;
-                  inherit username;
-                  inherit pkgs;
-                  inherit system;
-                  inherit isDesktop;
-                  inherit nixvim;
+                  inherit
+                    inputs
+                    username
+                    isDesktop
+                    nixvim
+                    ;
+                  pkgs = linuxPkgs;
+                  system = linuxSystem;
                 };
               }
             ];
           };
         };
-        homeConfigurations = {
-          myHomeConfig = home-manager.lib.homeManagerConfiguration {
-            pkgs = pkgs;
 
-            modules = [
-              (import ./home-manager/default.nix {
-                inherit inputs;
-                inherit username;
-                inherit pkgs;
-                inherit system;
-                inherit isDesktop;
-                inherit nixvim;
-              })
-            ];
-          };
+        homeConfigurations = {
+          myHomeConfig = mkHomeConfiguration linuxSystem linuxPkgs;
+          myHomeConfig-darwin = mkHomeConfiguration darwinSystem darwinPkgs;
         };
-        darwinConfigurations = {
-          mac-config = nix-darwin.lib.darwinSystem {
-            system = system;
-            modules = [
-              { system.primaryUser = username; }
-              (import ./nix-darwin/default.nix {
-                inherit inputs;
-                inherit username;
-                inherit pkgs;
-                inherit system;
-                inherit isDesktop;
-              })
-            ];
-          };
-        };
-      };
-      devShells = {
-        python = pkgs.mkShell {
-          buildInputs = [
-            pkgs.python314
-            pkgs.uv
+
+        darwinConfigurations.mac-config = nix-darwin.lib.darwinSystem {
+          system = darwinSystem;
+          modules = [
+            { system.primaryUser = username; }
+            (import ./nix-darwin/default.nix {
+              inherit inputs username isDesktop;
+              pkgs = darwinPkgs;
+              system = darwinSystem;
+            })
           ];
-          shellHook = ''
-            echo "uv version: $(uv --version)"
-            echo "python version: $(python --version)"
-          '';
         };
-        js = pkgs.mkShell {
-          buildInputs = [
-            pkgs.nodejs_24
-            pkgs.pnpm
-            pkgs.bun
-            pkgs.yarn
-            pkgs.typescript-language-server
-            pkgs.typescript
-          ];
-          shellHook = ''
-            echo "node version: $(node --version)"
-            echo "npm version: $(npm --version)"
-            echo "pnpm version: $(pnpm --version)"
-            echo "bun version: $(bun --version)"
-            echo "yarn version: $(yarn --version)"
-          '';
-        };
-        java21 = pkgs.mkShell {
-          buildInputs = [
-            pkgs.gradle_9
-            pkgs.maven
-            pkgs.javaPackages.compiler.semeru-bin.jdk-21
-          ];
-          shellHook = ''
-            echo "gradle version: $(gradle --version)"
-            echo "maven version: $(maven --version)"
-            echo "java version: $(java --version)"
-            echo "javac version: $(javac --version)"
-          '';
-        };
-        java8 = pkgs.mkShell {
-          buildInputs = [
-            pkgs.gradle_9
-            pkgs.maven
-            pkgs.javaPackages.compiler.semeru-bin.jdk-8
-          ];
-          shellHook = ''
-            echo "gradle version: $(gradle --version)"
-            echo "maven version: $(maven --version)"
-            echo "java version: $(java --version)"
-            echo "javac version: $(javac --version)"
-          '';
-        };
-        go = pkgs.mkShell {
-          buildInputs = [
-            pkgs.go
-            pkgs.gotools
-            pkgs.golangci-lint
-          ];
-          shellHook = ''
-            echo "go version: $(go version)"
-            echo "golangci-lint version: $(golangci-lint --version)"
-            echo $GOPATH
-          '';
-        };
-        kotlin = pkgs.mkShell {
-          buildInputs = [
-            pkgs.kotlin
-            pkgs.gradle_9
-            pkgs.maven
-            pkgs.javaPackages.compiler.semeru-bin.jdk-21
-          ];
-          shellHook = ''
-            echo "gradle version: $(gradle --version)"
-            echo "maven version: $(mvn -v)"
-            echo "java version: $(java --version)"
-            echo "javac version: $(javac --version)"
-            echo "kotlin version: $(kotlin -version)"
-          '';
-        };
-        csharp = pkgs.mkShell {
-          buildInputs = [
-            pkgs.dotnet-sdk
-            pkgs.omnisharp-roslyn
-            # pkgs.dotnet-aspnetcore  # Web開発時に追加
-          ];
-          shellHook = ''
-            echo "dotnet version: $(dotnet --version)"
-            echo "OmniSharp version: $(omnisharp --version)"
-          '';
-        };
-      };
-      #   inherit system;
-      #   modules = [ home-manager.darwinModules.home-manager ./nix-darwin/default.nix ];
-      # };
-      apps.update = {
-        type = "app";
-        program = toString (
-          pkgs.writeShellScript "update-script" ''
-            set -e
-            echo "Updating flake..."
-            nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
-            echo "Updating profile..."
-            nix --extra-experimental-features nix-command --extra-experimental-features flakes profile upgrade my-packages
-            echo "Update complete!"
-          ''
-        );
-      };
-      apps.install = {
-        type = "app";
-        program = toString (
-          pkgs.writeShellScript "update-script" ''
-            set -e
-            echo "Updating flake..."
-            nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
-            echo "Updating profile..."
-            nix --extra-experimental-features nix-command --extra-experimental-features flakes profile install my-packages
-            echo "Update complete!"
-          ''
-        );
-      };
-    }
-  );
+      }
+    );
 }

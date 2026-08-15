@@ -1,6 +1,20 @@
 { config, pkgs, ... }:
 
 {
+  # Windows Steam library (J:). Keep Proton prefixes on the Linux filesystem.
+  fileSystems."/mnt/games" = {
+    device = "/dev/disk/by-uuid/1C7E75C67E7598EA";
+    fsType = "ntfs3";
+    options = [
+      "rw"
+      "uid=1000"
+      "gid=100"
+      "umask=0022"
+      "windows_names"
+      "noatime"
+    ];
+  };
+
   # UEFI boot loader (the generated hardware file only defines /boot).
   boot.loader = {
     systemd-boot = {

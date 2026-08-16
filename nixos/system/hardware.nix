@@ -12,6 +12,8 @@
       "umask=0022"
       "windows_names"
       "noatime"
+      "nofail"
+      "x-systemd.automount"
     ];
   };
 

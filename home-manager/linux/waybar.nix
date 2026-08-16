@@ -15,6 +15,7 @@
         modules-right = [
           "idle_inhibitor"
           "wireplumber"
+          "bluetooth"
           "network"
           "cpu"
           "memory"
@@ -52,6 +53,15 @@
           on-click-right = "pavucontrol";
           on-scroll-up = "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+";
           on-scroll-down = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
+        };
+        bluetooth = {
+          format = " {status}";
+          format-connected = " {device_alias}";
+          format-connected-battery = " {device_alias} {device_battery_percentage}%";
+          tooltip-format = "{controller_alias}\t{controller_address}\n\n{num_connections} connected";
+          tooltip-format-connected = "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}";
+          tooltip-format-enumerate-connected = "{device_alias}\t{device_address}";
+          on-click = "blueman-manager";
         };
         network = {
           format-wifi = "{essid} ({signalStrength}%) ";

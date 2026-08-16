@@ -19,6 +19,9 @@
   # Firmware updates
   services.fwupd.enable = true;
 
+  # Bluetooth device manager
+  services.blueman.enable = true;
+
   # Gaming mouse configuration daemon (libratbag)
   services.ratbagd.enable = true;
 

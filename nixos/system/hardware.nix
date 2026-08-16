@@ -15,13 +15,24 @@
     ];
   };
 
-  # UEFI boot loader (the generated hardware file only defines /boot).
+  # UEFI boot loader with separate XBOOTLDR and ESP partitions.
   boot.loader = {
+    grub.enable = false;
     systemd-boot = {
       enable = true;
       configurationLimit = 3;
+
+      # Kernel/initrd/boot entries are stored on the XBOOTLDR partition.
+      xbootldrMountPoint = "/boot";
+
+      # Reboot through the firmware Windows Boot Manager instead of
+      # directly chainloading Windows.
+      rebootForBitlocker = true;
     };
-    efi.canTouchEfiVariables = true;
+    efi = {
+      canTouchEfiVariables = true;
+      efiSysMountPoint = "/efi";
+    };
   };
 
   # AMD CPU Microcode

@@ -10,6 +10,9 @@
     # Browser
     chromium
 
+    # Game launcher
+    heroic
+
     # Clipboard
     clipse
     wl-clipboard

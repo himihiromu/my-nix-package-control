@@ -1,20 +1,75 @@
 { config, pkgs, ... }:
 
 {
-  # Windows Steam library (J:). Keep Proton prefixes on the Linux filesystem.
-  fileSystems."/mnt/games" = {
-    device = "/dev/disk/by-uuid/1C7E75C67E7598EA";
-    fsType = "ntfs3";
-    options = [
-      "rw"
-      "uid=1000"
-      "gid=100"
-      "umask=0022"
-      "windows_names"
-      "noatime"
-      "nofail"
-      "x-systemd.automount"
-    ];
+  # Windows NTFS volumes shared with NixOS.
+  fileSystems = {
+    # D: Shared data drive
+    "/mnt/shared" = {
+      device = "/dev/disk/by-uuid/6444A92E44A903C0";
+      fsType = "ntfs3";
+      options = [
+        "rw"
+        "uid=1000"
+        "gid=100"
+        "fmask=0133"
+        "dmask=0022"
+        "windows_names"
+        "noatime"
+        "nofail"
+        "x-systemd.automount"
+      ];
+    };
+
+    # H: TOSHIBA HDD
+    "/mnt/games/hdd" = {
+      device = "/dev/disk/by-uuid/3AFEB55DFEB511DD";
+      fsType = "ntfs3";
+      options = [
+        "rw"
+        "uid=1000"
+        "gid=100"
+        "fmask=0022"
+        "dmask=0022"
+        "windows_names"
+        "noatime"
+        "nofail"
+        "x-systemd.automount"
+      ];
+    };
+
+    # F: Samsung SATA SSD
+    "/mnt/games/ssd" = {
+      device = "/dev/disk/by-uuid/DABC9520BC94F7E9";
+      fsType = "ntfs3";
+      options = [
+        "rw"
+        "uid=1000"
+        "gid=100"
+        "fmask=0022"
+        "dmask=0022"
+        "windows_names"
+        "noatime"
+        "nofail"
+        "x-systemd.automount"
+      ];
+    };
+
+    # J: Nextorage NVMe SSD
+    "/mnt/games/nvme" = {
+      device = "/dev/disk/by-uuid/1C7E75C67E7598EA";
+      fsType = "ntfs3";
+      options = [
+        "rw"
+        "uid=1000"
+        "gid=100"
+        "fmask=0022"
+        "dmask=0022"
+        "windows_names"
+        "noatime"
+        "nofail"
+        "x-systemd.automount"
+      ];
+    };
   };
 
   # UEFI boot loader with separate XBOOTLDR and ESP partitions.

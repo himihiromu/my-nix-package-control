@@ -10,6 +10,9 @@
     # Browser
     chromium
 
+    # Editor
+    vscode
+
     # Game launcher
     heroic
 

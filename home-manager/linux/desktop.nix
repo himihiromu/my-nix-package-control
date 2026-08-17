@@ -20,6 +20,12 @@
     # File Manager
     nemo
 
+    # File sharing
+    localsend
+
+    # System monitor
+    mission-center
+
     # Wallpaper
     waypaper
 

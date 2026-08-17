@@ -84,7 +84,7 @@
 
       # Reboot through the firmware Windows Boot Manager instead of
       # directly chainloading Windows.
-      rebootForBitlocker = true;
+      rebootForBitlocker = false;
     };
     efi = {
       canTouchEfiVariables = true;

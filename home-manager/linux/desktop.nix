@@ -17,6 +17,13 @@
     geary
     thunderbird
 
+    # Photos
+    gthumb
+
+    # Image editing
+    gimp
+    krita
+
     # Editor
     vscode
 

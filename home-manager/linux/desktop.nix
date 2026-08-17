@@ -9,6 +9,8 @@
 
     # Browser
     chromium
+    firefox
+    floorp-bin
 
     # Editor
     vscode

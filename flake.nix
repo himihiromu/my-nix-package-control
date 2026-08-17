@@ -88,6 +88,8 @@
             config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
               "zsh-abbr"
               "claude-code"
+              "vscode"
+              "google-chrome"
             ];
           }).extend (
             neovim-nightly-overlay.overlays.default

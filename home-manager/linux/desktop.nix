@@ -9,6 +9,23 @@
 
     # Browser
     chromium
+    firefox
+    floorp-bin
+    google-chrome
+
+    # Mail
+    geary
+    thunderbird
+
+    # Photos
+    gthumb
+
+    # Image editing
+    gimp
+    krita
+
+    # Editor
+    vscode
 
     # Game launcher
     heroic
@@ -19,6 +36,12 @@
 
     # File Manager
     nemo
+
+    # File sharing
+    localsend
+
+    # System monitor
+    mission-center
 
     # Wallpaper
     waypaper

@@ -13,6 +13,10 @@
     floorp-bin
     google-chrome
 
+    # Mail
+    geary
+    thunderbird
+
     # Editor
     vscode
 

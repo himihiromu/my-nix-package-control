@@ -11,6 +11,7 @@
     chromium
     firefox
     floorp-bin
+    google-chrome
 
     # Editor
     vscode

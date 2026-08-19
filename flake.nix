@@ -90,6 +90,7 @@
               "claude-code"
               "vscode"
               "google-chrome"
+              "chatgpt"
             ];
           }).extend (
             neovim-nightly-overlay.overlays.default

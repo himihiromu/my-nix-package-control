@@ -1,4 +1,7 @@
 { pkgs }:
+let
+  chatgpt = pkgs.callPackage ./chatgpt.nix { };
+in
 {
   installPackages = with pkgs; [
     # Terminal
@@ -12,6 +15,9 @@
     firefox
     floorp-bin
     google-chrome
+
+    # AI assistant
+    chatgpt
 
     # Mail
     geary

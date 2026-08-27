@@ -20,6 +20,12 @@
   # systemd-timesyncd
   services.timesyncd.enable = true;
 
+  # OpenSSH server
+  services.openssh = {
+    enable = true;
+    openFirewall = true;
+  };
+
   # Firmware updates
   services.fwupd.enable = true;
 

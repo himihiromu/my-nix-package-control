@@ -100,7 +100,6 @@ in
       "$fileManager" = "nemo";
       exec-once = [
         "fcitx5 -d --replace"
-        "swaync"
         "nm-applet --indicator"
       ];
       env = [

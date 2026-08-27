@@ -1,5 +1,5 @@
 {
-  pkgs
+  pkgs,
 }:
 {
   installPackages = with pkgs; [
@@ -27,5 +27,7 @@
     bruno
     pandoc
     claude-code
+    llmfit
+    ollama
   ];
 }

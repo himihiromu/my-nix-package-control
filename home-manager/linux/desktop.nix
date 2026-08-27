@@ -14,7 +14,6 @@
     google-chrome
 
     # Mail
-    geary
     thunderbird
 
     # Photos

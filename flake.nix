@@ -90,6 +90,7 @@
               "claude-code"
               "vscode"
               "google-chrome"
+              "zoom"
             ];
           }).extend (
             neovim-nightly-overlay.overlays.default

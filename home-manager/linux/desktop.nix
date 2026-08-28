@@ -14,8 +14,10 @@
     google-chrome
 
     # Mail
-    geary
     thunderbird
+
+    # Video conferencing
+    zoom-us
 
     # Photos
     gthumb

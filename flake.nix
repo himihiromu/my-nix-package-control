@@ -26,6 +26,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    takt = {
+      url = "github:nrslib/takt";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # 実行時に --override-input で差し替える
     local-options = {
       url = "path:./user-options/options.nix";
@@ -82,6 +87,9 @@
             inherit system;
             config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
               "zsh-abbr"
+              "claude-code"
+              "vscode"
+              "google-chrome"
             ];
           }).extend (
             neovim-nightly-overlay.overlays.default
@@ -90,25 +98,45 @@
       ).extend rustCratesOverlay;
     in
     {
-      formatter = pkgs.nixfmt-rfc-style;
+      formatter = pkgs.nixfmt;
       packages = {
         my-package = pkgs.buildEnv {
           name = "my-packages-list";
           paths = with pkgs; [
             git
             curl
-            nixfmt-rfc-style
+            nixfmt
             neovim
           ];
         };
         nixosConfigurations = {
-          nixos = nixpkgs.lib.nixosSystem {
+          # WSL2 on Windows
+          nixos-wsl = nixpkgs.lib.nixosSystem {
             system = system;
             modules = [
               nixos-wsl.nixosModules.default
               {
                 system.stateVersion = "24.05";
                 wsl.enable = true;
+              }
+            ];
+          };
+          # Bare metal (single host)
+          nixos = nixpkgs.lib.nixosSystem {
+            system = system;
+            modules = [
+              { _module.args = { inherit username isDesktop; }; }
+              ./nixos/configuration.nix
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.users.${username} = import ./home-manager/default.nix {
+                  inherit inputs;
+                  inherit username;
+                  inherit pkgs;
+                  inherit system;
+                  inherit isDesktop;
+                  inherit nixvim;
+                };
               }
             ];
           };
@@ -161,6 +189,7 @@
             pkgs.nodejs_24
             pkgs.pnpm
             pkgs.bun
+            pkgs.yarn
             pkgs.typescript-language-server
             pkgs.typescript
           ];
@@ -169,6 +198,7 @@
             echo "npm version: $(npm --version)"
             echo "pnpm version: $(pnpm --version)"
             echo "bun version: $(bun --version)"
+            echo "yarn version: $(yarn --version)"
           '';
         };
         java21 = pkgs.mkShell {
@@ -224,6 +254,17 @@
             echo "kotlin version: $(kotlin -version)"
           '';
         };
+        csharp = pkgs.mkShell {
+          buildInputs = [
+            pkgs.dotnet-sdk
+            pkgs.omnisharp-roslyn
+            # pkgs.dotnet-aspnetcore  # Web開発時に追加
+          ];
+          shellHook = ''
+            echo "dotnet version: $(dotnet --version)"
+            echo "OmniSharp version: $(omnisharp --version)"
+          '';
+        };
       };
       #   inherit system;
       #   modules = [ home-manager.darwinModules.home-manager ./nix-darwin/default.nix ];
@@ -257,4 +298,3 @@
     }
   );
 }
-

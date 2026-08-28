@@ -17,22 +17,15 @@
     bat
     bun
     ripgrep
-    zoxide
-    yazi
     pik
     just
     jq
     fd
-    fzf
-    direnv
-    keifu
-    filetree
     nushell
-    eza
     dust
     tmux
     bruno
     pandoc
-    takt
+    claude-code
   ];
 }

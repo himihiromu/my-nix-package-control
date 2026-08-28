@@ -16,6 +16,9 @@
     # Mail
     thunderbird
 
+    # Video conferencing
+    zoom-us
+
     # Photos
     gthumb
 

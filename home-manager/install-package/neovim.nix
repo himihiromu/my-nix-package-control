@@ -1,8 +1,34 @@
 { pkgs, ... }:
+let
+  skkeleton = pkgs.vimUtils.buildVimPlugin {
+    pname = "skkeleton";
+    version = "unstable-2026-08-27";
+    src = pkgs.fetchFromGitHub {
+      owner = "vim-skk";
+      repo = "skkeleton";
+      rev = "cb6e529dada798929deefd879e32e418dab1c6ac";
+      hash = "sha256-ydZdzknNz9baKPZ5FDHY264evzZ3+50ZVi1VuhwXv4M=";
+    };
+  };
+in
 {
   programs.nixvim = {
     enable = true;
     nixpkgs.source = pkgs.path;
+
+    extraPackages = [ pkgs.deno ];
+    extraPlugins = [
+      pkgs.vimPlugins.denops-vim
+      skkeleton
+    ];
+
+    extraConfigLua = ''
+      vim.fn['skkeleton#config']({
+        globalDictionaries = { '${pkgs.skkDictionaries.l}/share/skk/SKK-JISYO.L' },
+        eggLikeNewline = true,
+      })
+      vim.fn['skkeleton#register_keymap']('input', 'l', 'disable')
+    '';
 
     opts = {
       number = true;
@@ -15,14 +41,6 @@
     };
 
     plugins = {
-      skkeleton = {
-        enable = true;
-        settings = {
-          globalDictionaries = [ "${pkgs.skk-dicts}/share/skk/SKK-JISYO.L" ];
-          eggLikeNewline = true;
-        };
-      };
-
       web-devicons.enable = true;
       which-key.enable = true;
       bufferline.enable = true;
@@ -82,7 +100,10 @@
         };
       }
       {
-        mode = ["i" "c"];
+        mode = [
+          "i"
+          "c"
+        ];
         key = "<C-j>";
         action = "<Plug>(skkeleton-enable)";
         options = {

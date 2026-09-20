@@ -16,6 +16,9 @@
     # Mail
     thunderbird
 
+    # Chat
+    discord
+
     # Video conferencing
     zoom-us
 

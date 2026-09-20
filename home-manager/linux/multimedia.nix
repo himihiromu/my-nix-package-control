@@ -3,6 +3,9 @@
 }:
 {
   installPackages = with pkgs; [
+    # Media player
+    vlc
+
     # Recording
     gpu-screen-recorder
     obs-studio

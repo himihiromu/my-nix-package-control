@@ -91,6 +91,7 @@
               "vscode"
               "google-chrome"
               "zoom"
+              "discord"
             ];
           }).extend (
             neovim-nightly-overlay.overlays.default

@@ -118,3 +118,8 @@ hyprctl keyword 'device[bcm5974]:scroll_factor' 0.7
 ```
 
 好みの値が決まったらNix定義に記入し、上記のホスト構成の適用コマンドで永続化する。
+
+MacBookでは、2本指で押し込むクリックと2本指タップを右クリックに割り当てる。
+3本指の左右スワイプでワークスペース（仮想デスクトップ）を切り替える。
+クリック設定は `settings.device`、スワイプ設定は `settings.gesture` にある。
+この左右スワイプは、macOSのMission Controlのようなウィンドウ一覧表示とは別の操作になる。

@@ -64,7 +64,14 @@
         sensitivity = 0.0;
         # スクロール量を標準の70%に抑える。
         scroll_factor = 0.7;
+        # 2本指の押し込み・タップを右クリックにする。
+        clickfinger_behavior = true;
+        tap-to-click = true;
+        tap_button_map = "lrm";
       }
+    ];
+    wayland.windowManager.hyprland.settings.gesture = [
+      "3, horizontal, workspace"
     ];
   };
   security.rtkit.enable = true;

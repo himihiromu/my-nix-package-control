@@ -104,7 +104,7 @@ MacBookを含むノートPCで利用でき、バッテリーのないデスク�
 設定は `home-manager/linux/waybar.nix` の `battery` にある。
 
 MacBookのトラックパッドのカーソル速度は、`nixos/hosts/macbook-air/default.nix` の `settings.device` 内にある
-`bcm5974` の `sensitivity` で調整する。現在は標準速度の `0.0` より少し遅い `-0.2`。
+`bcm5974` の `sensitivity` で調整する。現在は標準速度の `0.0`。
 `0.2` などの正の値で速く、`-0.2` などの負の値で遅くなる（範囲は `-1.0`〜`1.0`）。
 この設定は内蔵トラックパッドにだけ適用する。
 スクロールは `scroll_factor = 0.7` で移動量を標準の70%に抑える。
@@ -113,7 +113,7 @@ MacBookのトラックパッドのカーソル速度は、`nixos/hosts/macbook-a
 一時的に速度を試す場合は、Hyprlandのセッション内で次を実行する。
 
 ```sh
-hyprctl keyword 'device[bcm5974]:sensitivity' -0.2
+hyprctl keyword 'device[bcm5974]:sensitivity' 0.0
 hyprctl keyword 'device[bcm5974]:scroll_factor' 0.7
 ```
 

@@ -51,6 +51,9 @@
   # seen by Fcitx as Hangul and Hangul_Hanja. Bind the physical codes
   # independently of the input method's current keyboard layout.
   home-manager.users.${username} = {
+    wayland.windowManager.hyprland.plugins = [
+      (pkgs.callPackage ./hyprexpo.nix { })
+    ];
     wayland.windowManager.hyprland.settings.bind = [
       ", code:130, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -o"
       ", code:131, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -c"
@@ -72,6 +75,7 @@
     ];
     wayland.windowManager.hyprland.settings.gesture = [
       "3, horizontal, workspace"
+      "3, up, dispatcher, hyprexpo:expo, on"
     ];
   };
   security.rtkit.enable = true;

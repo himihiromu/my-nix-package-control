@@ -122,4 +122,9 @@ hyprctl keyword 'device[bcm5974]:scroll_factor' 0.7
 MacBookでは、2本指で押し込むクリックと2本指タップを右クリックに割り当てる。
 3本指の左右スワイプでワークスペース（仮想デスクトップ）を切り替える。
 クリック設定は `settings.device`、スワイプ設定は `settings.gesture` にある。
-この左右スワイプは、macOSのMission Controlのようなウィンドウ一覧表示とは別の操作になる。
+3本指の上スワイプでは、[HyprExpo](https://github.com/sandwichfarm/hyprexpo)で
+ワークスペースを縮小した一覧を開く。プレビューをクリックして移動し、Escでキャンセルする。
+macOSのMission Controlに近い用途だが、表示はワークスペース単位のグリッドになる。
+
+HyprExpoは `nixos/hosts/macbook-air/hyprexpo.nix` で対応版を固定し、
+ホストと同じHyprlandの依存関係でビルドする。Hyprland更新時にはプラグインの互換性も確認する。

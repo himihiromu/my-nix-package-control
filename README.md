@@ -4,27 +4,29 @@ NixOS + Home Manager + nix-darwin + chezmoi で Linux/macOS 環境を管理す�
 
 ## 対象構成
 
-| 構成名 | 対象 | flake attribute |
+| 構成名 | 対象 | flakeの指定 |
 |--------|------|----------------|
-| nixos | Bare metal（単一ホスト） | `.#nixos` |
+| nixos | AMDデスクトップ（実機） | `.#nixos` |
+| macbook-air | Intel MacBookAir7,2（実機） | `.#macbook-air` |
 | nixos-wsl | WSL2 on Windows | `.#nixos-wsl` |
 | mac-config | macOS（nix-darwin） | `.#mac-config` |
 | myHomeConfig | Home Manager 単体 | `.#myHomeConfig` |
 
-## NixOS (Bare Metal)
+## NixOS（実機）
 
 ```shell
 # ホスト構成の適用（初回 / 設定変更時）
 $ sudo nixos-rebuild switch --flake .#nixos
 
-# テスト（rebootせずに試す）
+# テスト（再起動せずに試す）
 $ sudo nixos-rebuild test --flake .#nixos
 
 # ビルドのみ（適用しない）
 $ nixos-rebuild build --flake .#nixos
 ```
 
-`hardware-configuration.nix` はインストーラーが生成するファイルで置き換える。
+新しいホストを追加するときは、その実機で生成した `hardware-configuration.nix` を
+`nixos/hosts/<ホスト名>/` に配置する。既存ホストのファイルは上書きしない。
 `isDesktop` は `user-options/options.nix` でホストごとに bool 値を切り替える。
 
 ## NixOS (WSL2)
@@ -51,44 +53,45 @@ $ nix run nixpkgs#home-manager -- switch --flake .#myHomeConfig --show-trace
 ```shell
 $ nix-store --gc
 ```
-# Machine selection
 
-Bare-metal NixOS configurations are selected by the flake fragment:
+## ホストの選択
 
-| Configuration | Hardware | Boot layout |
+実機向けのNixOS構成は、flakeの `#` 以降に指定する名前で選択する。
+
+| 構成名 | ハードウェア | 起動パーティション構成 |
 | --- | --- | --- |
-| `nixos` | Original AMD desktop | ESP at `/efi`, XBOOTLDR at `/boot` |
-| `macbook-air` | Intel MacBookAir7,2 | ESP at `/boot`, no XBOOTLDR |
+| `nixos` | 既存のAMDデスクトップ | ESPは `/efi`、XBOOTLDRは `/boot` |
+| `macbook-air` | Intel MacBookAir7,2 | ESPは `/boot`、XBOOTLDRなし |
 
-Shared system and Home Manager settings are in `nixos/configuration.nix`.
-Host-specific imports, disk UUIDs, boot settings, and `system.stateVersion`
-are selected by `nixos/hosts/<name>/default.nix`. The MacBook configuration
-preserves the installed machine's Btrfs `@root`, `@home`, and `@nix` subvolumes,
-JIS keyboard, hardware settings, and limited build concurrency.
+共通のシステム設定とHome Managerの連携設定は `nixos/configuration.nix` に置く。
+ホスト固有のモジュール、ディスクUUID、起動設定、`system.stateVersion` は
+`nixos/hosts/<ホスト名>/default.nix` とそこから読み込むモジュールで管理する。
+MacBookの構成では、実機のBtrfsサブボリューム（`@root`、`@home`、`@nix`）、
+JISキーボード、ハードウェア設定、ビルド並列数の制限を維持する。
 
-On this MacBook, the Kana/Eisu keys arrive as XKB keycodes 130/131
-(`Hangul`/`Hangul_Hanja` in Fcitx). The host module binds those codes to
-explicit IME activation/deactivation, so pressing Kana repeatedly keeps
-Japanese input enabled. Fcitx's default Hangul toggle and Hangul_Hanja
-activation are overridden to match these keys. Ghostty uses native Wayland
-input; its package wrapper clears `GTK_IM_MODULE` for terminal, desktop,
-and D-Bus launches. Apply the host configuration to persist the key bindings;
-temporary `hyprctl keyword bind` commands do not survive a session restart.
+このMacBookでは、かな・英数キーがXKBキーコード130・131として届く
+（Fcitxでは `Hangul`・`Hangul_Hanja`）。ホスト設定でそれぞれをIMEの有効化・無効化に
+割り当て、かなキーを繰り返し押しても日本語入力が有効なままになるようにする。
+Fcitx側の既定の切替動作も、このキーの用途に合わせて上書きする。
+GhosttyはWayland標準の入力機能を使うため、ラッパーで `GTK_IM_MODULE` を解除する。
+端末、デスクトップ、D-Busからの起動で同じラッパーを使う。
+キー割り当てを永続化するにはホスト設定を適用する。
+一時的な `hyprctl keyword bind` による設定は、セッション再起動後には残らない。
 
-Evaluate before applying (from this repository):
+適用前に、このリポジトリ内で構成を評価する。
 
 ```sh
 nix eval "path:$PWD#nixosConfigurations.macbook-air.config.system.build.toplevel.drvPath" \
   --override-input local-options "path:$HOME/.config/nix/local-input/default.nix" --raw
 ```
 
-Apply only on the matching machine:
+次の適用コマンドは、対象のMacBook上でのみ実行する。
 
 ```sh
 sudo nixos-rebuild switch --flake "path:$PWD#macbook-air" \
   --override-input local-options "path:$HOME/.config/nix/local-input/default.nix"
 ```
 
-To add another PC, add its hardware module and boot configuration under
-`nixos/hosts/`, then register it with `mkNixos` in `flake.nix`. Do not reuse
-another machine's disk UUIDs or change an existing host's `system.stateVersion`.
+別のPCを追加する場合は、`nixos/hosts/` にそのPCのハードウェア・起動設定を追加し、
+`flake.nix` の `mkNixos` で登録する。別の実機のディスクUUIDを流用したり、
+既存ホストの `system.stateVersion` を変更したりしない。

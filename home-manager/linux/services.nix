@@ -99,7 +99,8 @@ in
       "$terminal" = "ghostty";
       "$fileManager" = "nemo";
       exec-once = [
-        "fcitx5 -d --replace"
+        # UWSM starts Fcitx via its XDG autostart service. Starting it here
+        # as well races for the D-Bus name and Wayland input-method connection.
         "nm-applet --indicator"
       ];
       env = [

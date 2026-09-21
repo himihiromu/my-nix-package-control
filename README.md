@@ -96,20 +96,25 @@ sudo nixos-rebuild switch --flake "path:$PWD#macbook-air" \
 `flake.nix` の `mkNixos` で登録する。別の実機のディスクUUIDを流用したり、
 既存ホストの `system.stateVersion` を変更したりしない。
 
-### MacBookのバッテリー表示とトラックパッド
+### ノートPCのバッテリー表示とMacBookのトラックパッド
 
-Waybarの右端に内蔵バッテリーの残量を％で表示する。充電中は充電アイコンに切り替わる。
-設定は `nixos/hosts/macbook-air/default.nix` の `programs.waybar.settings.mainBar` にある。
+Waybarは内蔵バッテリーを自動検出し、右端に残量を％で表示する。
+MacBookを含むノートPCで利用でき、バッテリーのないデスクトップPCでは表示しない。
+充電中は充電アイコンに切り替わる。
+設定は `home-manager/linux/waybar.nix` の `battery` にある。
 
-トラックパッドのカーソル速度は、同じファイルの `settings.device` 内にある
+MacBookのトラックパッドのカーソル速度は、`nixos/hosts/macbook-air/default.nix` の `settings.device` 内にある
 `bcm5974` の `sensitivity` で調整する。現在は標準速度の `0.0` より少し遅い `-0.2`。
 `0.2` などの正の値で速く、`-0.2` などの負の値で遅くなる（範囲は `-1.0`〜`1.0`）。
 この設定は内蔵トラックパッドにだけ適用する。
+スクロールは `scroll_factor = 0.7` で移動量を標準の70%に抑える。
+値を小さくすると遅くなり、`1.0` に戻すと標準の移動量になる。
 
 一時的に速度を試す場合は、Hyprlandのセッション内で次を実行する。
 
 ```sh
 hyprctl keyword 'device[bcm5974]:sensitivity' -0.2
+hyprctl keyword 'device[bcm5974]:scroll_factor' 0.7
 ```
 
 好みの値が決まったらNix定義に記入し、上記のホスト構成の適用コマンドで永続化する。

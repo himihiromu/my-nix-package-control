@@ -108,7 +108,19 @@ in
           "hyprland/language"
           "clock"
           "tray"
+          "battery"
         ];
+
+        # 内蔵バッテリーを自動検出。バッテリーのないPCでは非表示になる。
+        battery = {
+          interval = 30;
+          format = "{icon} {capacity}%";
+          format-charging = "⚡ {capacity}%";
+          format-plugged = " {capacity}%";
+          format-full = " {capacity}%";
+          format-icons = [ "" "" "" "" "" ];
+          tooltip-format = "バッテリー残量: {capacity}%";
+        };
 
         "hyprland/window".max-length = 80;
         "hyprland/language".format = "{short}";

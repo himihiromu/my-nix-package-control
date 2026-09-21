@@ -1,4 +1,4 @@
-{ lib, pkgs, username, ... }:
+{ pkgs, username, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -57,25 +57,13 @@
       ", Hiragana_Katakana, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -o"
       ", Eisu_toggle, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -c"
     ];
-    programs.waybar.settings.mainBar = {
-      modules-right = lib.mkAfter [ "battery" ];
-      battery = {
-        bat = "BAT0";
-        interval = 30;
-        format = "{icon} {capacity}%";
-        format-charging = "⚡ {capacity}%";
-        format-plugged = " {capacity}%";
-        format-full = " {capacity}%";
-        format-icons = [ "" "" "" "" "" ];
-        tooltip-format = "バッテリー残量: {capacity}%";
-      };
-    };
-
     wayland.windowManager.hyprland.settings.device = [
       {
         name = "bcm5974";
         # -1.0〜1.0。正の値で速く、負の値で遅くする。0.0は標準速度。
         sensitivity = -0.2;
+        # スクロール量を標準の70%に抑える。
+        scroll_factor = 0.7;
       }
     ];
   };

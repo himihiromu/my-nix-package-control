@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, username, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -50,12 +50,35 @@
   # This Apple JIS keyboard emits XKB codes 130 (Kana) and 131 (Eisu),
   # seen by Fcitx as Hangul and Hangul_Hanja. Bind the physical codes
   # independently of the input method's current keyboard layout.
-  home-manager.users.himihiromu.wayland.windowManager.hyprland.settings.bind = [
-    ", code:130, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -o"
-    ", code:131, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -c"
-    ", Hiragana_Katakana, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -o"
-    ", Eisu_toggle, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -c"
-  ];
+  home-manager.users.${username} = {
+    wayland.windowManager.hyprland.settings.bind = [
+      ", code:130, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -o"
+      ", code:131, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -c"
+      ", Hiragana_Katakana, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -o"
+      ", Eisu_toggle, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -c"
+    ];
+    programs.waybar.settings.mainBar = {
+      modules-right = lib.mkAfter [ "battery" ];
+      battery = {
+        bat = "BAT0";
+        interval = 30;
+        format = "{icon} {capacity}%";
+        format-charging = "⚡ {capacity}%";
+        format-plugged = " {capacity}%";
+        format-full = " {capacity}%";
+        format-icons = [ "" "" "" "" "" ];
+        tooltip-format = "バッテリー残量: {capacity}%";
+      };
+    };
+
+    wayland.windowManager.hyprland.settings.device = [
+      {
+        name = "bcm5974";
+        # -1.0〜1.0。正の値で速く、負の値で遅くする。0.0は標準速度。
+        sensitivity = -0.2;
+      }
+    ];
+  };
   security.rtkit.enable = true;
 
   # Keep builds within the memory available on this 8 GB machine.

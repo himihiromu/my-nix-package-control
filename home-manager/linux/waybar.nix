@@ -84,8 +84,8 @@ in
 {
   programs.waybar = {
     enable = true;
-    settings = [
-      {
+    settings = {
+      mainBar = {
         height = 30;
         spacing = 4;
         modules-left = [
@@ -192,8 +192,8 @@ in
           format-alt = "{:%Y-%m-%d}";
         };
         tray.spacing = 10;
-      }
-    ];
+      };
+    };
     systemd = {
       enable = true;
       targets = [ "graphical-session.target" ];

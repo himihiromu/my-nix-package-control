@@ -95,3 +95,21 @@ sudo nixos-rebuild switch --flake "path:$PWD#macbook-air" \
 別のPCを追加する場合は、`nixos/hosts/` にそのPCのハードウェア・起動設定を追加し、
 `flake.nix` の `mkNixos` で登録する。別の実機のディスクUUIDを流用したり、
 既存ホストの `system.stateVersion` を変更したりしない。
+
+### MacBookのバッテリー表示とトラックパッド
+
+Waybarの右端に内蔵バッテリーの残量を％で表示する。充電中は充電アイコンに切り替わる。
+設定は `nixos/hosts/macbook-air/default.nix` の `programs.waybar.settings.mainBar` にある。
+
+トラックパッドのカーソル速度は、同じファイルの `settings.device` 内にある
+`bcm5974` の `sensitivity` で調整する。現在は標準速度の `0.0` より少し遅い `-0.2`。
+`0.2` などの正の値で速く、`-0.2` などの負の値で遅くなる（範囲は `-1.0`〜`1.0`）。
+この設定は内蔵トラックパッドにだけ適用する。
+
+一時的に速度を試す場合は、Hyprlandのセッション内で次を実行する。
+
+```sh
+hyprctl keyword 'device[bcm5974]:sensitivity' -0.2
+```
+
+好みの値が決まったらNix定義に記入し、上記のホスト構成の適用コマンドで永続化する。

@@ -123,7 +123,8 @@ MacBookでは、2本指で押し込むクリックと2本指タップを右ク�
 3本指の左右スワイプでワークスペース（仮想デスクトップ）を切り替える。
 クリック設定は `settings.device`、スワイプ設定は `settings.gesture` にある。
 3本指の上スワイプでは、[HyprExpo](https://github.com/sandwichfarm/hyprexpo)で
-ワークスペースを縮小した一覧を開く。プレビューをクリックして移動し、Escでキャンセルする。
+ワークスペースを縮小した一覧を開く。3本指の下スワイプまたはEscで閉じる。
+プレビューをクリックすると、そのワークスペースへ移動する。
 macOSのMission Controlに近い用途だが、表示はワークスペース単位のグリッドになる。
 
 HyprExpoは `nixos/hosts/macbook-air/hyprexpo.nix` で対応版を固定し、

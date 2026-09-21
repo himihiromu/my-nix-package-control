@@ -76,6 +76,7 @@
     wayland.windowManager.hyprland.settings.gesture = [
       "3, horizontal, workspace"
       "3, up, dispatcher, hyprexpo:expo, on"
+      "3, down, dispatcher, hyprexpo:expo, off"
     ];
   };
   security.rtkit.enable = true;

@@ -145,3 +145,22 @@ HyprExpoは `nixos/hosts/macbook-air/hyprexpo.nix` で対応版を固定し、
 明るさと音量は長押しでも調整でき、画面ロック中も操作できる。
 画面輝度は完全消灯を避けるため最小値を1に制限する。
 キー割り当てはHyprland設定、Fnの動作は `macbook-hardware.nix` の `hid_apple fnmode=1` で管理する。
+
+### Scrollingレイアウト
+
+MacBookではHyprland標準の `scrolling` レイアウトを使用する。
+ウィンドウを画面内に詰め込むのではなく、横方向に伸びる列へ並べ、フォーカスした列を表示範囲へ移動する。
+列が1つだけの場合は画面いっぱいに広がり、複数ある場合は隣の列が一部見える。
+
+| キー | 操作 |
+| --- | --- |
+| Super + H / L | 左／右の列へフォーカス移動 |
+| Super + Shift + H / L | 現在の列を左／右の列と入れ替え |
+| Super + , / . | 列幅をプリセットで縮小／拡大（1/3、1/2、2/3、全幅） |
+| Super + P | 現在のウィンドウを独立した列へ移動 |
+| Super + Shift + P | 現在のウィンドウを専用列から取り出す |
+| Super + Ctrl + P | 前の列へウィンドウを統合、または独立列化 |
+| Super + I | 現在の列を表示範囲に合わせる |
+
+3本指左右スワイプはワークスペース切替、上下スワイプはHyprExpoの一覧表示の開閉に割り当てている。
+Scrollingレイアウトの詳細は[Hyprland公式ドキュメント](https://wiki.hypr.land/Configuring/Layouts/Scrolling-Layout/)を参照。

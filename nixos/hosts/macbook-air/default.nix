@@ -59,7 +59,33 @@
       ", code:131, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -c"
       ", Hiragana_Katakana, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -o"
       ", Eisu_toggle, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -c"
+      # Scrolling layout: move focus between columns and change their order.
+      "$mod, H, layoutmsg, focus l"
+      "$mod, L, layoutmsg, focus r"
+      "$mod SHIFT, H, layoutmsg, swapcol l"
+      "$mod SHIFT, L, layoutmsg, swapcol r"
+      "$mod, Comma, layoutmsg, colresize -conf"
+      "$mod, Period, layoutmsg, colresize +conf"
+      "$mod, P, layoutmsg, promote"
+      "$mod SHIFT, P, layoutmsg, expel"
+      "$mod CTRL, P, layoutmsg, consume_or_expel prev"
+      "$mod, I, layoutmsg, fit active"
     ];
+    wayland.windowManager.hyprland.settings.general = {
+      layout = "scrolling";
+    };
+    wayland.windowManager.hyprland.settings.scrolling = {
+      # Half-width columns leave adjacent windows visible as context.
+      column_width = 0.5;
+      fullscreen_on_one_column = true;
+      focus_fit_method = 1;
+      follow_focus = true;
+      follow_min_visible = 0.4;
+      explicit_column_widths = "0.333, 0.5, 0.667, 1.0";
+      wrap_focus = true;
+      wrap_swapcol = true;
+      direction = "right";
+    };
     wayland.windowManager.hyprland.settings.device = [
       {
         name = "bcm5974";

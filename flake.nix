@@ -44,6 +44,25 @@
       options = import local-options;
       inherit (options) username;
       inherit (options) isDesktop;
+      mkNixos = hostModule: nixpkgs.lib.nixosSystem {
+            system = system;
+            modules = [
+              { _module.args = { inherit username isDesktop; }; }
+              ./nixos/configuration.nix
+              hostModule
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.users.${username} = import ./home-manager/default.nix {
+                  inherit inputs;
+                  inherit username;
+                  inherit pkgs;
+                  inherit system;
+                  inherit isDesktop;
+                  inherit nixvim;
+                };
+              }
+            ];
+          };
       rustCratesOverlay = final: prev: {
         keifu = prev.rustPlatform.buildRustPackage {
           pname = "keifu";
@@ -123,25 +142,9 @@
               }
             ];
           };
-          # Bare metal (single host)
-          nixos = nixpkgs.lib.nixosSystem {
-            system = system;
-            modules = [
-              { _module.args = { inherit username isDesktop; }; }
-              ./nixos/configuration.nix
-              home-manager.nixosModules.home-manager
-              {
-                home-manager.users.${username} = import ./home-manager/default.nix {
-                  inherit inputs;
-                  inherit username;
-                  inherit pkgs;
-                  inherit system;
-                  inherit isDesktop;
-                  inherit nixvim;
-                };
-              }
-            ];
-          };
+          # Select hardware explicitly with the flake configuration name.
+          nixos = mkNixos ./nixos/hosts/nixos;
+          macbook-air = mkNixos ./nixos/hosts/macbook-air;
         };
         homeConfigurations = {
           myHomeConfig = home-manager.lib.homeManagerConfiguration {

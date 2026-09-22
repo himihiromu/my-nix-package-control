@@ -6,6 +6,10 @@
   hardware.graphics.enable = true;
   boot.initrd.kernelModules = [ "i915" ];
   boot.kernelModules = [ "bcm5974" "hid_apple" "applesmc" ];
+  # 上段キー単独で明るさ・音量、Fn併用でF1〜F12を送信する。
+  boot.extraModprobeConfig = ''
+    options hid_apple fnmode=1
+  '';
   # Ethernet-only baseline: BCM4360 is unsupported by b43, and wl was declined.
   boot.blacklistedKernelModules = [ "wl" "b43" "b43legacy" "bcma" "ssb" "brcmsmac" ];
   hardware.bluetooth.enable = true;

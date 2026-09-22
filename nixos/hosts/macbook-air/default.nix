@@ -78,6 +78,10 @@
       "3, up, dispatcher, hyprexpo:expo, on"
       "3, down, dispatcher, hyprexpo:expo, off"
     ];
+    wayland.windowManager.hyprland.settings.bindel = [
+      ", XF86KbdBrightnessUp, exec, ${pkgs.brightnessctl}/bin/brightnessctl --device=smc::kbd_backlight set 10%+"
+      ", XF86KbdBrightnessDown, exec, ${pkgs.brightnessctl}/bin/brightnessctl --device=smc::kbd_backlight set 10%-"
+    ];
   };
   security.rtkit.enable = true;
 

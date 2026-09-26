@@ -29,5 +29,8 @@
     claude-code
     llmfit
     ollama
+    # GNU coreutilsのRust実装。プレフィックスなしで ls, rm, cat 等を提供し、
+    # per-user profileがPATH優先されるためシステムのcoreutilsを置き換える
+    uutils-coreutils-noprefix
   ];
 }

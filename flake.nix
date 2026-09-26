@@ -136,10 +136,7 @@
             system = system;
             modules = [
               nixos-wsl.nixosModules.default
-              {
-                system.stateVersion = "24.05";
-                wsl.enable = true;
-              }
+              ./nixos/hosts/nixos-wsl
             ];
           };
           # Select hardware explicitly with the flake configuration name.

@@ -48,6 +48,49 @@ $ sudo nix run nix-darwin -- switch --flake .#mac-config
 $ nix run nixpkgs#home-manager -- switch --flake .#myHomeConfig --show-trace
 ```
 
+## Claude Code（Z.ai）
+
+リポジトリ内で以下を実行し、表示されるプロンプトに Z.ai の API キーを入力する（入力は非表示）。
+
+```shell
+nix develop
+# 明示的に指定する場合: nix develop .#zai
+claude
+```
+
+[Z.ai の公式手順](https://docs.z.ai/devpack/tool/claude)に従い、
+`https://api.z.ai/api/anthropic` を利用する。Z.ai の API キーと利用可能な Coding Plan が必要。
+Claude Code 本体も Nix で用意するため、別途 npm でインストールする必要はない。
+
+事前に環境変数でキーを渡す場合（Bash）:
+
+```bash
+read -r -s -p 'Z.ai API key: ' ZAI_API_KEY; printf '\n'
+export ZAI_API_KEY
+nix develop .#zai
+claude
+```
+
+キーはシェル起動時に `ANTHROPIC_AUTH_TOKEN` に設定する。
+API キーを Nix ファイルに記載する必要はなく、Nix store にも埋め込まない。
+`nix develop .#zai --command claude` のような非対話実行では、事前に `ZAI_API_KEY` を設定する。
+
+モデルは既定で `glm-5.3-flash`。契約で利用可能な別モデルを使う場合は、
+`ZAI_MODEL=モデル名 nix develop .#zai` で変更できる。
+Opus / Sonnet / Haiku とサブエージェントにも同じモデルを設定する。
+
+設定・認証・履歴は `${XDG_CONFIG_HOME:-$HOME/.config}/claude-zai` に保存する。
+初回は Claude Code の初期設定が表示される場合がある。
+起動後の `/status` で接続先とモデルを確認できる。
+シェルを `exit` すると、親シェルの環境に戻る。
+
+別のプロジェクトから使う場合:
+
+```shell
+nix develop /path/to/my-nix-package-control#zai
+claude
+```
+
 ## nixの容量削減
 
 ```shell

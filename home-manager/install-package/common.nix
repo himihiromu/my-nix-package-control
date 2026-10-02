@@ -3,6 +3,7 @@
 }:
 {
   installPackages = with pkgs; [
+    awscli2
     vim
     git
     gh

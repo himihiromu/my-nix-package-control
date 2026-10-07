@@ -14,6 +14,7 @@
       "steam-original"
       "steam-unwrapped"
       "steam-run"
+      "discord-unwrapped"
     ];
 
   programs.steam = {
@@ -72,6 +73,16 @@
       "ja_JP.UTF-8/UTF-8"
       "en_US.UTF-8/UTF-8"
     ];
+  };
+
+  # Use kmscon on virtual terminals so Pango can render Japanese CJK glyphs.
+  services.kmscon = {
+    enable = true;
+    config = {
+      font-engine = "pango";
+      font-name = "Noto Sans Mono CJK JP";
+      font-size = 12;
+    };
   };
 
   # Timezone

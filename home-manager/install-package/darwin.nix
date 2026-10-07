@@ -6,7 +6,5 @@
     lima
     skhd
     docker-credential-helpers
-    filetree
-    keifu
   ];
 }

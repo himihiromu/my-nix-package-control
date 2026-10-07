@@ -111,6 +111,7 @@
               "google-chrome"
               "zoom"
               "discord"
+              "discord-unwrapped"
             ];
           }).extend (
             neovim-nightly-overlay.overlays.default

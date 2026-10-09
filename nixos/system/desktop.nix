@@ -54,6 +54,16 @@
   # PolicyKit
   security.polkit.enable = true;
 
+  # KMSCON for Unicode-capable virtual consoles
+  services.kmscon = {
+    enable = true;
+    config = {
+      "font-engine" = "pango";
+      "font-name" = "Noto Sans CJK JP";
+      "font-size" = 12;
+    };
+  };
+
   # Locale
   i18n = {
     defaultLocale = "ja_JP.UTF-8";

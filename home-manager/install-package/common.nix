@@ -12,6 +12,7 @@
     docker
     curl
     chezmoi
+    mise
     wireguard-tools
     wireguard-go
     htop

@@ -62,6 +62,7 @@ in
 
     # Editor
     vscode
+    (import ../install-package/orca.nix { inherit pkgs; })
 
     # Game launcher
     heroic

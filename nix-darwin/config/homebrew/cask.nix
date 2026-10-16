@@ -2,6 +2,7 @@
   installPackages = [
     "cursor"
     "clipy"
+    "claude"
     "raycast"
     "kiro-cli"
     "jetbrains-toolbox"

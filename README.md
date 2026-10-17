@@ -210,8 +210,10 @@ Scrollingレイアウトの詳細は[Hyprland公式ドキュメント](https://w
 
 ## Bash の略語展開
 
-`home-manager/shell/bash.nix` が [bash-abbrev-alias](https://github.com/momo-lab/bash-abbrev-alias)
-の固定コミットとハッシュを指定し、`$XDG_CONFIG_HOME/bash/abbrev-alias.plugin.bash`
+`flake.nix` の `localPackagesOverlay` が [bash-abbrev-alias](https://github.com/momo-lab/bash-abbrev-alias)
+の固定コミットとハッシュから `pkgs.bash-abbrev-alias` を定義する。
+`home-manager/install-package/common.nix` で他のパッケージと同様にインストールし、
+`home-manager/shell/bash.nix` がパッケージ内のライブラリを参照して、`$XDG_CONFIG_HOME/bash/abbrev-alias.plugin.bash`
 （既定では `~/.config/bash/abbrev-alias.plugin.bash`）を配置する。
 [dotfiles PR #16](https://github.com/himihiromu/dotfiles/pull/16) の `.bashrc` が Nix 管理の対話 Bash の
 Emacs モードで読み込み、`la`・`ll`・`lal` を登録する。

@@ -63,7 +63,41 @@
               }
             ];
           };
-      rustCratesOverlay = final: prev: {
+      localPackagesOverlay = final: prev: {
+        bash-abbrev-alias = prev.stdenvNoCC.mkDerivation {
+          pname = "bash-abbrev-alias";
+          version = "0.1.0-unstable-2020-05-15";
+
+          src = prev.fetchFromGitHub {
+            owner = "momo-lab";
+            repo = "bash-abbrev-alias";
+            rev = "6afb671fc95b3c559f2665637df65d9060f4d320";
+            hash = "sha256-bvbMyniy5TGoU0hVGKV2bo+qf6fAfMjlJQ1/DYw5RKo=";
+          };
+
+          dontBuild = true;
+          doCheck = true;
+          checkPhase = ''
+            runHook preCheck
+            ${prev.bash}/bin/bash -n abbrev-alias.plugin.bash
+            runHook postCheck
+          '';
+          installPhase = ''
+            runHook preInstall
+            install -Dm644 abbrev-alias.plugin.bash \
+              $out/share/bash-abbrev-alias/abbrev-alias.plugin.bash
+            install -Dm644 LICENSE $out/share/licenses/bash-abbrev-alias/LICENSE
+            runHook postInstall
+          '';
+
+          meta = {
+            description = "Abbreviation expansion for Bash";
+            homepage = "https://github.com/momo-lab/bash-abbrev-alias";
+            license = prev.lib.licenses.mit;
+            platforms = prev.lib.platforms.unix;
+          };
+        };
+
         keifu = prev.rustPlatform.buildRustPackage {
           pname = "keifu";
           version = "0.1.5";
@@ -117,7 +151,7 @@
             neovim-nightly-overlay.overlays.default
           )
         )
-      ).extend rustCratesOverlay;
+      ).extend localPackagesOverlay;
     in
     {
       formatter = pkgs.nixfmt;

@@ -213,7 +213,7 @@ Scrollingレイアウトの詳細は[Hyprland公式ドキュメント](https://w
 `home-manager/shell/bash.nix` が [bash-abbrev-alias](https://github.com/momo-lab/bash-abbrev-alias)
 の固定コミットとハッシュを指定し、`$XDG_CONFIG_HOME/bash/abbrev-alias.plugin.bash`
 （既定では `~/.config/bash/abbrev-alias.plugin.bash`）を配置する。
-[dotfiles PR #16](https://github.com/himihiromu/dotfiles/pull/16) の `.bashrc` が対話 Bash 4.2 以上の
+[dotfiles PR #16](https://github.com/himihiromu/dotfiles/pull/16) の `.bashrc` が Nix 管理の対話 Bash の
 Emacs モードで読み込み、`la`・`ll`・`lal` を登録する。
 NixOS/Home Manager の通常の適用と、対応する chezmoi 設定の適用が必要。
 `.bashrc` の管理は引き続き chezmoi が担当する。

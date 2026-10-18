@@ -220,3 +220,27 @@ Emacs モードで読み込み、`la`・`ll`・`lal` を登録する。
 NixOS/Home Manager の通常の適用と、対応する chezmoi 設定の適用が必要。
 `.bashrc` の管理は引き続き chezmoi が担当する。
 ライブラリ未配置の場合も既存 alias は利用できる。
+
+## ChatGPT Linux アプリ
+
+Linux のパッケージ一覧に公式 Debian x64 配布物を NixOS 向けに調整した `chatgpt` を含める。
+パッケージ定義は `home-manager/linux/chatgpt.nix`。
+更新される `latest` URL は使わず、公式リポジトリ内のバージョン付き URL と SHA-256 を固定する。
+更新時は `version` と `src.hash` を変更し、再ビルドと起動確認を行う。
+
+通常の NixOS / Home Manager 適用後、アプリケーションメニューの ChatGPT または
+`chatgpt` コマンドで起動する。ランチャーに `--ozone-platform=x11` を設定しているため、
+Hyprland では XWayland を使う。既存の Hyprland 設定で XWayland は有効。
+ネイティブ Wayland は今回の対象にしない。
+
+確認時は、まず `chatgpt --version` が `26.1013.40934` と表示されることを確認し、
+続いて起動・ブラウザ経由のログイン・日本語入力と変換・チャット送信を確認する。
+既に別バージョンの ChatGPT が起動中なら、終了してから確認する。
+
+2026-10-18 に固定配布物のハッシュ検証、パッケージビルド、バージョン表示、
+一時 HOME と仮想 X サーバーでのウィンドウ生成を確認した（仮想環境の検証では `--disable-gpu` を追加）。
+Home Manager の activation derivation 評価、インストール対象、Hyprland の XWayland 有効化も確認した。
+実環境への適用、実際の XWayland / GPU、ログイン、日本語入力、チャット送信は未確認。
+
+NixOS は公式サポート対象外であり、公式のネイティブ Wayland 対応も実験段階。
+対応範囲の出典: [公式 Linux アプリガイド](https://learn.chatgpt.com/docs/linux/linux-app)（確認日: 2026-10-18）。

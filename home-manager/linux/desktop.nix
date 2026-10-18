@@ -1,5 +1,6 @@
 { pkgs }:
 let
+  chatgpt = pkgs.callPackage ./chatgpt.nix { };
   # Use Wayland's native IME path in Ghostty. Forcing the Fcitx GTK module
   # breaks Japanese input in Codex CLI on this setup.
   ghosttyWayland = pkgs.symlinkJoin {
@@ -43,6 +44,9 @@ in
     firefox
     floorp-bin
     google-chrome
+
+    # AI assistant
+    chatgpt
 
     # Mail
     thunderbird

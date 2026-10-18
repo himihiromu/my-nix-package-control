@@ -143,6 +143,7 @@
               "claude-code"
               "vscode"
               "google-chrome"
+              "chatgpt"
               "zoom"
               "discord"
               "discord-unwrapped"

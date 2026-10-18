@@ -244,3 +244,30 @@ Home Manager の activation derivation 評価、インストール対象、Hyprl
 
 NixOS は公式サポート対象外であり、公式のネイティブ Wayland 対応も実験段階。
 対応範囲の出典: [公式 Linux アプリガイド](https://learn.chatgpt.com/docs/linux/linux-app)（確認日: 2026-10-18）。
+
+## Mozc と SKK の切り替え
+
+Hyprland では **Super+Space** で Mozc と SKK を切り替える。
+英数入力中に押すと Mozc を選択する。日本語入力のオン・オフは従来の
+Ctrl+Space や、MacBook のかな・英数キーを使う。
+Vicinae ランチャーは **Alt+Space** で起動する。
+
+`home-manager/linux/toggle-japanese-input.nix` のコマンドを Hyprland のキーに登録する。
+初回に Mozc / SKK が現在の入力メソッドグループに未登録なら、Fcitx5 の公式 D-Bus API
+で不足分だけ追加する。グループ名・配列・既存の入力メソッドを保持し、
+プロファイル全体の Nix による置き換えやユーザー辞書の無効化は行わない。
+入力メソッドのインストールは既存の `nixos/system/desktop.nix` の定義を使う。
+
+NixOS / Home Manager の設定を適用して Hyprland を再読み込みした後、
+文字入力欄で Super+Space を押して切り替えを確認する。
+切り替わらない場合は `fcitx5-remote -n` で選択中の入力メソッド名を確認できる。
+
+検証は `tests/test_japanese_input.py` で専用の D-Bus / Fcitx5 と一時 HOME を作成して行う。
+Python の `dbus-next` と、次の実行ファイルを環境変数で指定する。
+
+- `FCITX5_TEST_BIN`: Mozc・SKK を含む `config.i18n.inputMethod.package` の `bin/fcitx5`
+- `TOGGLE_JAPANESE_INPUT_BIN`: `toggle-japanese-input.nix` をビルドした `bin/toggle-japanese-input`
+- `DBUS_DAEMON_TEST_BIN`: Nixpkgs の `dbus` の `bin/dbus-daemon`
+
+`python3 tests/test_japanese_input.py -v` で未登録エンジン追加、実際のエンジン切り替え、
+英数入力からの選択、重複防止、既存の日本語グループ名・配列・他入力メソッドの保持と保存を確認する。

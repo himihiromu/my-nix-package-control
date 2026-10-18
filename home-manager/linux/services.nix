@@ -5,6 +5,7 @@
   ...
 }:
 let
+  toggleJapaneseInput = pkgs.callPackage ./toggle-japanese-input.nix { };
   wallpaperDirectory = "${config.home.homeDirectory}/Pictures/Wallpapers";
   defaultWallpaper = "${wallpaperDirectory}/hyprland-wall0.png";
 in
@@ -119,7 +120,9 @@ in
       bind = [
         "$mod, Return, exec, uwsm app -- $terminal"
         "$mod, E, exec, uwsm app -- $fileManager"
-        "$mod, Space, exec, vicinae toggle"
+        # Keep Vicinae on Alt+Space; reserve Super+Space for Mozc/SKK.
+        "ALT, Space, exec, vicinae toggle"
+        "$mod, Space, exec, ${toggleJapaneseInput}/bin/toggle-japanese-input"
         "$mod, Q, killactive"
         "$mod, W, killactive"
         "$mod, F, fullscreen"

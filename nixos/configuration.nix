@@ -10,15 +10,10 @@
 
 {
   imports = [
-    ./hardware-configuration.nix
-    ./system/hardware.nix
     ./system/desktop.nix
     ./system/services.nix
     ./system/nix.nix
   ];
-
-  # Hostname
-  networking.hostName = "nixos";
 
   # User
   users.users.${username} = {
@@ -36,5 +31,4 @@
     useUserPackages = true;
   };
 
-  system.stateVersion = "25.05";
 }

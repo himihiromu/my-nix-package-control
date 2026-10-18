@@ -8,14 +8,13 @@ in
     onActivation = {
       autoUpdate = true;
       upgrade = true;
-      cleanup = "uninstall";
     };
     caskArgs = {
       appdir = "~/Applications";
     };
     casks = (if isDesktop then installPackages else []);
     masApps = {
-      RunCat = 1429033973;
+      RunCat = 6757801838;
     };
   };
 }

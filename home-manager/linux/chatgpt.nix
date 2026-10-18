@@ -33,13 +33,13 @@
   git,
 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   pname = "chatgpt";
-  version = "26.814.41957";
+  version = "26.1013.40934";
 
   src = fetchurl {
-    url = "https://persistent.oaistatic.com/codex-app-prod/linux/deb/latest/chatgpt_amd64.deb";
-    hash = "sha256-R3iyanq9CGRyFNWwXBe9Pr4tlojRRtq/AXwaL6+TrH0=";
+    url = "https://persistent.oaistatic.com/codex-app-prod/linux/deb/pool/main/c/chatgpt/chatgpt_${finalAttrs.version}_amd64.deb";
+    hash = "sha256-PKWef5pmQbni+5rWgGg3hLWrgCb/dBj7ISoOvl3zodc=";
   };
 
   nativeBuildInputs = [
@@ -100,8 +100,14 @@ stdenv.mkDerivation {
     cp -r usr/share/applications usr/share/pixmaps "$out/share/"
     ln -s "$out/lib/chatgpt/codex-launcher" "$out/bin/chatgpt"
 
+    # Keep Hyprland on XWayland while upstream native Wayland is experimental.
     wrapProgram "$out/lib/chatgpt/ChatGPT" \
+      --add-flags "--ozone-platform=x11" \
       --prefix PATH : ${lib.makeBinPath [ git xdg-utils ]}
+
+    # Use this package even when another chatgpt executable is present in PATH.
+    substituteInPlace "$out/share/applications/chatgpt.desktop" \
+      --replace-fail "Exec=chatgpt" "Exec=$out/bin/chatgpt"
 
     runHook postInstall
   '';
@@ -113,4 +119,4 @@ stdenv.mkDerivation {
     mainProgram = "chatgpt";
     platforms = [ "x86_64-linux" ];
   };
-}
+})

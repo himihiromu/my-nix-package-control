@@ -207,3 +207,16 @@ MacBookではHyprland標準の `scrolling` レイアウトを使用する。
 
 3本指左右スワイプはワークスペース切替、上下スワイプはHyprExpoの一覧表示の開閉に割り当てている。
 Scrollingレイアウトの詳細は[Hyprland公式ドキュメント](https://wiki.hypr.land/Configuring/Layouts/Scrolling-Layout/)を参照。
+
+## Bash の略語展開
+
+`flake.nix` の `localPackagesOverlay` が [bash-abbrev-alias](https://github.com/momo-lab/bash-abbrev-alias)
+の固定コミットとハッシュから `pkgs.bash-abbrev-alias` を定義する。
+`home-manager/install-package/common.nix` で他のパッケージと同様にインストールし、
+`home-manager/shell/bash.nix` がパッケージ内のライブラリを参照して、`$XDG_CONFIG_HOME/bash/abbrev-alias.plugin.bash`
+（既定では `~/.config/bash/abbrev-alias.plugin.bash`）を配置する。
+[dotfiles PR #16](https://github.com/himihiromu/dotfiles/pull/16) の `.bashrc` が Nix 管理の対話 Bash の
+Emacs モードで読み込み、`la`・`ll`・`lal` を登録する。
+NixOS/Home Manager の通常の適用と、対応する chezmoi 設定の適用が必要。
+`.bashrc` の管理は引き続き chezmoi が担当する。
+ライブラリ未配置の場合も既存 alias は利用できる。

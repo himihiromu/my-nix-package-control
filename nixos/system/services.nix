@@ -7,7 +7,10 @@
   # Firewall
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 53317 ];
+    allowedTCPPorts = [
+      6768 # Orca mobile (WebSocket)
+      53317
+    ];
     allowedUDPPorts = [ 53317 ];
   };
 

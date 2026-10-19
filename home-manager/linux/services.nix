@@ -5,6 +5,8 @@
   ...
 }:
 let
+  # Super+Space から呼ぶ Mozc / SKK 切り替えコマンドを用意する。
+  toggleJapaneseInput = pkgs.callPackage ./toggle-japanese-input.nix { };
   wallpaperDirectory = "${config.home.homeDirectory}/Pictures/Wallpapers";
   defaultWallpaper = "${wallpaperDirectory}/hyprland-wall0.png";
 in
@@ -119,7 +121,9 @@ in
       bind = [
         "$mod, Return, exec, uwsm app -- $terminal"
         "$mod, E, exec, uwsm app -- $fileManager"
-        "$mod, Space, exec, vicinae toggle"
+        # Alt+Space は Vicinae、Super+Space は Mozc / SKK の切り替えに使う。
+        "ALT, Space, exec, vicinae toggle"
+        "$mod, Space, exec, ${toggleJapaneseInput}/bin/toggle-japanese-input"
         "$mod, Q, killactive"
         "$mod, W, killactive"
         "$mod, F, fullscreen"

@@ -40,6 +40,7 @@
     bruno
     pandoc
     claude-code
+    codex
     llmfit
     ollama
     filetree

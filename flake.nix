@@ -47,7 +47,15 @@
       mkNixos = hostModule: nixpkgs.lib.nixosSystem {
             system = system;
             modules = [
-              { _module.args = { inherit username isDesktop; }; }
+              {
+                _module.args = { inherit username isDesktop; };
+                # NixOS 経由の Home Manager は useGlobalPkgs により
+                # システムの pkgs を使うため、同じ overlay を適用する。
+                nixpkgs.overlays = [
+                  neovim-nightly-overlay.overlays.default
+                  localPackagesOverlay
+                ];
+              }
               ./nixos/configuration.nix
               hostModule
               home-manager.nixosModules.home-manager

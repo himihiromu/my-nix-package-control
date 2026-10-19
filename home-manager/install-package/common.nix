@@ -47,6 +47,7 @@
     bash-abbrev-alias
     # GNU coreutilsのRust実装。プレフィックスなしで ls, rm, cat 等を提供し、
     # per-user profileがPATH優先されるためシステムのcoreutilsを置き換える
-    uutils-coreutils-noprefix
+    # darwinのnet-toolsはsymlinkJoinでpostInstallが効かずhostnameが衝突するため優先度を上げる
+    (lib.hiPrio uutils-coreutils-noprefix)
   ];
 }

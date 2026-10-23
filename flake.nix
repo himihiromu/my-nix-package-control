@@ -72,6 +72,16 @@
             ];
           };
       localPackagesOverlay = final: prev: {
+        # Qt 6.12 の uic 対応。nixpkgs の Mozc に修正が入ったら削除する。
+        mozc = prev.mozc.overrideAttrs (old: {
+          patches = (old.patches or [ ]) ++ [
+            (prev.fetchurl {
+              url = "https://github.com/google/mozc/commit/29c082a64b577b661694148760a2ae19817beb57.patch";
+              hash = "sha256-TcuMPd3E4ZPhU4tmeVD7OMY4tWFJGjiiSXZSh3gn384=";
+            })
+          ];
+        });
+
         bash-abbrev-alias = prev.stdenvNoCC.mkDerivation {
           pname = "bash-abbrev-alias";
           version = "0.1.0-unstable-2020-05-15";

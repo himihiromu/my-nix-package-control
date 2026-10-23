@@ -27,8 +27,10 @@
   libxrandr,
   nspr,
   nss,
+  openssl,
   pango,
   systemd,
+  tpm2-tss,
   xdg-utils,
   git,
 }:
@@ -71,9 +73,11 @@ stdenv.mkDerivation (finalAttrs: {
     libxrandr
     nspr
     nss
+    openssl
     pango
     stdenv.cc.cc.lib
     systemd
+    tpm2-tss
   ];
 
   autoPatchelfIgnoreMissingDeps = [

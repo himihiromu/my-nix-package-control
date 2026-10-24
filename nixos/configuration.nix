@@ -10,7 +10,6 @@
 
 {
   imports = [
-    ./system/desktop.nix
     ./system/services.nix
     ./system/nix.nix
   ];
@@ -21,7 +20,6 @@
     extraGroups = [
       "wheel"
       "docker"
-      "networkmanager"
     ];
   };
 

@@ -44,11 +44,11 @@
       options = import local-options;
       inherit (options) username;
       inherit (options) isDesktop;
-      mkNixos = hostModule: nixpkgs.lib.nixosSystem {
+      mkNixos = { hostModule, isWsl ? false }: nixpkgs.lib.nixosSystem {
             system = system;
             modules = [
               {
-                _module.args = { inherit username isDesktop; };
+                _module.args = { inherit username isDesktop isWsl; };
                 # NixOS 経由の Home Manager は useGlobalPkgs により
                 # システムの pkgs を使うため、同じ overlay を適用する。
                 nixpkgs.overlays = [
@@ -65,10 +65,14 @@
                   inherit username;
                   inherit pkgs;
                   inherit system;
-                  inherit isDesktop;
+                  inherit isDesktop isWsl;
                   inherit nixvim;
                 };
               }
+            ] ++ (if isWsl then [ nixos-wsl.nixosModules.default ] else [
+              ./nixos/system/physical-services.nix
+            ]) ++ nixpkgs.lib.optionals (isDesktop && !isWsl) [
+              ./nixos/system/desktop.nix
             ];
           };
       localPackagesOverlay = final: prev: {
@@ -186,16 +190,13 @@
         };
         nixosConfigurations = {
           # WSL2 on Windows
-          nixos-wsl = nixpkgs.lib.nixosSystem {
-            system = system;
-            modules = [
-              nixos-wsl.nixosModules.default
-              ./nixos/hosts/nixos-wsl
-            ];
+          nixos-wsl = mkNixos {
+            hostModule = ./nixos/hosts/nixos-wsl;
+            isWsl = true;
           };
           # Select hardware explicitly with the flake configuration name.
-          nixos = mkNixos ./nixos/hosts/nixos;
-          macbook-air = mkNixos ./nixos/hosts/macbook-air;
+          nixos = mkNixos { hostModule = ./nixos/hosts/nixos; };
+          macbook-air = mkNixos { hostModule = ./nixos/hosts/macbook-air; };
         };
         homeConfigurations = {
           myHomeConfig = home-manager.lib.homeManagerConfiguration {

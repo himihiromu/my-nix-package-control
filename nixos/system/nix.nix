@@ -1,6 +1,28 @@
-{ config, username, ... }:
+{
+  config,
+  username,
+  lib,
+  ...
+}:
 
 {
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
+    builtins.elem (lib.getName pkg) [
+      "zsh-abbr"
+      "claude-code"
+      "vscode"
+      "google-chrome"
+      "zoom"
+      "discord"
+      "discord-unwrapped"
+      "steam"
+      "steam-original"
+      "steam-unwrapped"
+      "steam-run"
+      "discord-unwrapped"
+    ];
+
   nix.settings = {
     experimental-features = [
       "nix-command"

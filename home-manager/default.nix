@@ -3,12 +3,13 @@
   username,
   system,
   isDesktop,
+  isWsl ? false,
   nixvim,
   inputs,
   ...
 }:
 let
-  commonPackage = (import ./install-package/common.nix { inherit pkgs; }).installPackages;
+  commonPackage = (import ./install-package/common.nix { inherit pkgs isDesktop; }).installPackages;
   isMac =
     if (builtins.toString system) == "x86_64-darwin" then
       true
@@ -26,11 +27,12 @@ let
   machinePackage =
     if isMac then
       (import ./install-package/darwin.nix { inherit pkgs; }).installPackages
-    else if isLinux then
+    else if isLinux && isDesktop then
       (import ./linux { inherit pkgs; }).installPackages
     else
       [ ];
   zed = import ./install-package/zed.nix {
+    inherit (pkgs) lib;
     inherit pkgs;
     inherit isDesktop;
   };
@@ -42,22 +44,23 @@ let
   };
 in
 {
-  imports = [
-    zed
-    nixvim.homeModules.nixvim
-    nix-vim-package
-    shell
-    takt-package
-  ]
-  ++ (
-    if isLinux then
-      [
-        ./linux/services.nix
-        ./linux/user-dirs.nix
-      ]
-    else
-      [ ]
-  );
+  imports =
+    [
+      nixvim.homeModules.nixvim
+      nix-vim-package
+      shell
+      takt-package
+      zed
+    ]
+    ++ (
+      if isLinux && isDesktop && !isWsl then
+        [
+          ./linux/services.nix
+          ./linux/user-dirs.nix
+        ]
+      else
+        [ ]
+    );
 
   home = {
     username = username;

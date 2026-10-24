@@ -1,5 +1,6 @@
 {
   pkgs,
+  isDesktop,
 }:
 {
   installPackages = with pkgs; [
@@ -37,7 +38,6 @@
     nushell
     dust
     tmux
-    bruno
     pandoc
     claude-code
     codex
@@ -50,5 +50,5 @@
     # per-user profileがPATH優先されるためシステムのcoreutilsを置き換える
     # darwinのnet-toolsはsymlinkJoinでpostInstallが効かずhostnameが衝突するため優先度を上げる
     (lib.hiPrio uutils-coreutils-noprefix)
-  ];
+  ] ++ pkgs.lib.optionals isDesktop [ pkgs.bruno ];
 }

@@ -36,6 +36,43 @@ $ nixos-rebuild build --flake .#nixos
 $ sudo nixos-rebuild switch --flake .#nixos-wsl
 ```
 
+WSLでも共通のユーザー設定、Nix管理（flakes・信頼ユーザー・GC・最適化）、
+Docker（rootful / rootless）、SSH、Home ManagerのCLIパッケージとシェル連携を適用する。
+`wsl.defaultUser` は `local-options.username` に合わせる。
+
+ユーザー名は明示したローカル設定を指定する（`username` と `isDesktop` を含むNix属性セット）。
+既存のWSLユーザー名と合わせること。
+
+```shell
+sudo nixos-rebuild switch --flake "path:$PWD#nixos-wsl" \
+  --override-input local-options "path:$HOME/.config/nix/local-input/default.nix"
+```
+
+WSLではAvahi、OS側のHyprlandセッション、音声、PolicyKit、日本語環境の追加設定を読み込まない。
+GUIアプリやHome ManagerのGUI設定は、dotfilesで入力する `isDesktop` で選択する。
+`false` ならCLI環境とZedリモートサーバー、`true` ならGUIアプリ（Zed・Bruno等）も追加する。
+WSLでGUIアプリを選択した場合の表示には、WSLgなどホスト側のGUI機能が必要。
+GUI常駐サービスとHyprlandセッションの設定は、`isWsl` によりWSLでは読み込まない。
+NetworkManager、時刻同期、ファームウェア更新、Bluetooth・マウス管理、
+ブート・ディスク・GPUなどの実機設定も読み込まず、WSL側の仕組みを使う。
+ファイアウォールの共通設定は読み込むが、NixOS-WSLがゲスト内のファイアウォールを無効にする。
+Windows側のネットワーク制御は別途管理する。
+
+共通設定は `nixos/configuration.nix` と `nixos/system/{nix,services}.nix`、
+実機用のサービスは `nixos/system/physical-services.nix`、
+GUI・音声・権限・日本語環境は `nixos/system/desktop.nix` に分ける。
+`isWsl` は `#nixos-wsl` のホスト定義でtrueにするWSL専用フラグ（他ホストはfalse）。
+WSL固有のOS設定とGUIセッション除外に使い、NixOSとHome Managerへ渡す。
+`isDesktop` はdotfilesから渡す、WSL・実機・Home Manager単体で共通のGUIアプリ選択フラグ。
+`isDesktop` によって適用先ホストやNixコマンドは切り替えない。
+実機では `true` のときにOS側のデスクトップ・音声・日本語環境も有効にする。
+`false` はノートPCという意味ではなく、GUI環境を管理しないという意味で使う。
+
+既存のdotfilesは対話入力を `~/.config/nix/local-input/default.nix` に出力し、
+`mise nixos` 等で `--override-input local-options` として渡す。
+WSLでは `mise nixos switch nixos-wsl` で構成を明示する。
+dotfilesの初回導入スクリプトはNixOSの場合 `#nixos` を選ぶため、WSLの自動選択には別途修正が必要。
+
 ## nix-darwin (macOS)
 
 ```shell

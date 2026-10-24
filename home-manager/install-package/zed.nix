@@ -1,15 +1,18 @@
 {
   pkgs,
+  lib,
   isDesktop,
   ...
 }:
-let
-  inherit (pkgs.zed-editor) version;
-in
 {
   programs.zed-editor = {
-    enable = true;
-    installRemoteServer = !isDesktop;
+    enable = isDesktop;
+    installRemoteServer = false;
   };
-  # home.file.".zed_server/zed-remote-server-dev-build".source = config.lib.file.mkOutOfStoreSymlink ".zed_server/zed-remote-server-stable-${version}";
+
+  # CLI環境ではGUI本体を入れず、従来のリモート接続先として使えるようにする。
+  home.file = lib.optionalAttrs (!isDesktop && pkgs.zed-editor ? remote_server) {
+    ".zed_server/${pkgs.zed-editor.remoteServerExecutableName}".source =
+      lib.getExe' pkgs.zed-editor.remote_server pkgs.zed-editor.remoteServerExecutableName;
+  };
 }

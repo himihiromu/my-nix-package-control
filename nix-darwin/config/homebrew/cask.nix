@@ -21,5 +21,6 @@
     "zed"
     "google-japanese-ime"
     "zoom"
+    "stablyai/orca/orca"
   ];
 }

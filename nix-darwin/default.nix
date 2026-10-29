@@ -8,12 +8,14 @@ let
   system_config = import ./config/system.nix { inherit pkgs; inherit system; };
   homebrew = import ./config/homebrew/default.nix { inherit pkgs; inherit isDesktop;};
   nixConfig = import ./config/nix-config.nix { inherit pkgs; };
+  launchd = import ./config/launchd.nix;
 
 in
 {
   imports = [
     # fonts
     homebrew
+    launchd
     # networking
     nixConfig
     # security

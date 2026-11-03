@@ -85,6 +85,29 @@ $ sudo nix run nix-darwin -- switch --flake .#mac-config
 $ nix run nixpkgs#home-manager -- switch --flake .#myHomeConfig --show-trace
 ```
 
+## direnv と Orca のエージェント起動
+
+`home-manager/shell/attributes.nix` で direnv / nix-direnv を有効化し、
+共通コマンド `orca-direnv` をインストールする。
+`orca-direnv codex ...` / `orca-direnv claude ...` の形で利用できる。
+現在の作業ディレクトリで `direnv exec . "$@"` を実行し、指定した CLI に引数を渡す。
+元の CLI が PATH から見つかることが前提。
+
+Orca の Settings → Agents → Installed で各エージェントを展開し、Command に
+`~/.nix-profile/bin/orca-direnv codex` 等のホーム部分を展開した絶対パスと CLI 名を指定する。
+Arguments と環境変数は既存の設定を維持する。
+Command が複数語を受け付けない版のため、従来の `orca-codex-direnv`・
+`orca-claude-direnv`・`orca-opencode-direnv`・`orca-antigravity-direnv` も
+共通コマンドを呼ぶ互換用コマンドとして残す。
+リポジトリには `.envrc` の `use flake` を用意し、内容確認後に `direnv allow .` を行う。
+未承認の `.envrc` があればエージェントも起動しない。
+`.envrc` のない場所では通常の環境で起動する。
+
+通常のターミナルには dotfiles 側の Bash / Zsh hook も適用する。
+Home Manager の switch だけでは chezmoi 管理の rc は変更されない。
+Orca の Setup で別プロセスの `nix develop` を実行する設定は不要。
+設定変更後はターミナルやエージェントを開き直す。
+
 ## Claude Code（Z.ai）
 
 リポジトリ内で以下を実行し、表示されるプロンプトに Z.ai の API キーを入力する（入力は非表示）。

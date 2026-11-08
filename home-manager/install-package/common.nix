@@ -50,5 +50,8 @@
     # per-user profileがPATH優先されるためシステムのcoreutilsを置き換える
     # darwinのnet-toolsはsymlinkJoinでpostInstallが効かずhostnameが衝突するため優先度を上げる
     (lib.hiPrio uutils-coreutils-noprefix)
-  ] ++ pkgs.lib.optionals isDesktop [ pkgs.bruno ];
+  ] ++ pkgs.lib.optionals isDesktop [ pkgs.bruno ]
+    ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+      (pkgs.callPackage ./muse-web.nix { })
+    ];
 }

@@ -311,3 +311,15 @@ Python の `dbus-next` と、次の実行ファイルを環境変数で指定す
 
 `python3 tests/test_japanese_input.py -v` で登録済みエンジンの切り替え、英数入力からの選択、
 既存グループ・配列の保持、各エンジンの未登録・未インストール時に切り替えも設定変更もしないことを確認する。
+
+## Meta Muse（Web 版ランチャー）
+
+Linux の Home Manager 共通パッケージに `muse-web` を含める。
+`muse-web` またはアプリケーションメニューの「Muse (Web)」から、
+既定ブラウザで公式の <https://muse.ai/> を開く。
+WSL など `isDesktop = false` の構成でもコマンドを提供する。
+ブラウザの選択には既定の関連付け / `BROWSER` を使う。
+
+これは個人向け Muse の Web 版ランチャー。開発者向けの Muse Code とは別。
+Linux 向け公式アプリの調査結果と、Mac アプリとの機能差は
+[Meta Muse の Linux 導入と Mac 版との比較](docs/muse.md)を参照する。

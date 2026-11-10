@@ -29,6 +29,13 @@ $ nixos-rebuild build --flake .#nixos
 `nixos/hosts/<ホスト名>/` に配置する。既存ホストのファイルは上書きしない。
 `isDesktop` は `user-options/options.nix` でホストごとに bool 値を切り替える。
 
+AMDデスクトップの共有・ゲーム用NTFSディスクは、マウントまたはautomountユニットが
+失敗すると、GUIログイン中のユーザーへSwayNotificationCenter経由で通知する。
+通知にはマウント先と `journalctl` の確認コマンドを表示し、同じディスクの通知は
+60秒に1回までに抑える。GUI未ログイン時は通知せずjournalへ記録する。
+自動マウント待機中は失敗ではなく、通常はアクセス時のマウント失敗が通知の対象になる。
+設定は `nixos/system/mount-failure-notifications.nix` で管理する。
+
 ## NixOS (WSL2)
 
 ```shell

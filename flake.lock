@@ -293,11 +293,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794272514,
-        "narHash": "sha256-EA6ph9UPR9ipeUkLU4lyjX6SU2Nu2vmG6afv7BMvH08=",
+        "lastModified": 1794295427,
+        "narHash": "sha256-UCDQjdrq5MGbiOo+OLh+6z/jvZfpgPR5V+pzW48KhFc=",
         "owner": "nrslib",
         "repo": "takt",
-        "rev": "aaf72fe0df2d081d359d9932027ea1cd031da9a6",
+        "rev": "abbf2083024f1f0c44c19f9323806b6b77e3bf4e",
         "type": "github"
       },
       "original": {

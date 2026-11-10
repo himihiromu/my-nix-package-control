@@ -76,14 +76,21 @@
             ];
           };
       localPackagesOverlay = final: prev: {
-        # Qt 6.12 の uic 対応。nixpkgs の Mozc に修正が入ったら削除する。
-        mozc = prev.mozc.overrideAttrs (old: {
-          patches = (old.patches or [ ]) ++ [
-            (prev.fetchurl {
-              url = "https://github.com/google/mozc/commit/29c082a64b577b661694148760a2ae19817beb57.patch";
-              hash = "sha256-TcuMPd3E4ZPhU4tmeVD7OMY4tWFJGjiiSXZSh3gn384=";
-            })
-          ];
+        # 同梱ライブラリを前提とする Codex のビルドで、
+        # cargoSetupHook によるシステムライブラリ使用の強制を無効にする。
+        codex = prev.codex.overrideAttrs (old: {
+          dontCargoUseSystemLibs = true;
+        });
+
+        # cargoSetupHook が要求するシステムの libgit2 を fff.nvim に渡す。
+        vimPlugins = prev.vimPlugins.extend (vimFinal: vimPrev: {
+          fff-nvim = vimPrev.fff-nvim.override {
+            rustPlatform = prev.rustPlatform // {
+              buildRustPackage = args: prev.rustPlatform.buildRustPackage (args // {
+                buildInputs = (args.buildInputs or [ ]) ++ [ prev.libgit2 ];
+              });
+            };
+          };
         });
 
         bash-abbrev-alias = prev.stdenvNoCC.mkDerivation {
@@ -133,7 +140,13 @@
           cargoHash = "sha256-AyyLl9ZLMMikaeDvJhFXwAWgivi89gOqz52eyJZQTXQ=";
 
           nativeBuildInputs = [ prev.pkg-config ];
-          buildInputs = [ prev.openssl ];
+          buildInputs = [ prev.openssl prev.zlib prev.libssh2 ];
+
+          # libgit2-sys 0.17 は libgit2 1.8 系が必要なため、同梱版を使う。
+          # cargoSetupHook が設定する値を configure 後に上書きする。
+          preBuild = ''
+            export LIBGIT2_NO_VENDOR=0
+          '';
 
           env = {
             OPENSSL_NO_VENDOR = "1";

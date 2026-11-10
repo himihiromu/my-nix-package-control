@@ -46,6 +46,7 @@ in
       bufferline.enable = true;
       nvim-tree.enable = true;
       fff.enable = true;
+      fff.package = pkgs.vimPlugins.fff-nvim;
 
       lsp = {
         enable = true;

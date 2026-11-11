@@ -8,6 +8,7 @@
     "jetbrains-toolbox"
     "aquaskk"
     "chrome-remote-desktop-host"
+    "stablyai/orca/orca"
     "stoplight-studio"
     "firefox"
     "visual-studio-code"

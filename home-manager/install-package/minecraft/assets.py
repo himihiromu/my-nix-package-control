@@ -102,8 +102,10 @@ def check_instance(root, instance_id, spec):
         components = {c["uid"]: c["version"] for c in json.loads(pack.read_text())["components"]}
         if components.get("net.minecraft") != spec.get("minecraftVersion", "1.7.10") or components.get("net.minecraftforge") != spec.get("forgeVersion", "10.13.4.1614"):
             raise ValueError(f"既存インスタンスのMinecraft/Forgeの版が違います: {instance}")
-        if set(components) - {"net.minecraft", "net.minecraftforge", "org.lwjgl"}:
-            raise ValueError(f"未確認の追加コンポーネントがあります: {instance}")
+        # Prism adds LWJGL 2 for legacy Minecraft and LWJGL 3 for modern Minecraft.
+        extra_components = set(components) - {"net.minecraft", "net.minecraftforge", "org.lwjgl", "org.lwjgl3"}
+        if extra_components:
+            raise ValueError(f"未確認の追加コンポーネントがあります ({', '.join(sorted(extra_components))}): {instance}")
         ini = configparser.ConfigParser(interpolation=None)
         ini.read(cfg)
         if ini.get("General", "InstanceType", fallback="") != "OneSix":

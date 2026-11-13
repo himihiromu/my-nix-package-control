@@ -16,6 +16,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    prismix = {
+      url = "git+https://codeberg.org/OliMoli/prismix?ref=refs/tags/v0.1.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -182,6 +186,9 @@
               "zoom"
               "discord"
               "discord-unwrapped"
+            ] || builtins.elem pkg.name [
+              "Industrial-1.7.10-Trial-assets.tar.gz"
+              "Industry-Magic-1.7.10-Trial-assets.tar.gz"
             ];
           }).extend (
             neovim-nightly-overlay.overlays.default

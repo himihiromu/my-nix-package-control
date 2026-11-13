@@ -21,6 +21,11 @@
       "steam-unwrapped"
       "steam-run"
       "discord-unwrapped"
+    ]
+    || builtins.elem pkg.name [
+      # requireFileで登録するローカルMOD資産に限定する。
+      "Industrial-1.7.10-Trial-assets.tar.gz"
+      "Industry-Magic-1.7.10-Trial-assets.tar.gz"
     ];
 
   nix.settings = {

@@ -240,6 +240,27 @@
         "type": "github"
       }
     },
+    "prismix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791394826,
+        "narHash": "sha256-KNvEKkHKJ0f0+sjkLZc2zlnKaReYlBT4VsSJHXA92vI=",
+        "ref": "refs/tags/v0.1.0",
+        "rev": "f9155d606cc28b299eb05ce316bb0ccadb8ae371",
+        "revCount": 31,
+        "type": "git",
+        "url": "https://codeberg.org/OliMoli/prismix"
+      },
+      "original": {
+        "ref": "refs/tags/v0.1.0",
+        "type": "git",
+        "url": "https://codeberg.org/OliMoli/prismix"
+      }
+    },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -250,6 +271,7 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_2",
         "nixvim": "nixvim",
+        "prismix": "prismix",
         "takt": "takt",
         "vim-src": "vim-src"
       }

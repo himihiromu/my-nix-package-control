@@ -5,8 +5,8 @@ NixOS/Home Managerのswitch、OBS設定変更、chezmoi applyは実行してい�
 
 ## 管理境界と導入
 
-- Nix: `home-manager/linux/obs.nix` がOBSと `obs-pipewire-audio-capture` を導入。
-  `obs-control.nix` / `.py` がPython + websockets + libnotifyの操作コマンドを提供する。
+- Nix: `home-manager/linux/obs/default.nix` がOBSと `obs-pipewire-audio-capture` を導入。
+  `obs/control.nix` / `obs/control.py` がPython + websockets + libnotifyの操作コマンドを提供する。
   常駐クライアントは追加しない。
 - chezmoi: GUI生成後の録画プロファイル、録画エンコーダー、シーン、保存先、リプレイ設定。
   OBS設定をHome Managerの `xdg.configFile` / シンボリックリンクで配置しない。
@@ -147,8 +147,8 @@ Portalのトークンやゲームの音声識別子は端末をまたいだ復�
 
 Nix側の変更ファイル:
 
-- `home-manager/linux/obs.nix`: Home ManagerのOBSモジュールと4キーバインド（Hyprlang/Lua対応）。
-- `home-manager/linux/obs-control.nix` / `obs-control.py`: 操作用パッケージと実装。
+- `home-manager/linux/obs/default.nix`: Home ManagerのOBSモジュールと4キーバインド（Hyprlang/Lua対応）。
+- `home-manager/linux/obs/control.nix` / `control.py`: 操作用パッケージと実装。
 - `home-manager/linux/services.nix`: OBSモジュールのimport。
 - `home-manager/linux/multimedia.nix`: 素のOBSをパッケージ一覧から除き、二重導入を避ける。
 - `tests/test_obs_control.py`: WebSocket認証・状態遷移・失敗時の検証。

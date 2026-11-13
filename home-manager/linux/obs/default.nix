@@ -5,7 +5,7 @@
   ...
 }:
 let
-  obsControl = pkgs.callPackage ./obs-control.nix { };
+  obsControl = pkgs.callPackage ./control.nix { };
   commands = [
     {
       key = "O";

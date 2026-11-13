@@ -14,7 +14,7 @@ from websockets.sync.client import connect
 from websockets.sync.server import serve
 
 SPEC = importlib.util.spec_from_file_location(
-    "obs_control", Path(__file__).resolve().parents[1] / "home-manager/linux/obs-control.py")
+    "obs_control", Path(__file__).resolve().parents[1] / "home-manager/linux/obs/control.py")
 control = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(control)
 

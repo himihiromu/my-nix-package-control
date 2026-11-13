@@ -6,6 +6,6 @@ pkgs.writeShellApplication {
   name = "obs-control";
   runtimeInputs = [ pkgs.libnotify ];
   text = ''
-    exec ${python}/bin/python3 ${./obs-control.py} "$@"
+    exec ${python}/bin/python3 ${./control.py} "$@"
   '';
 }

@@ -13,7 +13,7 @@ in
 {
   imports = [
     ./waybar.nix
-    ./obs.nix
+    ./obs
   ];
 
   home.file = {

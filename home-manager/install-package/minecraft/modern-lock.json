@@ -1,0 +1,343 @@
+{
+  "instanceId": "Industry-Magic-1.20.1",
+  "displayName": "Industry & Magic 1.20.1",
+  "minecraftVersion": "1.20.1",
+  "forgeVersion": "47.4.28",
+  "checkedDate": "2026-11-13",
+  "excluded": {
+    "Modern Industrialization": "Minecraft 1.20.1版はFabric用のため除外",
+    "Touhou Little Maid": "2026-11-13: 配信・収益化の素材利用条件が未確認のため、ユーザー依頼で除外"
+  },
+  "mods": [
+    {
+      "filename": "create-1.20.1-6.0.8.jar",
+      "url": "https://cdn.modrinth.com/data/LNytGWDc/versions/8amzvn9x/create-1.20.1-6.0.8.jar",
+      "sha256": "6fbb910c367dbce8e4fc7e5bf64b6edd4de980906ed00af8e47e4af843c0d9b0",
+      "version": "mc1.20.1-6.0.8",
+      "versionId": "8amzvn9x"
+    },
+    {
+      "filename": "Mekanism-1.20.1-10.4.16.80.jar",
+      "url": "https://cdn.modrinth.com/data/Ce6I4WUE/versions/uxe1WQp4/Mekanism-1.20.1-10.4.16.80.jar",
+      "sha256": "3b0d191fa4a45e662f9725991d76a30192f30186abb2ba694b873b5f7b9358d2",
+      "version": "10.4.16.80",
+      "versionId": "uxe1WQp4"
+    },
+    {
+      "filename": "MekanismGenerators-1.20.1-10.4.16.80.jar",
+      "url": "https://cdn.modrinth.com/data/OFVYKsAk/versions/Th4Czz4N/MekanismGenerators-1.20.1-10.4.16.80.jar",
+      "sha256": "be2d5b8553f8638cfabf491002f95cef6acef210f627addb391f5af713502512",
+      "version": "10.4.16.80",
+      "versionId": "Th4Czz4N"
+    },
+    {
+      "filename": "appliedenergistics2-forge-15.4.12.jar",
+      "url": "https://cdn.modrinth.com/data/XxWD5pD3/versions/QRpVsqDI/appliedenergistics2-forge-15.4.12.jar",
+      "sha256": "b9c5928893a20d3feb0b4393e2c23d756a16d9abee24d9c14c98e6096d53844d",
+      "version": "15.4.12",
+      "versionId": "QRpVsqDI"
+    },
+    {
+      "filename": "industrial-foregoing-1.20.1-3.5.22.jar",
+      "url": "https://cdn.modrinth.com/data/lWxpUd04/versions/5XXYqEMK/industrial-foregoing-1.20.1-3.5.22.jar",
+      "sha256": "9220ddde2c259c8dfa5c05ad23b26650dc9b2f3048c4aca3b1d9d6f4cd211f3d",
+      "version": "1.20.1-3.5.22",
+      "versionId": "5XXYqEMK"
+    },
+    {
+      "filename": "ars_nouveau-1.20.1-4.12.7-all.jar",
+      "url": "https://cdn.modrinth.com/data/TKB6INcv/versions/Hw2aD01e/ars_nouveau-1.20.1-4.12.7-all.jar",
+      "sha256": "1f1debc282a0c379c1141f2840ea294eede6f6b544c589663f40bbe17b59a1af",
+      "version": "4.12.7",
+      "versionId": "Hw2aD01e"
+    },
+    {
+      "filename": "ars_creo-1.20.1-4.3.0.jar",
+      "url": "https://cdn.modrinth.com/data/fZ324GMc/versions/bLLhDnY2/ars_creo-1.20.1-4.3.0.jar",
+      "sha256": "31964f41303ee2265ac4dbed66c6af20c11bd01637016d13e8de091e87fb78f7",
+      "version": "4.3.0",
+      "versionId": "bLLhDnY2"
+    },
+    {
+      "filename": "productivebees-1.20.1-12.6.0.jar",
+      "url": "https://cdn.modrinth.com/data/jH6iiqkd/versions/mywVOObd/productivebees-1.20.1-12.6.0.jar",
+      "sha256": "b728e5640fcfd0bd7137cabf475455588452ace89a3dd136333a60fdf7049af4",
+      "version": "1.20.1-12.6.0",
+      "versionId": "mywVOObd"
+    },
+    {
+      "filename": "FarmersDelight-1.20.1-1.3.4.jar",
+      "url": "https://cdn.modrinth.com/data/R2OftAxM/versions/SiIpcZzM/FarmersDelight-1.20.1-1.3.4.jar",
+      "sha256": "34f03eb671ea1ca579b00c98e4541404cb96d1a292014aed9cc5eb45ad8afbce",
+      "version": "1.20.1-1.3.4",
+      "versionId": "SiIpcZzM"
+    },
+    {
+      "filename": "thermal_foundation-1.20.1-11.0.6.70.jar",
+      "url": "https://cdn.modrinth.com/data/Xvg6q5Wp/versions/44ilyZbi/thermal_foundation-1.20.1-11.0.6.70.jar",
+      "sha256": "8cb610abb3c835b47f9b4ec19be6a54104d1f61230b67a9d5bfd097c5ac45823",
+      "version": "11.0.6",
+      "versionId": "44ilyZbi"
+    },
+    {
+      "filename": "thermal_expansion-1.20.1-11.0.1.29.jar",
+      "url": "https://cdn.modrinth.com/data/hmD6rrUJ/versions/Ux2Z0ow1/thermal_expansion-1.20.1-11.0.1.29.jar",
+      "sha256": "f44d9e2476deb0ce2700c3837aa6e99c6a6bc95bc2d89d69ebe34b6c3a612633",
+      "version": "11.0.1",
+      "versionId": "Ux2Z0ow1"
+    },
+    {
+      "filename": "thermal_dynamics-1.20.1-11.0.1.23.jar",
+      "url": "https://cdn.modrinth.com/data/t8bmWGI2/versions/KaJ5ADIU/thermal_dynamics-1.20.1-11.0.1.23.jar",
+      "sha256": "1eb755e77b8bbdf5fef16c1b725002d2b47520b544e49f1274724986ab677ca0",
+      "version": "11.0.1",
+      "versionId": "KaJ5ADIU"
+    },
+    {
+      "filename": "thermal_cultivation-1.20.1-11.0.1.24.jar",
+      "url": "https://cdn.modrinth.com/data/5beJoehw/versions/A2jLUXFB/thermal_cultivation-1.20.1-11.0.1.24.jar",
+      "sha256": "6d8fb94fab048954144a81d14b95a5917ac5bfc5d277695dc4dda3bcecd6c03a",
+      "version": "11.0.1",
+      "versionId": "A2jLUXFB"
+    },
+    {
+      "filename": "thermal_innovation-1.20.1-11.0.1.23.jar",
+      "url": "https://cdn.modrinth.com/data/MNgLmnvM/versions/pzbezfsE/thermal_innovation-1.20.1-11.0.1.23.jar",
+      "sha256": "cb9ae2b7184b01441687a9fd7ca534d861b37b46934003dc14f2675bc844150f",
+      "version": "11.0.1",
+      "versionId": "pzbezfsE"
+    },
+    {
+      "filename": "thermal_locomotion-1.20.1-11.0.1.19.jar",
+      "url": "https://cdn.modrinth.com/data/L3eFR8i3/versions/nkfnQtdO/thermal_locomotion-1.20.1-11.0.1.19.jar",
+      "sha256": "45565603b45eeac7df4a1c6dd36afb600a52f2c334be336260c357d7563e0682",
+      "version": "11.0.1",
+      "versionId": "nkfnQtdO"
+    },
+    {
+      "filename": "EnderIO-1.20.1-6.2.18-beta-all.jar",
+      "url": "https://cdn.modrinth.com/data/49ZofO4f/versions/nJnmg29v/EnderIO-1.20.1-6.2.18-beta-all.jar",
+      "sha256": "9d1471e6d4562d0a50f0564bc46573b87fd738bd440fe19397d31847da20f172",
+      "version": "6.2.18-beta",
+      "versionId": "nJnmg29v"
+    },
+    {
+      "filename": "Applied-Mekanistics-1.4.3.jar",
+      "url": "https://cdn.modrinth.com/data/IiATswDj/versions/9n9p68Qq/Applied-Mekanistics-1.4.3.jar",
+      "sha256": "e1aafd9c2ae1cab7bb6905ec61718aed41b9f07c05148c9a033e4bb886173d2c",
+      "version": "1.4.3",
+      "versionId": "9n9p68Qq"
+    },
+    {
+      "filename": "appliedcreate-1.20.1-1.1.6.jar",
+      "url": "https://cdn.modrinth.com/data/XmZgyZzj/versions/Xm22wdvJ/appliedcreate-1.20.1-1.1.6.jar",
+      "sha256": "a0210b46a9c266a0d56e0f34c0df571fd78cff5c7497ad4b27b00105c1612a85",
+      "version": "1.1.6",
+      "versionId": "Xm22wdvJ"
+    },
+    {
+      "filename": "occultism-1.20.1-1.158.0.jar",
+      "url": "https://cdn.modrinth.com/data/sbJh4AZw/versions/hs5pHmiU/occultism-1.20.1-1.158.0.jar",
+      "sha256": "21449cefa0a64ab6a8750cdbf1e0f90408366f6e90497cf4d0367c98b2159754",
+      "version": "1.20.1-1.158.0",
+      "versionId": "hs5pHmiU"
+    },
+    {
+      "filename": "ars_ocultas-1.20.1-1.2.2-all.jar",
+      "url": "https://cdn.modrinth.com/data/Tsw8vbks/versions/si2iOQut/ars_ocultas-1.20.1-1.2.2-all.jar",
+      "sha256": "5373af3f799173f07cdb48142bf90c33d05b74fd081ccde9df7632c393d09840",
+      "version": "1.20.1-1.2.2",
+      "versionId": "si2iOQut"
+    },
+    {
+      "filename": "railcraft-reborn-1.20.1-1.1.11.jar",
+      "url": "https://cdn.modrinth.com/data/rO6kKst6/versions/wNOUeJHM/railcraft-reborn-1.20.1-1.1.11.jar",
+      "sha256": "a859a6f75069097dc052a74fdba0624571a23a429ba3ec4624168b33716bc1f2",
+      "version": "1.1.11",
+      "versionId": "wNOUeJHM"
+    },
+    {
+      "filename": "rftoolsbuilder-1.20-6.0.11.jar",
+      "url": "https://cdn.modrinth.com/data/e0IclJLr/versions/5wxNTLy4/rftoolsbuilder-1.20-6.0.11.jar",
+      "sha256": "5424f6919c12bd0598addc60acda7a2560ba3ecdb54015ae3e2efbdba8d04d4c",
+      "version": "1.20-6.0.11",
+      "versionId": "5wxNTLy4"
+    },
+    {
+      "filename": "irons_spellbooks-1.20.1-3.16.3.jar",
+      "url": "https://cdn.modrinth.com/data/s4OWxYQQ/versions/hZaEegS9/irons_spellbooks-1.20.1-3.16.3.jar",
+      "sha256": "54b5aaa52887c38f570fbd820288171234d8541c17a5e953f9271189fdd480fb",
+      "version": "1.20.1-3.16.3",
+      "versionId": "hZaEegS9"
+    },
+    {
+      "filename": "TConstruct-1.20.1-3.12.1.231.jar",
+      "url": "https://cdn.modrinth.com/data/rxIIYO6c/versions/Fv0zTUuh/TConstruct-1.20.1-3.12.1.231.jar",
+      "sha256": "474bb3e14646be1b4e343aa0d3a8482ff5db6350da19355fac6c5ddd2050ac19",
+      "version": "3.12.1.231",
+      "versionId": "Fv0zTUuh"
+    },
+    {
+      "filename": "silent-gear-1.20.1-3.6.7.jar",
+      "url": "https://cdn.modrinth.com/data/73mSSnCf/versions/2Chvw4VA/silent-gear-1.20.1-3.6.7.jar",
+      "sha256": "0f438b1919544e6ba0b4e44ee4496d7dfab878f90c9ab02cca46507217e0dc5a",
+      "version": "3.6.7",
+      "versionId": "2Chvw4VA"
+    },
+    {
+      "filename": "emi-1.1.24+1.20.1+forge.jar",
+      "url": "https://cdn.modrinth.com/data/fRiHVvU7/versions/Axuu9I9R/emi-1.1.24%2B1.20.1%2Bforge.jar",
+      "sha256": "92784dcf5222d72983a420c90f2e9240468ee0fece96f757c82d7884b6cbdb72",
+      "version": "1.1.24+1.20.1+forge",
+      "versionId": "Axuu9I9R"
+    },
+    {
+      "filename": "xaerominimap-forge-1.20.1-26.6.0.jar",
+      "url": "https://cdn.modrinth.com/data/1bokaNcj/versions/dB6E0CY9/xaerominimap-forge-1.20.1-26.6.0.jar",
+      "sha256": "9b39cd06094d7631c8614d172d0ba8399c71c981530af417f12a7909fcb855bd",
+      "version": "forge-1.20.1-26.6.0",
+      "versionId": "dB6E0CY9"
+    },
+    {
+      "filename": "architectury-9.2.14-forge.jar",
+      "url": "https://cdn.modrinth.com/data/lhGA9TYQ/versions/1MKTLiiG/architectury-9.2.14-forge.jar",
+      "sha256": "218b471d0b8a1f6cda14cfc1beb9eeb0df54304500acc6c5613d9b88ec65d9af",
+      "version": "9.2.14+forge",
+      "versionId": "1MKTLiiG"
+    },
+    {
+      "filename": "Patchouli-1.20.1-85-FORGE.jar",
+      "url": "https://cdn.modrinth.com/data/nU0bVIaL/versions/94dtOLgZ/Patchouli-1.20.1-85-FORGE.jar",
+      "sha256": "05f7b5d52f6b8f0fd7f8b4822fa07a192d1394d83a264309c9d221d6d4fd21c5",
+      "version": "1.20.1-85-forge",
+      "versionId": "94dtOLgZ"
+    },
+    {
+      "filename": "player-animation-lib-forge-1.0.2-rc1+1.20.jar",
+      "url": "https://cdn.modrinth.com/data/gedNE4y2/versions/xe2EVE6q/player-animation-lib-forge-1.0.2-rc1%2B1.20.jar",
+      "sha256": "90d9965cb9efdbda29fdc5610be3914cf7008bf5c392ff34f7ab25f96a852691",
+      "version": "1.0.2-rc1+1.20-forge",
+      "versionId": "xe2EVE6q"
+    },
+    {
+      "filename": "irons_lib-1.20.1-2.3.0.jar",
+      "url": "https://cdn.modrinth.com/data/9nfaJPtX/versions/IptroA3L/irons_lib-1.20.1-2.3.0.jar",
+      "sha256": "85f606530258f7a37b73f6138da0aeb512f3aa9fe7b5253fb15b0b670fa1862f",
+      "version": "1.20.1-2.3.0",
+      "versionId": "IptroA3L"
+    },
+    {
+      "filename": "jei-1.20.1-forge-15.74.0.234.jar",
+      "url": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/6E4ps2ER/jei-1.20.1-forge-15.74.0.234.jar",
+      "sha256": "0bbd27c886b974be6906fe16f5e5e3ace8a87350b32e4361cca0213df1e7e86e",
+      "version": "15.74.0.234",
+      "versionId": "6E4ps2ER"
+    },
+    {
+      "filename": "guideme-20.1.15.jar",
+      "url": "https://cdn.modrinth.com/data/Ck4E7v7R/versions/i7Tp1AHw/guideme-20.1.15.jar",
+      "sha256": "cf8052ab3da121012efc59a20e731c24bfe7488dfa556c9b88809f42dea3b24a",
+      "version": "20.1.15",
+      "versionId": "i7Tp1AHw"
+    },
+    {
+      "filename": "titanium-1.20.1-3.8.37.jar",
+      "url": "https://cdn.modrinth.com/data/1Ro7m06l/versions/Hiz07O4L/titanium-1.20.1-3.8.37.jar",
+      "sha256": "e71e6400cb2e6b137d7c319ef58912c8e3bf652e74c1b8221160a85649b8ec5f",
+      "version": "1.20.1-3.8.37",
+      "versionId": "Hiz07O4L"
+    },
+    {
+      "filename": "cofh_core-1.20.1-11.0.2.56.jar",
+      "url": "https://cdn.modrinth.com/data/OWSRM4vD/versions/kglS53Hd/cofh_core-1.20.1-11.0.2.56.jar",
+      "sha256": "d7cd3ec8083e294e17cb50fe607b416c1dc83ce885e53ba3995d86e028f790e0",
+      "version": "11.0.2",
+      "versionId": "kglS53Hd"
+    },
+    {
+      "filename": "kotlinforforge-4.12.0-all.jar",
+      "url": "https://cdn.modrinth.com/data/ordsPcFz/versions/Zsh14XeQ/kotlinforforge-4.12.0-all.jar",
+      "sha256": "6a66c6a68ec09f8717cdbf06883394f0ee24d7cd826b7134a0f81839e8e720ae",
+      "version": "4.12.0",
+      "versionId": "Zsh14XeQ"
+    },
+    {
+      "filename": "curios-forge-5.14.1+1.20.1.jar",
+      "url": "https://cdn.modrinth.com/data/vvuO3ImH/versions/IPQlZkz1/curios-forge-5.14.1%2B1.20.1.jar",
+      "sha256": "1e817919a35b37cf30524aaec73f0ca5130452f23f168f844854df282eb8e51f",
+      "version": "5.14.1+1.20.1",
+      "versionId": "IPQlZkz1"
+    },
+    {
+      "filename": "SmartBrainLib-forge-1.20.1-1.15.jar",
+      "url": "https://cdn.modrinth.com/data/PuyPazRT/versions/YkeJNm33/SmartBrainLib-forge-1.20.1-1.15.jar",
+      "sha256": "dc1f5497e1a175397fa10ea84170d8311c71b592976128700fb008139dde55d4",
+      "version": "1.15",
+      "versionId": "YkeJNm33"
+    },
+    {
+      "filename": "modonomicon-1.20.1-forge-1.79.3.jar",
+      "url": "https://cdn.modrinth.com/data/692GClaE/versions/J0YtwRxM/modonomicon-1.20.1-forge-1.79.3.jar",
+      "sha256": "6a95475102948bff7046b53bc3882ebfdfcf8f0d7a5d14fe612e63680cfe18a3",
+      "version": "1.20.1-1.79.3",
+      "versionId": "J0YtwRxM"
+    },
+    {
+      "filename": "geckolib-forge-1.20.1-4.8.4.jar",
+      "url": "https://cdn.modrinth.com/data/8BmcQJ2H/versions/aC5KMoNg/geckolib-forge-1.20.1-4.8.4.jar",
+      "sha256": "4518779a31b6c2abb92c98b5ad17ef3d60177df68626bfc86c44de2764913c2b",
+      "version": "4.8.4",
+      "versionId": "aC5KMoNg"
+    },
+    {
+      "filename": "mcjtylib-1.20-8.0.10.jar",
+      "url": "https://cdn.modrinth.com/data/1Zu0uTEE/versions/PbhlcKAx/mcjtylib-1.20-8.0.10.jar",
+      "sha256": "04f174457e4a34ab50c350306cf8b7128ba15dbdc116739a43cd625f722a862d",
+      "version": "1.20-8.0.10",
+      "versionId": "PbhlcKAx"
+    },
+    {
+      "filename": "rftoolsbase-1.20-5.0.7.jar",
+      "url": "https://cdn.modrinth.com/data/hIO8IsD8/versions/dYvtIH7M/rftoolsbase-1.20-5.0.7.jar",
+      "sha256": "8ba2f257cfafa034fa86971005cc416979563badd0525fdbfeea40da48e6375e",
+      "version": "1.20-5.0.7",
+      "versionId": "dYvtIH7M"
+    },
+    {
+      "filename": "Mantle-1.20.1-1.11.128.jar",
+      "url": "https://cdn.modrinth.com/data/Cg6Uc79H/versions/WWRIIbP8/Mantle-1.20.1-1.11.128.jar",
+      "sha256": "7006205556fef70b0d8c3dc96f6bc98707168e0b74f580d83a97857580d0c49d",
+      "version": "1.11.128",
+      "versionId": "WWRIIbP8"
+    },
+    {
+      "filename": "silent-lib-1.20.1-8.0.0.jar",
+      "url": "https://cdn.modrinth.com/data/BQhuHQo4/versions/WGt4877n/silent-lib-1.20.1-8.0.0.jar",
+      "sha256": "c1ea062ee42eb3d9cd7113de92d02f4412722ad0f7d129192d61ef98f1ad0ee1",
+      "version": "8.0.0",
+      "versionId": "WGt4877n"
+    },
+    {
+      "filename": "mezz_config-1.20.1-forge-0.7.1.jar",
+      "url": "https://cdn.modrinth.com/data/7tEfOcA7/versions/wcPo3ErK/mezz_config-1.20.1-forge-0.7.1.jar",
+      "sha256": "e7321d592293a09461f3a7dbc19d46f790c7ada63931e6f986cede87dbcbea1c",
+      "version": "0.7.1",
+      "versionId": "wcPo3ErK"
+    },
+    {
+      "filename": "compactmachines-forge-6.0.3.jar",
+      "url": "https://mediafilez.forgecdn.net/files/6000/230/compactmachines-forge-6.0.3.jar",
+      "sha256": "2661e00951be5e355bf68786fc4ffd573a22d41a86dbb414e954947dc7522f57"
+    },
+    {
+      "filename": "ftb-ultimine-forge-2001.1.7.jar",
+      "url": "https://maven.ftb.dev/releases/dev/ftb/mods/ftb-ultimine-forge/2001.1.7/ftb-ultimine-forge-2001.1.7.jar",
+      "sha256": "317c94a8ad011907932b7f0eec875b1b0233bc9164e8920c702186570da74d69"
+    },
+    {
+      "filename": "ftb-library-forge-2001.2.12.jar",
+      "url": "https://maven.ftb.dev/releases/dev/ftb/mods/ftb-library-forge/2001.2.12/ftb-library-forge-2001.2.12.jar",
+      "sha256": "f09335944fff8ca3ef37a40e0b125ffb6707759ede258c73f9ce9bac61bfbf96"
+    }
+  ]
+}

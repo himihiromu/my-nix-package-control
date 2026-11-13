@@ -52,6 +52,10 @@ in
       takt-package
       zed
     ]
+    ++ pkgs.lib.optionals (isLinux && isDesktop) [
+      inputs.prismix.homeModules.default
+      ./install-package/minecraft
+    ]
     ++ (
       if isLinux && isDesktop && !isWsl then
         [

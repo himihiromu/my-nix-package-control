@@ -80,6 +80,16 @@ WSL固有のOS設定とGUIセッション除外に使い、NixOSとHome Manager�
 WSLでは `mise nixos switch nixos-wsl` で構成を明示する。
 dotfilesの初回導入スクリプトはNixOSの場合 `#nixos` を選ぶため、WSLの自動選択には別途修正が必要。
 
+## Minecraft（Linux Desktop）
+
+Prism Launcher と Prismix で Vanilla（Minecraft **26.3 / Java 25**、メモリ **1–4 GiB**）と、
+「工業MOD」「工業と魔術」（**1.7.10 / Forge 10.13.4.1614 / Java 8**、メモリ **1–6 GiB**）を管理する。
+`isDesktop = true` の Linux Home Manager 構成で有効。MOD資産はローカルアーカイブのハッシュで固定し、
+ワールドと編集済みMOD設定は再適用で上書きしない。初回ビルド前に資産登録が必要。
+新しい[工業・魔術の1.20.1環境](docs/minecraft-modern.md)も追加している（Forge 47.4.28 / Java 17 / メモリ1–8 GiB）。
+導入・Microsoft ログイン・サバイバル/ノーマルのワールド作成・保存先・更新手順・検証方法は
+[Minecraft の運用手順](docs/minecraft.md)を参照。
+
 ## nix-darwin (macOS)
 
 ```shell

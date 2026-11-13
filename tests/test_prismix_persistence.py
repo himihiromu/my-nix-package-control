@@ -199,6 +199,56 @@ class PersistenceTests(unittest.TestCase):
         self.assertEqual(pack.read_bytes(), before)
         self.assertFalse((instance / ".legacy-before-nix").exists())
 
+    def test_existing_modern_instance_with_lwjgl3_is_adopted(self):
+        self.apply_fragments(self.current)
+        instance = self.data / "instances/Industry-Magic-1.20.1"
+        for name in ("instance.cfg", "mmc-pack.json"):
+            (instance / (".hm_" + name)).unlink()
+        pack_path = instance / "mmc-pack.json"
+        pack = json.loads(pack_path.read_text())
+        pack["components"].insert(0, {
+            "uid": "org.lwjgl3", "version": "3.3.1", "dependencyOnly": True,
+        })
+        pack_path.write_text(json.dumps(pack))
+        before_pack = pack_path.read_bytes()
+        cfg = instance / "instance.cfg"
+        cfg.write_text(cfg.read_text() + "\n[Custom]\nkeep=yes\n")
+        before_cfg = cfg.read_bytes()
+        world = instance / "minecraft/saves/Existing/level.dat"
+        world.parent.mkdir()
+        world.write_bytes(b"existing-modern-world")
+        options = instance / "minecraft/options.txt"
+        options.write_text("user-options\n")
+        self.apply_fragments(self.current)
+        self.assertEqual((instance / ".legacy-before-nix/mmc-pack.json").read_bytes(), before_pack)
+        self.assertEqual((instance / ".legacy-before-nix/instance.cfg").read_bytes(), before_cfg)
+        self.assertIn("keep=yes", cfg.read_text())
+        self.assertEqual(world.read_bytes(), b"existing-modern-world")
+        self.assertEqual(options.read_text(), "user-options\n")
+
+    def test_existing_modern_unknown_component_or_wrong_version_is_rejected(self):
+        instance = self.data / "instances/Industry-Magic-1.20.1"
+        instance.mkdir(parents=True)
+        (instance / "instance.cfg").write_text("[General]\nInstanceType=OneSix\n")
+        pack_path = instance / "mmc-pack.json"
+        for extra, minecraft, forge, error in [
+            ([{"uid": "unknown.loader", "version": "1"}], "1.20.1", "47.4.28", "unknown.loader"),
+            ([], "1.20.2", "47.4.28", "Minecraft/Forge"),
+            ([], "1.20.1", "47.4.0", "Minecraft/Forge"),
+        ]:
+            with self.subTest(extra=extra, minecraft=minecraft, forge=forge):
+                pack_path.write_text(json.dumps({"components": [
+                    {"uid": "org.lwjgl3", "version": "3.3.1", "dependencyOnly": True},
+                    {"uid": "net.minecraft", "version": minecraft},
+                    {"uid": "net.minecraftforge", "version": forge},
+                ] + extra}))
+                before = pack_path.read_bytes()
+                result = self.shell(self.current["modernCheckScript"], self.current)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(error, result.stderr)
+                self.assertEqual(pack_path.read_bytes(), before)
+                self.assertFalse((instance / ".legacy-before-nix").exists())
+
     def test_modern_pack_versions_and_worlds_survive_reapply(self):
         self.apply_fragments(self.current)
         instance = self.data / "instances/Industry-Magic-1.20.1"

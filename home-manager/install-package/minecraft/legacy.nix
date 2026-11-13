@@ -5,10 +5,10 @@
   ...
 }:
 let
-  manifestFile = ./minecraft-legacy-manifest.json;
+  manifestFile = ./legacy-manifest.json;
   manifest = builtins.fromJSON (builtins.readFile manifestFile);
   dataDir = "${config.xdg.dataHome}/PrismLauncher";
-  helper = "${pkgs.python3}/bin/python3 ${./minecraft-legacy.py}";
+  helper = "${pkgs.python3}/bin/python3 ${./assets.py}";
   arguments = "--manifest ${manifestFile} --data-dir ${lib.escapeShellArg dataDir}";
   assets = pkgs.runCommand "minecraft-legacy-assets" { nativeBuildInputs = [ pkgs.gnutar ]; } (
     lib.concatStringsSep "\n" (

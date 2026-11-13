@@ -8,8 +8,8 @@
 - 表示名: **Industry & Magic 1.20.1**
 - Minecraft **1.20.1** / Forge **47.4.28** / Java **17**
 - メモリ: 最小1024 MiB / 最大8192 MiB。初期表示は日本語、描画距離8チャンク。
-- Nixモジュール: `home-manager/install-package/minecraft-modern.nix`
-- 固定ファイル: `home-manager/install-package/minecraft-modern-lock.json`
+- Nixモジュール: `home-manager/install-package/minecraft/modern.nix`
+- 固定ファイル: `home-manager/install-package/minecraft/modern-lock.json`
 
 ## 選定したMOD
 

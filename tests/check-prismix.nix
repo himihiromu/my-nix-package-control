@@ -17,7 +17,7 @@ let
       inherit pkgs;
       modules = [
         flake.inputs.prismix.homeModules.default
-        ../home-manager/install-package/minecraft.nix
+        ../home-manager/install-package/minecraft
         {
           home.username = "prismix-test";
           home.homeDirectory = "/tmp/prismix-fixture-home";

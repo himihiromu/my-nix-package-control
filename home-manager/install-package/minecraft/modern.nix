@@ -5,7 +5,7 @@
   ...
 }:
 let
-  lockFile = ./minecraft-modern-lock.json;
+  lockFile = ./modern-lock.json;
   lock = builtins.fromJSON (builtins.readFile lockFile);
   id = lock.instanceId;
   dataDir = "${config.xdg.dataHome}/PrismLauncher";
@@ -28,7 +28,7 @@ let
       ${id} = {
         inherit (lock) minecraftVersion forgeVersion;
         language = "ja_jp";
-        archiveName = "minecraft-modern-lock.json";
+        archiveName = "modern-lock.json";
         archiveSha256 = builtins.hashString "sha256" (builtins.readFile lockFile);
         files = builtins.listToAttrs (
           map (mod: {
@@ -39,7 +39,7 @@ let
       };
     }
   );
-  helper = "${pkgs.python3}/bin/python3 ${./minecraft-legacy.py}";
+  helper = "${pkgs.python3}/bin/python3 ${./assets.py}";
   arguments = "--manifest ${manifest} --data-dir ${lib.escapeShellArg dataDir}";
 in
 {

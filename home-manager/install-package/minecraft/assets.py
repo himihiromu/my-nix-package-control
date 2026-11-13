@@ -1,4 +1,4 @@
-"""ローカルの旧MOD資産を固定し、セーブを触らずにPrism環境を初期化する。"""
+"""MOD資産の登録とPrism環境の初期化。既存のセーブ・編集済み設定は保持する。"""
 import argparse
 import configparser
 import gzip

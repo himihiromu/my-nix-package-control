@@ -4,8 +4,25 @@
 
 ## 構成
 
+Minecraftの実装は `home-manager/install-package/minecraft/` にまとめる。
+
+```text
+minecraft/
+├── default.nix          # Launcher・Vanillaと各環境の読み込み
+├── legacy.nix           # 1.7.10の2環境
+├── legacy-manifest.json # 旧MOD・初期設定のファイルとハッシュ
+├── modern.nix           # 1.20.1環境
+├── modern-lock.json     # 配布URL・バージョン・ハッシュ
+└── assets.py            # 資産登録・照合・既存設定を保持した初期配置
+```
+
+固定JSONはNix定義と合わせて更新する構成情報なので、このリポジトリで管理する。
+プレイ中に変わる `options.txt`、MOD設定、ワールド、認証情報はユーザーデータとして扱う。
+これらを固定JSONと一緒にGitへ入れたり、適用のたびに初期状態へ戻したりしない。
+dotfiles側へMODの固定情報を重複させない。
+
 既存の `home-manager/default.nix` から、Linux かつ `isDesktop = true` の場合だけ
-Prismix と `install-package/minecraft.nix` を import する。NixOS 経由・単体 Home Manager の両方で利用できる。
+Prismix と `install-package/minecraft/default.nix` を import する。NixOS 経由・単体 Home Manager の両方で利用できる。
 macOS と CLI 構成には追加しない。Linux Desktop の WSL では WSLg 等の GUI 環境が別途必要。
 
 - Prismix: **v0.1.0**、`f9155d606cc28b299eb05ce316bb0ccadb8ae371`。
@@ -18,7 +35,7 @@ macOS と CLI 構成には追加しない。Linux Desktop の WSL では WSLg �
 - インスタンス名・ディレクトリ名: **Vanilla**。
   Minecraft **26.3**、Java **25**、最小 **1024 MiB**、最大 **4096 MiB**。
   MOD ローダー・MOD・シェーダー・リソースパックは追加しない。
-- 旧MOD環境は `install-package/minecraft-legacy.nix` で以下の2つを追加する。
+- 旧MOD環境は `install-package/minecraft/legacy.nix` で以下の2つを追加する。
 
 | インスタンスID | 表示名 | Minecraft / Forge | Java / メモリ |
 | --- | --- | --- | --- |
@@ -62,7 +79,7 @@ Prismix は `options.txt` の設定を扱えるが、ワールドのゲームモ
 
 ## 1.7.10のローカルMOD資産
 
-ファイル定義は `home-manager/install-package/minecraft-legacy-manifest.json` に置く。
+ファイル定義は `home-manager/install-package/minecraft/legacy-manifest.json` に置く。
 元の「工業MOD」「工業と魔術」のMOD本体、`mods/1.7.10/` のライブラリ、MODの初期設定、
 `GregTech.cfg` / `GregTech.lang` をSHA-256で固定する。ミニマップの `.points`、
 セーブ、バックアップ、ログ、Microsoft認証情報は含めない。
@@ -72,8 +89,8 @@ MODバイナリをGitへ格納したり、オンラインの最新版へ置き�
 
 ```sh
 nix shell --inputs-from . nixpkgs#python3 -c python3 \
-  home-manager/install-package/minecraft-legacy.py cache \
-  --manifest home-manager/install-package/minecraft-legacy-manifest.json
+  home-manager/install-package/minecraft/assets.py cache \
+  --manifest home-manager/install-package/minecraft/legacy-manifest.json
 ```
 
 適用後は同じ処理を `minecraft-legacy-cache` で実行できる。
@@ -153,7 +170,7 @@ Prismix を設定から外してもワールドは残るが、`.hm_*` がなく�
 | Java パス・メモリ・MOD 定義 | セーブ・スクリーンショット・ゲーム内設定 |
 
 Minecraft を更新する場合は、ゲームを終了してワールドをバックアップし、公式のリリースと Java 要求を確認する。
-`home-manager/install-package/minecraft.nix` の `minecraft.version` と必要なら Java を変更し、評価・ビルド後に通常の手順で適用する。
+`home-manager/install-package/minecraft/default.nix` の `minecraft.version` と必要なら Java を変更し、評価・ビルド後に通常の手順で適用する。
 `nix flake update` だけでは Minecraft の明示した版は変わらない。新しい版で開いたワールドの古い版への戻しは避ける。
 Prismix 自体を更新する場合は input のタグを変更して `nix flake update prismix` を実行し、API と activation の差分を確認する。
 
@@ -168,7 +185,7 @@ MOD は `mod.mods` の固定ハッシュ付きパスで追加する。Prismix �
 
 ```sh
 # リポジトリのルートで実行。いずれも switch しない。
-nix-instantiate --parse home-manager/install-package/minecraft.nix >/dev/null
+nix-instantiate --parse home-manager/install-package/minecraft/default.nix >/dev/null
 nix eval "path:$PWD#homeConfigurations.myHomeConfig.activationPackage.drvPath" \
   --override-input local-options "path:$HOME/.config/nix/local-input/default.nix" --no-write-lock-file --raw
 nix build "path:$PWD#homeConfigurations.myHomeConfig.activationPackage" \

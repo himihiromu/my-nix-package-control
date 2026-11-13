@@ -11,8 +11,8 @@ let
 in
 {
   imports = [
-    ./minecraft-legacy.nix
-    ./minecraft-modern.nix
+    ./legacy.nix
+    ./modern.nix
   ];
 
   programs.prismlauncher = {

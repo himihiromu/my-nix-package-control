@@ -318,3 +318,9 @@ Python の `dbus-next` と、次の実行ファイルを環境変数で指定す
 
 `python3 tests/test_japanese_input.py -v` で登録済みエンジンの切り替え、英数入力からの選択、
 既存グループ・配列の保持、各エンジンの未登録・未インストール時に切り替えも設定変更もしないことを確認する。
+
+## OBSによるゲーム録画
+
+物理Linuxデスクトップ向けの構成と初回GUI設定、キーバインド、実機確認は
+[OBS録画手順](docs/obs-recording.md)を参照してください。
+OBSの書き込み可能な設定はchezmoi、WebSocket認証は端末ローカルで管理します。

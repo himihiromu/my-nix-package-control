@@ -8,7 +8,6 @@
 
     # Recording
     gpu-screen-recorder
-    obs-studio
 
     # Screenshot
     grimblast

@@ -11,7 +11,10 @@ let
   defaultWallpaper = "${wallpaperDirectory}/hyprland-wall0.png";
 in
 {
-  imports = [ ./waybar.nix ];
+  imports = [
+    ./waybar.nix
+    ./obs
+  ];
 
   home.file = {
     "Pictures/Wallpapers/hyprland-wall0.png".source = "${pkgs.hyprland}/share/hypr/wall0.png";

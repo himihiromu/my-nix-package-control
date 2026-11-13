@@ -2,6 +2,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }:
 let
@@ -9,6 +10,24 @@ let
   toggleJapaneseInput = pkgs.callPackage ./toggle-japanese-input.nix { };
   wallpaperDirectory = "${config.home.homeDirectory}/Pictures/Wallpapers";
   defaultWallpaper = "${wallpaperDirectory}/hyprland-wall0.png";
+  lua = lib.generators.mkLuaInline;
+  bind = keys: action: {
+    _args = [
+      keys
+      (lua action)
+    ];
+  };
+  exec = keys: command: bind keys "hl.dsp.exec_cmd(${builtins.toJSON command})";
+  repeatExec = keys: command: {
+    _args = [
+      keys
+      (lua "hl.dsp.exec_cmd(${builtins.toJSON command})")
+      {
+        locked = true;
+        repeating = true;
+      }
+    ];
+  };
 in
 {
   imports = [
@@ -60,7 +79,7 @@ in
       general = {
         lock_cmd = "pidof hyprlock || hyprlock";
         before_sleep_cmd = "loginctl lock-session";
-        after_sleep_cmd = "hyprctl dispatch dpms on";
+        after_sleep_cmd = "hyprctl dispatch 'hl.dsp.dpms({ action = \"enable\" })'";
       };
       listener = [
         {
@@ -69,8 +88,8 @@ in
         }
         {
           timeout = 1800; # 30 minutes
-          on-timeout = "hyprctl dispatch dpms off";
-          on-resume = "hyprctl dispatch dpms on";
+          on-timeout = "hyprctl dispatch 'hl.dsp.dpms({ action = \"disable\" })'";
+          on-resume = "hyprctl dispatch 'hl.dsp.dpms({ action = \"enable\" })'";
         }
       ];
     };
@@ -93,69 +112,105 @@ in
 
   wayland.windowManager.hyprland = {
     enable = true;
-    configType = "hyprlang";
+    configType = "lua";
     systemd.enable = false; # UWSM owns the graphical user session.
     settings = {
       monitor = [
-        "DP-2,preferred,0x0,1"
-        "HDMI-A-2,preferred,1920x0,1"
+        {
+          output = "DP-2";
+          mode = "preferred";
+          position = "0x0";
+          scale = 1;
+        }
+        {
+          output = "HDMI-A-2";
+          mode = "preferred";
+          position = "1920x0";
+          scale = 1;
+        }
       ];
-      "$mod" = "SUPER";
-      "$terminal" = "ghostty";
-      "$fileManager" = "nemo";
-      exec-once = [
-        # UWSM starts Fcitx via its XDG autostart service. Starting it here
-        # as well races for the D-Bus name and Wayland input-method connection.
-        "nm-applet --indicator"
-      ];
-      env = [
-        "GTK_IM_MODULE,fcitx"
-        "QT_IM_MODULE,fcitx"
-        "XMODIFIERS,@im=fcitx"
-        "SDL_IM_MODULE,fcitx"
-        "GLFW_IM_MODULE,ibus"
-        "QT_QPA_PLATFORMTHEME,qt6ct"
-      ];
-      input = {
+      config.input = {
         kb_layout = "jp";
         follow_mouse = 1;
         touchpad.natural_scroll = true;
       };
+      # Fcitx is started by UWSM's XDG autostart service.
+      on._args = [
+        "hyprland.start"
+        (lua ''
+          function() hl.exec_cmd("nm-applet --indicator") end
+        '')
+      ];
+      env = [
+        {
+          _args = [
+            "GTK_IM_MODULE"
+            "fcitx"
+          ];
+        }
+        {
+          _args = [
+            "QT_IM_MODULE"
+            "fcitx"
+          ];
+        }
+        {
+          _args = [
+            "XMODIFIERS"
+            "@im=fcitx"
+          ];
+        }
+        {
+          _args = [
+            "SDL_IM_MODULE"
+            "fcitx"
+          ];
+        }
+        {
+          _args = [
+            "GLFW_IM_MODULE"
+            "ibus"
+          ];
+        }
+        {
+          _args = [
+            "QT_QPA_PLATFORMTHEME"
+            "qt6ct"
+          ];
+        }
+      ];
       bind = [
-        "$mod, Return, exec, uwsm app -- $terminal"
-        "$mod, E, exec, uwsm app -- $fileManager"
-        # Alt+Space は Vicinae、Super+Space は Mozc / SKK の切り替えに使う。
-        "ALT, Space, exec, vicinae toggle"
-        "$mod, Space, exec, ${toggleJapaneseInput}/bin/toggle-japanese-input"
-        "$mod, Q, killactive"
-        "$mod, W, killactive"
-        "$mod, F, fullscreen"
-        "$mod, V, togglefloating"
-        "$mod, L, exec, loginctl lock-session"
-        "$mod SHIFT, E, exit"
-        ", Print, exec, grimblast save area - | satty --filename - --copy-command wl-copy --early-exit --actions-on-escape exit"
-        "SHIFT, Print, exec, grimblast copy area"
-        "$mod SHIFT, C, exec, hyprpicker --autocopy"
-        "$mod, 1, workspace, 1"
-        "$mod, 2, workspace, 2"
-        "$mod, 3, workspace, 3"
-        "$mod, 4, workspace, 4"
-        "$mod, 5, workspace, 5"
-        "$mod SHIFT, 1, movetoworkspace, 1"
-        "$mod SHIFT, 2, movetoworkspace, 2"
-        "$mod SHIFT, 3, movetoworkspace, 3"
-        "$mod SHIFT, 4, movetoworkspace, 4"
-        "$mod SHIFT, 5, movetoworkspace, 5"
-      ];
-      bindel = [
-        ", XF86AudioRaiseVolume, exec, ${pkgs.wireplumber}/bin/wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
-        ", XF86AudioLowerVolume, exec, ${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-        ", XF86MonBrightnessUp, exec, ${pkgs.brightnessctl}/bin/brightnessctl --class=backlight --min-value=1 set 5%+"
-        ", XF86MonBrightnessDown, exec, ${pkgs.brightnessctl}/bin/brightnessctl --class=backlight --min-value=1 set 5%-"
-      ];
-      # ミュートは長押しで繰り返し切り替わらないようにする。
-      bindl = [
-        ", XF86AudioMute, exec, ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        (exec "SUPER + Return" "uwsm app -- ghostty")
+        (exec "SUPER + E" "uwsm app -- nemo")
+        (exec "ALT + Space" "vicinae toggle")
+        (exec "SUPER + Space" "${toggleJapaneseInput}/bin/toggle-japanese-input")
+        (bind "SUPER + Q" "hl.dsp.window.close()")
+        (bind "SUPER + W" "hl.dsp.window.close()")
+        (bind "SUPER + F" ''hl.dsp.window.fullscreen({ action = "toggle", mode = "fullscreen" })'')
+        (bind "SUPER + V" ''hl.dsp.window.float({ action = "toggle" })'')
+        (exec "SUPER + L" "loginctl lock-session")
+        (bind "SUPER + SHIFT + E" "hl.dsp.exit()")
+        (exec "Print" "grimblast save area - | satty --filename - --copy-command wl-copy --early-exit --actions-on-escape exit")
+        (exec "SHIFT + Print" "grimblast copy area")
+        (exec "SUPER + SHIFT + C" "hyprpicker --autocopy")
+      ]
+      ++ lib.concatMap (i: [
+        (bind "SUPER + ${toString i}" "hl.dsp.focus({ workspace = ${toString i} })")
+        (bind "SUPER + SHIFT + ${toString i}" "hl.dsp.window.move({ workspace = ${toString i} })")
+      ]) (lib.range 1 5)
+      ++ [
+        (repeatExec "XF86AudioRaiseVolume" "${pkgs.wireplumber}/bin/wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+")
+        (repeatExec "XF86AudioLowerVolume" "${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-")
+        (repeatExec "XF86MonBrightnessUp" "${pkgs.brightnessctl}/bin/brightnessctl --class=backlight --min-value=1 set 5%+")
+        (repeatExec "XF86MonBrightnessDown" "${pkgs.brightnessctl}/bin/brightnessctl --class=backlight --min-value=1 set 5%-")
+        # Mute must not repeat while the key is held.
+        {
+          _args = [
+            "XF86AudioMute"
+            (lua "hl.dsp.exec_cmd(${builtins.toJSON "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"})")
+            { locked = true; }
+          ];
+        }
       ];
     };
   };

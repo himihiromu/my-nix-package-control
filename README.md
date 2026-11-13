@@ -80,6 +80,28 @@ WSL固有のOS設定とGUIセッション除外に使い、NixOSとHome Manager�
 WSLでは `mise nixos switch nixos-wsl` で構成を明示する。
 dotfilesの初回導入スクリプトはNixOSの場合 `#nixos` を選ぶため、WSLの自動選択には別途修正が必要。
 
+## Hyprland の Lua 設定（0.55 以降）
+
+Home Manager の `configType = "lua"` で `~/.config/hypr/hyprland.lua` を生成する。
+共通設定は `home-manager/linux/services.nix`、MacBook 固有設定は
+`nixos/hosts/macbook-air/default.nix` で管理する。
+`settings.config` は `hl.config()`、`settings.bind` は `hl.bind()` の引数に対応し、
+旧形式の `bind` 文字列をそのまま渡すことはできない。
+Hypridle 自体は `.conf` のまま、画面消灯・復帰コマンドに Lua dispatcher を使う。
+
+アップデート後に初期設定の画面や US 配列になった場合は、Nix が旧 `.conf` だけを
+生成していないか確認する。自動生成された `hyprland.lua` が既にある場合は、
+適用前にバックアップへ移して Home Manager のファイルとの衝突を避ける。
+適用後は `hyprctl configerrors` と `hyprctl getoption input:kb_layout` で確認する。
+MacBook の右カラムへのフォーカス移動は、画面ロックの Super+L との重複を避けて
+Super+Alt+L に割り当てる。
+
+確認日: 2026-11-13。両ホストの Home Manager 評価と Lua 設定生成を確認。
+デスクトップ設定は Hyprland 0.57.2 の `--verify-config` で `config ok` を確認。
+MacBook の実機動作（ジェスチャー・HyprExpo を含む）は未確認。
+出典: [Hyprland 0.55 の変更](https://hypr.land/news/update55/)、
+[Lua dispatcher](https://wiki.hypr.land/configuring/core/dispatchers/)。
+
 ## Minecraft（Linux Desktop）
 
 Prism Launcher と Prismix で Vanilla（Minecraft **26.3 / Java 25**、メモリ **1–4 GiB**）と、

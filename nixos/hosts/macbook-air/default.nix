@@ -1,4 +1,19 @@
-{ pkgs, username, ... }:
+{
+  pkgs,
+  username,
+  lib,
+  ...
+}:
+let
+  lua = lib.generators.mkLuaInline;
+  bind = keys: action: {
+    _args = [
+      keys
+      (lua action)
+    ];
+  };
+  exec = keys: command: bind keys "hl.dsp.exec_cmd(${builtins.toJSON command})";
+in
 {
   imports = [
     ./hardware-configuration.nix
@@ -55,26 +70,47 @@
       (pkgs.callPackage ./hyprexpo.nix { })
     ];
     wayland.windowManager.hyprland.settings.bind = [
-      ", code:130, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -o"
-      ", code:131, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -c"
-      ", Hiragana_Katakana, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -o"
-      ", Eisu_toggle, exec, ${pkgs.fcitx5}/bin/fcitx5-remote -c"
+      (exec "code:130" "${pkgs.fcitx5}/bin/fcitx5-remote -o")
+      (exec "code:131" "${pkgs.fcitx5}/bin/fcitx5-remote -c")
+      (exec "Hiragana_Katakana" "${pkgs.fcitx5}/bin/fcitx5-remote -o")
+      (exec "Eisu_toggle" "${pkgs.fcitx5}/bin/fcitx5-remote -c")
       # Scrolling layout: move focus between columns and change their order.
-      "$mod, H, layoutmsg, focus l"
-      "$mod, L, layoutmsg, focus r"
-      "$mod SHIFT, H, layoutmsg, swapcol l"
-      "$mod SHIFT, L, layoutmsg, swapcol r"
-      "$mod, Comma, layoutmsg, colresize -conf"
-      "$mod, Period, layoutmsg, colresize +conf"
-      "$mod, P, layoutmsg, promote"
-      "$mod SHIFT, P, layoutmsg, expel"
-      "$mod CTRL, P, layoutmsg, consume_or_expel prev"
-      "$mod, I, layoutmsg, fit active"
+      (bind "SUPER + H" ''hl.dsp.layout("focus l")'')
+      (bind "SUPER + ALT + L" ''hl.dsp.layout("focus r")'')
+      (bind "SUPER + SHIFT + H" ''hl.dsp.layout("swapcol l")'')
+      (bind "SUPER + SHIFT + L" ''hl.dsp.layout("swapcol r")'')
+      (bind "SUPER + Comma" ''hl.dsp.layout("colresize -conf")'')
+      (bind "SUPER + Period" ''hl.dsp.layout("colresize +conf")'')
+      (bind "SUPER + P" ''hl.dsp.layout("promote")'')
+      (bind "SUPER + SHIFT + P" ''hl.dsp.layout("expel")'')
+      (bind "SUPER + CTRL + P" ''hl.dsp.layout("consume_or_expel prev")'')
+      (bind "SUPER + I" ''hl.dsp.layout("fit active")'')
+
+      {
+        _args = [
+          "XF86KbdBrightnessUp"
+          (lua "hl.dsp.exec_cmd(${builtins.toJSON "${pkgs.brightnessctl}/bin/brightnessctl --device=smc::kbd_backlight set 10%+"})")
+          {
+            locked = true;
+            repeating = true;
+          }
+        ];
+      }
+      {
+        _args = [
+          "XF86KbdBrightnessDown"
+          (lua "hl.dsp.exec_cmd(${builtins.toJSON "${pkgs.brightnessctl}/bin/brightnessctl --device=smc::kbd_backlight set 10%-"})")
+          {
+            locked = true;
+            repeating = true;
+          }
+        ];
+      }
     ];
-    wayland.windowManager.hyprland.settings.general = {
+    wayland.windowManager.hyprland.settings.config.general = {
       layout = "scrolling";
     };
-    wayland.windowManager.hyprland.settings.scrolling = {
+    wayland.windowManager.hyprland.settings.config.scrolling = {
       # Half-width columns leave adjacent windows visible as context.
       column_width = 0.5;
       fullscreen_on_one_column = true;
@@ -95,18 +131,26 @@
         scroll_factor = 0.7;
         # 2本指の押し込み・タップを右クリックにする。
         clickfinger_behavior = true;
-        tap-to-click = true;
+        tap_to_click = true;
         tap_button_map = "lrm";
       }
     ];
     wayland.windowManager.hyprland.settings.gesture = [
-      "3, horizontal, workspace"
-      "3, up, dispatcher, hyprexpo:expo, on"
-      "3, down, dispatcher, hyprexpo:expo, off"
-    ];
-    wayland.windowManager.hyprland.settings.bindel = [
-      ", XF86KbdBrightnessUp, exec, ${pkgs.brightnessctl}/bin/brightnessctl --device=smc::kbd_backlight set 10%+"
-      ", XF86KbdBrightnessDown, exec, ${pkgs.brightnessctl}/bin/brightnessctl --device=smc::kbd_backlight set 10%-"
+      {
+        fingers = 3;
+        direction = "horizontal";
+        action = "workspace";
+      }
+      {
+        fingers = 3;
+        direction = "up";
+        action = lua ''function() hl.plugin.hyprexpo.expo("on") end'';
+      }
+      {
+        fingers = 3;
+        direction = "down";
+        action = lua ''function() hl.plugin.hyprexpo.expo("off") end'';
+      }
     ];
   };
   security.rtkit.enable = true;

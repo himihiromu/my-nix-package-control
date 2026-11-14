@@ -257,7 +257,13 @@ class PersistenceTests(unittest.TestCase):
         self.assertEqual(versions["net.minecraft"], "1.20.1")
         self.assertEqual(versions["net.minecraftforge"], "47.4.28")
         jars = list((instance / "minecraft/mods").glob("*.jar"))
-        self.assertEqual(len(jars), 48)
+        self.assertEqual(len(jars), 52)
+        self.assertTrue({
+            "embeddium-0.3.31+mc1.20.1.jar",
+            "modernfix-forge-5.27.93+mc1.20.1.jar",
+            "ferritecore-6.0.1-forge.jar",
+            "invtweaks-1.20.1-1.2.2.jar",
+        }.issubset({jar.name for jar in jars}))
         self.assertFalse(any("touhoulittlemaid" in jar.name for jar in jars))
         self.assertFalse(any(jar.is_symlink() for jar in jars))
         options = instance / "minecraft/options.txt"

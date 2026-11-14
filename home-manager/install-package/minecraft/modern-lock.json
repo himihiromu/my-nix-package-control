@@ -3,7 +3,7 @@
   "displayName": "Industry & Magic 1.20.1",
   "minecraftVersion": "1.20.1",
   "forgeVersion": "47.4.28",
-  "checkedDate": "2026-11-13",
+  "checkedDate": "2026-11-14",
   "excluded": {
     "Modern Industrialization": "Minecraft 1.20.1版はFabric用のため除外",
     "Touhou Little Maid": "2026-11-13: 配信・収益化の素材利用条件が未確認のため、ユーザー依頼で除外"
@@ -338,6 +338,34 @@
       "filename": "ftb-library-forge-2001.2.12.jar",
       "url": "https://maven.ftb.dev/releases/dev/ftb/mods/ftb-library-forge/2001.2.12/ftb-library-forge-2001.2.12.jar",
       "sha256": "f09335944fff8ca3ef37a40e0b125ffb6707759ede258c73f9ce9bac61bfbf96"
+    },
+    {
+      "filename": "embeddium-0.3.31+mc1.20.1.jar",
+      "url": "https://cdn.modrinth.com/data/sk9rgfiA/versions/UTbfe5d1/embeddium-0.3.31%2Bmc1.20.1.jar",
+      "version": "0.3.31+mc1.20.1",
+      "versionId": "UTbfe5d1",
+      "sha256": "eed3d1325f2acc2fd4e69bb495e5ccb91d962126ac5330f0582ebc2a3daf47fb"
+    },
+    {
+      "filename": "modernfix-forge-5.27.93+mc1.20.1.jar",
+      "url": "https://cdn.modrinth.com/data/nmDcB62a/versions/PJeJimdc/modernfix-forge-5.27.93%2Bmc1.20.1.jar",
+      "version": "5.27.93+mc1.20.1",
+      "versionId": "PJeJimdc",
+      "sha256": "83543866ec17b2d8080bd3f288d0c12612e57e0b744c886a31d28befb12b7291"
+    },
+    {
+      "filename": "ferritecore-6.0.1-forge.jar",
+      "url": "https://cdn.modrinth.com/data/uXXizFIs/versions/DG5Fn9Sz/ferritecore-6.0.1-forge.jar",
+      "version": "6.0.1",
+      "versionId": "DG5Fn9Sz",
+      "sha256": "9c2c9396a49e796d88497758caa4637d2bcbb433c318e2dd9cebcffbaf0f6c54"
+    },
+    {
+      "filename": "invtweaks-1.20.1-1.2.2.jar",
+      "url": "https://mediafilez.forgecdn.net/files/6816/947/invtweaks-1.20.1-1.2.2.jar",
+      "version": "1.20.1-1.2.2",
+      "curseforgeFileId": 6816947,
+      "sha256": "54ba6fd7d5e4b9a9dadf6876153b99a94b4997f8d4ee0e46c9c58ea5c8c95802"
     }
   ]
 }

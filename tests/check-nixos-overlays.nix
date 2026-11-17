@@ -1,11 +1,10 @@
-# 実行: nix eval --impure --json --file tests/check-nixos-overlays.nix
-# 単体 Home Manager だけでなく、useGlobalPkgs を使う NixOS 経由も確認する。
+# Called by checks.nix with anonymous fixture configurations.
+{ configurations, username }:
 let
-  flake = builtins.getFlake (toString ../.);
-  username = (import flake.inputs.local-options).username;
-  check = host:
+  check =
+    host:
     let
-      nixos = flake.nixosConfigurations.${host};
+      nixos = configurations.${host};
       home = nixos.config.home-manager.users.${username};
       expected = "${nixos.pkgs.bash-abbrev-alias}/share/bash-abbrev-alias/abbrev-alias.plugin.bash";
     in

@@ -74,17 +74,17 @@
           inherit system overlays;
           config = import ./lib/nixpkgs-policy.nix {
             inherit (nixpkgs) lib;
-            };
+          };
         };
       mkNixos =
         {
           hostModule,
           isWsl ? false,
           system ? "x86_64-linux",
+          username ? options.username,
+          isDesktop ? options.isDesktop,
+          homeProfiles ? options.homeProfiles or null,
         }:
-        let
-          pkgs = mkPkgs system;
-        in
         nixpkgs.lib.nixosSystem {
           system = system;
           modules = [
@@ -106,7 +106,7 @@
                   isWsl
                   system
                   ;
-                homeProfiles = options.homeProfiles or null;
+                inherit homeProfiles;
               };
               home-manager.users.${username} = ./home-manager/default.nix;
             }
@@ -124,8 +124,14 @@
           ];
         };
 
-      mkHome =
-        system:
+      mkHome = system: mkHomeWith { inherit system; };
+      mkHomeWith =
+        {
+          system,
+          username ? options.username,
+          isDesktop ? options.isDesktop,
+          homeProfiles ? options.homeProfiles or null,
+        }:
         home-manager.lib.homeManagerConfiguration {
           pkgs = mkPkgs system;
           extraSpecialArgs = {
@@ -136,7 +142,7 @@
               isDesktop
               system
               ;
-            homeProfiles = options.homeProfiles or null;
+            inherit homeProfiles;
           };
           modules = [ ./home-manager/default.nix ];
         };
@@ -188,6 +194,15 @@
       in
       {
         formatter = pkgs.nixfmt;
+        checks = import ./tests/checks.nix {
+          inherit
+            pkgs
+            system
+            inputs
+            mkNixos
+            mkHomeWith
+            ;
+        };
         packages = {
           my-package = pkgs.buildEnv {
             name = "my-packages-list";

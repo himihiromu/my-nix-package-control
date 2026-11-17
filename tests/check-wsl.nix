@@ -1,6 +1,6 @@
-# nix eval --impure --json 'path:.#packages.x86_64-linux' \
+# nix eval --impure --json 'path:.#nixosConfigurations' \
 #   --override-input local-options path:/path/to/options.nix \
-#   --apply 'p: import ./tests/check-wsl.nix { configurations = p.nixosConfigurations; username = "nixos"; isDesktop = false; }'
+#   --apply 'p: import ./tests/check-wsl.nix { configurations = p; username = "nixos"; isDesktop = false; }'
 {
   configurations,
   username,

@@ -42,43 +42,11 @@
     };
   };
   outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, nixvim, local-options, ... }@inputs:
-  flake-utils.lib.eachDefaultSystem (
-    system:
     let
       options = import ./lib/validate-options.nix (import local-options);
-      inherit (options) username;
-      inherit (options) isDesktop;
-      mkNixos = { hostModule, isWsl ? false }: nixpkgs.lib.nixosSystem {
-            system = system;
-            modules = [
-              {
-                _module.args = { inherit username isDesktop isWsl; };
-                # NixOS 経由の Home Manager は useGlobalPkgs により
-                # システムの pkgs を使うため、同じ overlay を適用する。
-                nixpkgs.overlays = [
-                  neovim-nightly-overlay.overlays.default
-                  localPackagesOverlay
-                ];
-              }
-              ./nixos/configuration.nix
-              hostModule
-              home-manager.nixosModules.home-manager
-              {
-                home-manager.users.${username} = import ./home-manager/default.nix {
-                  inherit inputs;
-                  inherit username;
-                  inherit pkgs;
-                  inherit system;
-                  inherit isDesktop isWsl;
-                  inherit nixvim;
-                };
-              }
-            ] ++ (if isWsl then [ nixos-wsl.nixosModules.default ] else [
-              ./nixos/system/physical-services.nix
-            ]) ++ nixpkgs.lib.optionals (isDesktop && !isWsl) [
-              ./nixos/system/desktop.nix
-            ];
-          };
+      inherit (options) username isDesktop;
+      # Explicit in chezmoi's input; --impure remains a migration fallback.
+      localSystem = options.system or (builtins.currentSystem or (throw "local-options: add system = \"x86_64-linux\" (or your Linux/Darwin system), or temporarily pass --impure. See README.md."));
       localPackagesOverlay = final: prev: {
         # 同梱ライブラリを前提とする Codex のビルドで、
         # cargoSetupHook によるシステムライブラリ使用の強制を無効にする。
@@ -173,7 +141,7 @@
           cargoHash = "sha256-TZWIa4L70WpvGwTi8DIadKwXEubxn3OciSaWf9UULZA=";
         };
       };
-      pkgs = (
+      mkPkgs = system: (
         (
           (import nixpkgs {
             inherit system;
@@ -195,10 +163,76 @@
           )
         )
       ).extend localPackagesOverlay;
+      mkNixos = { hostModule, isWsl ? false, system ? "x86_64-linux" }: let pkgs = mkPkgs system; in nixpkgs.lib.nixosSystem {
+            system = system;
+            modules = [
+              {
+                _module.args = { inherit username isDesktop isWsl; };
+                # NixOS 経由の Home Manager は useGlobalPkgs により
+                # システムの pkgs を使うため、同じ overlay を適用する。
+                nixpkgs.overlays = [
+                  neovim-nightly-overlay.overlays.default
+                  localPackagesOverlay
+                ];
+              }
+              ./nixos/configuration.nix
+              hostModule
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.users.${username} = import ./home-manager/default.nix {
+                  inherit inputs;
+                  inherit username;
+                  inherit pkgs;
+                  inherit system;
+                  inherit isDesktop isWsl;
+                  inherit nixvim;
+                };
+              }
+            ] ++ (if isWsl then [ nixos-wsl.nixosModules.default ] else [
+              ./nixos/system/physical-services.nix
+            ]) ++ nixpkgs.lib.optionals (isDesktop && !isWsl) [
+              ./nixos/system/desktop.nix
+            ];
+          };
+
+      mkHome = system: home-manager.lib.homeManagerConfiguration {
+        pkgs = mkPkgs system;
+        modules = [ (import ./home-manager/default.nix {
+          inherit inputs username system isDesktop nixvim;
+          pkgs = mkPkgs system;
+        }) ];
+      };
+      mkDarwin = system: nix-darwin.lib.darwinSystem {
+        inherit system;
+        modules = [
+          { system.primaryUser = username; }
+          (import ./nix-darwin/default.nix {
+            inherit inputs username system isDesktop;
+            pkgs = mkPkgs system;
+          })
+        ];
+      };
     in
     {
-      formatter = pkgs.nixfmt;
-      packages = {
+      nixosConfigurations = {
+        nixos = mkNixos { hostModule = ./nixos/hosts/nixos; };
+        macbook-air = mkNixos { hostModule = ./nixos/hosts/macbook-air; };
+        nixos-wsl = mkNixos { hostModule = ./nixos/hosts/nixos-wsl; isWsl = true; };
+      };
+      homeConfigurations = nixpkgs.lib.genAttrs
+        (map (system: "myHomeConfig-${system}") flake-utils.lib.defaultSystems)
+        (name: mkHome (nixpkgs.lib.removePrefix "myHomeConfig-" name))
+        // { myHomeConfig = mkHome localSystem; };
+      darwinConfigurations = {
+        mac-config-aarch64-darwin = mkDarwin "aarch64-darwin";
+        mac-config-x86_64-darwin = mkDarwin "x86_64-darwin";
+        mac-config = mkDarwin localSystem;
+      };
+    } // flake-utils.lib.eachDefaultSystem (system:
+      let pkgs = mkPkgs system;
+      in {
+        formatter = pkgs.nixfmt;
+        packages = {
         my-package = pkgs.buildEnv {
           name = "my-packages-list";
           paths = with pkgs; [
@@ -208,48 +242,7 @@
             neovim
           ];
         };
-        nixosConfigurations = {
-          # WSL2 on Windows
-          nixos-wsl = mkNixos {
-            hostModule = ./nixos/hosts/nixos-wsl;
-            isWsl = true;
-          };
-          # Select hardware explicitly with the flake configuration name.
-          nixos = mkNixos { hostModule = ./nixos/hosts/nixos; };
-          macbook-air = mkNixos { hostModule = ./nixos/hosts/macbook-air; };
         };
-        homeConfigurations = {
-          myHomeConfig = home-manager.lib.homeManagerConfiguration {
-            pkgs = pkgs;
-
-            modules = [
-              (import ./home-manager/default.nix {
-                inherit inputs;
-                inherit username;
-                inherit pkgs;
-                inherit system;
-                inherit isDesktop;
-                inherit nixvim;
-              })
-            ];
-          };
-        };
-        darwinConfigurations = {
-          mac-config = nix-darwin.lib.darwinSystem {
-            system = system;
-            modules = [
-              { system.primaryUser = username; }
-              (import ./nix-darwin/default.nix {
-                inherit inputs;
-                inherit username;
-                inherit pkgs;
-                inherit system;
-                inherit isDesktop;
-              })
-            ];
-          };
-        };
-      };
       devShells = rec {
         default = zai;
         zai = pkgs.mkShell {
@@ -375,9 +368,6 @@
           '';
         };
       };
-      #   inherit system;
-      #   modules = [ home-manager.darwinModules.home-manager ./nix-darwin/default.nix ];
-      # };
       apps.update = {
         type = "app";
         program = toString (
@@ -404,6 +394,5 @@
           ''
         );
       };
-    }
-  );
+      });
 }

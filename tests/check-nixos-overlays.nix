@@ -5,7 +5,7 @@ let
   username = (import flake.inputs.local-options).username;
   check = host:
     let
-      nixos = flake.packages.x86_64-linux.nixosConfigurations.${host};
+      nixos = flake.nixosConfigurations.${host};
       home = nixos.config.home-manager.users.${username};
       expected = "${nixos.pkgs.bash-abbrev-alias}/share/bash-abbrev-alias/abbrev-alias.plugin.bash";
     in

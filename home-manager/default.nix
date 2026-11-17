@@ -4,7 +4,6 @@
   system,
   isDesktop,
   isWsl ? false,
-  nixvim,
   inputs,
   ...
 }:
@@ -31,28 +30,21 @@ let
       (import ./linux { inherit pkgs; }).installPackages
     else
       [ ];
-  zed = import ./install-package/zed.nix {
-    inherit (pkgs) lib;
-    inherit pkgs;
-    inherit isDesktop;
-  };
-  nix-vim-package = import ./install-package/neovim.nix { inherit pkgs; };
-  shell = import ./shell;
-  takt-package = import ./install-package/takt.nix {
-    inherit inputs;
-    inherit pkgs;
-  };
+  zed = ./install-package/zed.nix;
+  nix-vim-package = ./install-package/neovim.nix;
+  shell = ./shell;
+  takt-package = ./install-package/takt.nix;
 in
 {
   imports =
     [
-      nixvim.homeModules.nixvim
+      inputs.nixvim.homeModules.nixvim
       nix-vim-package
       shell
       takt-package
       zed
     ]
-    ++ pkgs.lib.optionals (isLinux && isDesktop) [
+    ++ inputs.nixpkgs.lib.optionals (isLinux && isDesktop) [
       inputs.prismix.homeModules.default
       ./install-package/minecraft
     ]

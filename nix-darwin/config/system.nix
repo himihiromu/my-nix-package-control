@@ -1,4 +1,4 @@
-{ pkgs, system }:
+{ pkgs, system, ... }:
 let
   appListPath =
     if system == "x86_64-darwin" then "/System/Applications/Launchpad.app/"

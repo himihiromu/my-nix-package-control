@@ -6,27 +6,10 @@
 }:
 
 {
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "zsh-abbr"
-      "claude-code"
-      "vscode"
-      "google-chrome"
-      "zoom"
-      "discord"
-      "discord-unwrapped"
-      "steam"
-      "steam-original"
-      "steam-unwrapped"
-      "steam-run"
-      "discord-unwrapped"
-    ]
-    || builtins.elem pkg.name [
-      # requireFileで登録するローカルMOD資産に限定する。
-      "Industrial-1.7.10-Trial-assets.tar.gz"
-      "Industry-Magic-1.7.10-Trial-assets.tar.gz"
-    ];
+  nixpkgs.config = import ../../lib/nixpkgs-policy.nix {
+    inherit lib;
+    extraAllowedNames = [ "steam" "steam-original" "steam-unwrapped" "steam-run" ];
+  };
 
   nix.settings = {
     experimental-features = [

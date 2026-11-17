@@ -141,28 +141,13 @@
           cargoHash = "sha256-TZWIa4L70WpvGwTi8DIadKwXEubxn3OciSaWf9UULZA=";
         };
       };
-      mkPkgs = system: (
-        (
-          (import nixpkgs {
-            inherit system;
-            config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [
-              "zsh-abbr"
-              "claude-code"
-              "vscode"
-              "google-chrome"
-              "chatgpt"
-              "zoom"
-              "discord"
-              "discord-unwrapped"
-            ] || builtins.elem pkg.name [
-              "Industrial-1.7.10-Trial-assets.tar.gz"
-              "Industry-Magic-1.7.10-Trial-assets.tar.gz"
-            ];
-          }).extend (
-            neovim-nightly-overlay.overlays.default
-          )
-        )
-      ).extend localPackagesOverlay;
+      overlays = [ neovim-nightly-overlay.overlays.default localPackagesOverlay ];
+      mkPkgs = system: import nixpkgs {
+        inherit system overlays;
+        config = import ./lib/nixpkgs-policy.nix {
+          inherit (nixpkgs) lib;
+        };
+      };
       mkNixos = { hostModule, isWsl ? false, system ? "x86_64-linux" }: let pkgs = mkPkgs system; in nixpkgs.lib.nixosSystem {
             system = system;
             modules = [
@@ -170,23 +155,14 @@
                 _module.args = { inherit username isDesktop isWsl; };
                 # NixOS 経由の Home Manager は useGlobalPkgs により
                 # システムの pkgs を使うため、同じ overlay を適用する。
-                nixpkgs.overlays = [
-                  neovim-nightly-overlay.overlays.default
-                  localPackagesOverlay
-                ];
+                nixpkgs.overlays = overlays;
               }
               ./nixos/configuration.nix
               hostModule
               home-manager.nixosModules.home-manager
               {
-                home-manager.users.${username} = import ./home-manager/default.nix {
-                  inherit inputs;
-                  inherit username;
-                  inherit pkgs;
-                  inherit system;
-                  inherit isDesktop isWsl;
-                  inherit nixvim;
-                };
+                home-manager.extraSpecialArgs = { inherit inputs username isDesktop isWsl system; };
+                home-manager.users.${username} = ./home-manager/default.nix;
               }
             ] ++ (if isWsl then [ nixos-wsl.nixosModules.default ] else [
               ./nixos/system/physical-services.nix
@@ -197,19 +173,16 @@
 
       mkHome = system: home-manager.lib.homeManagerConfiguration {
         pkgs = mkPkgs system;
-        modules = [ (import ./home-manager/default.nix {
-          inherit inputs username system isDesktop nixvim;
-          pkgs = mkPkgs system;
-        }) ];
+        extraSpecialArgs = {
+            isWsl = false; inherit inputs username isDesktop system; };
+        modules = [ ./home-manager/default.nix ];
       };
       mkDarwin = system: nix-darwin.lib.darwinSystem {
         inherit system;
+        specialArgs = { inherit inputs username isDesktop system; };
         modules = [
           { system.primaryUser = username; }
-          (import ./nix-darwin/default.nix {
-            inherit inputs username system isDesktop;
-            pkgs = mkPkgs system;
-          })
+          ./nix-darwin/default.nix
         ];
       };
     in

@@ -45,7 +45,7 @@
   flake-utils.lib.eachDefaultSystem (
     system:
     let
-      options = import local-options;
+      options = import ./lib/validate-options.nix (import local-options);
       inherit (options) username;
       inherit (options) isDesktop;
       mkNixos = { hostModule, isWsl ? false }: nixpkgs.lib.nixosSystem {

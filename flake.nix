@@ -105,6 +105,7 @@
                   isWsl
                   system
                   ;
+                homeProfiles = options.homeProfiles or null;
               };
               home-manager.users.${username} = ./home-manager/default.nix;
             }
@@ -134,6 +135,7 @@
               isDesktop
               system
               ;
+            homeProfiles = options.homeProfiles or null;
           };
           modules = [ ./home-manager/default.nix ];
         };

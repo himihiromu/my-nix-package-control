@@ -1,55 +1,27 @@
 {
-  pkgs,
   username,
   system,
   isDesktop,
   isWsl ? false,
+  homeProfiles ? null,
   inputs,
   ...
 }:
 let
-  isMac = builtins.elem system [
-    "x86_64-darwin"
-    "aarch64-darwin"
-  ];
-  isLinux = builtins.elem system [
-    "x86_64-linux"
-    "aarch64-linux"
-  ];
+  selected = import ./profiles/select.nix {
+    inherit (inputs.nixpkgs) lib;
+    inherit system isDesktop isWsl;
+    requested = homeProfiles;
+  };
 in
 {
-  imports = [
-    inputs.nixvim.homeModules.nixvim
-    ./programs/neovim.nix
-    ./shell
-    ./programs/takt.nix
-    ./programs/zed.nix
-    ./packages/common.nix
-  ]
-  ++ inputs.nixpkgs.lib.optionals isMac [ ./packages/darwin.nix ]
-  ++ inputs.nixpkgs.lib.optionals (isLinux && isDesktop) [
-    ./linux
-    inputs.prismix.homeModules.default
-    ./install-package/minecraft
-  ]
-  ++ (
-    if isLinux && isDesktop && !isWsl then
-      [
-        ./linux/services.nix
-        ./linux/user-dirs.nix
-      ]
-    else
-      [ ]
-  );
-
+  imports = map (name: ./profiles + "/${name}.nix") selected;
+  _module.args.guiApps = builtins.elem "gui-apps" selected;
   home = {
-    username = username;
-    homeDirectory = if isMac then "/Users/${username}" else "/home/${username}";
-
-    # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
+    inherit username;
+    homeDirectory =
+      if inputs.nixpkgs.lib.hasSuffix "-darwin" system then "/Users/${username}" else "/home/${username}";
     stateVersion = "24.05";
-
   };
-
   programs.home-manager.enable = true;
 }

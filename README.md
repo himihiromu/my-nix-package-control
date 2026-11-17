@@ -380,3 +380,22 @@ OBSの書き込み可能な設定はchezmoi、WebSocket認証は端末ローカ�
 明示名 `myHomeConfig-x86_64-linux`、`myHomeConfig-aarch64-darwin`、
 `mac-config-aarch64-darwin`、`mac-config-x86_64-darwin` も利用できる。
 NixOSの各ホストのsystemは構成側で固定し、実行PCのsystemから独立させる。
+
+## Home Managerの用途別profile
+
+local-optionsの `homeProfiles` を省略すると、従来の `isDesktop` / OS / WSLによる
+導入内容を維持する。明示する場合は、例えば `homeProfiles = [ "gui-apps" ];` で
+ゲーム・Hyprland常駐設定なしのGUI環境にできる。共通CLIのbaseは常に含まれる。
+
+| profile | 内容 |
+| --- | --- |
+| base | CLI・シェル・Neovim・Takt・Zedリモート接続 |
+| gui-apps | GUIアプリ・Bruno・Zed。Linuxでは汎用マルチメディアツールも含む |
+| hyprland-tools | Hyprland関連パッケージ。従来のWSL構成の互換用にも利用 |
+| hyprland | 上記ツールとセッション設定・Waybar・壁紙・ロック |
+| gaming | Heroic・Minecraft |
+| recording | OBSとHyprlandキー連携。Hyprlandセッションと併用する |
+| darwin | Lima・skhd・Docker認証ヘルパー |
+
+`isDesktop` は引き続きNixOS側のGUI機能を選ぶ。homeProfilesはHome Manager側だけを選択する。
+WSLではhyprland / recordingを選べない。WSLgのGUIアプリはgui-appsで選択する。

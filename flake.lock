@@ -108,6 +108,26 @@
       },
       "parent": []
     },
+    "minecraft": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "prismix": "prismix"
+      },
+      "locked": {
+        "path": "./flakes/minecraft",
+        "type": "path"
+      },
+      "original": {
+        "path": "./flakes/minecraft",
+        "type": "path"
+      },
+      "parent": []
+    },
     "neovim-nightly-overlay": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -243,6 +263,7 @@
     "prismix": {
       "inputs": {
         "nixpkgs": [
+          "minecraft",
           "nixpkgs"
         ]
       },
@@ -266,12 +287,12 @@
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
         "local-options": "local-options",
+        "minecraft": "minecraft",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nix-darwin": "nix-darwin",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_2",
         "nixvim": "nixvim",
-        "prismix": "prismix",
         "takt": "takt",
         "vim-src": "vim-src"
       }

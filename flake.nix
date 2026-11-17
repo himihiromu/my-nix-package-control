@@ -16,9 +16,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    prismix = {
-      url = "git+https://codeberg.org/OliMoli/prismix?ref=refs/tags/v0.1.0";
+    minecraft = {
+      url = "path:./flakes/minecraft";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
     nix-darwin = {
       url = "github:LnL7/nix-darwin";

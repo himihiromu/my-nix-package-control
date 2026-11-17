@@ -1,7 +1,6 @@
 { pkgs, inputs, ... }: {
   imports = [
-    inputs.prismix.homeModules.default
-    ../install-package/minecraft
+    inputs.minecraft.homeModules.default
   ];
   home.packages = [ pkgs.heroic ];
 }

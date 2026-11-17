@@ -1,0 +1,70 @@
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1794042290,
+        "narHash": "sha256-ziZn2PvCJE5JEEpqTdxXwJpPB+L3YqoCpTAMCzyaP3U=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f4a03c008967841f2a0b3cb7c436fc6fc31671f6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794278858,
+        "narHash": "sha256-rkrJwLgLSHBnXfgoSKIDa+2LLGdTqynsV3GAxOTGhUU=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "82ce401aa350502897c3f2e85f384d61cd3b0b6d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "prismix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791394826,
+        "narHash": "sha256-KNvEKkHKJ0f0+sjkLZc2zlnKaReYlBT4VsSJHXA92vI=",
+        "ref": "refs/tags/v0.1.0",
+        "rev": "f9155d606cc28b299eb05ce316bb0ccadb8ae371",
+        "revCount": 31,
+        "type": "git",
+        "url": "https://codeberg.org/OliMoli/prismix"
+      },
+      "original": {
+        "ref": "refs/tags/v0.1.0",
+        "type": "git",
+        "url": "https://codeberg.org/OliMoli/prismix"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "home-manager": "home-manager",
+        "prismix": "prismix"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

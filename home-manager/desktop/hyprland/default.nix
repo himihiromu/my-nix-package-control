@@ -114,20 +114,6 @@ in
     configType = "lua";
     systemd.enable = false; # UWSM owns the graphical user session.
     settings = {
-      monitor = [
-        {
-          output = "DP-2";
-          mode = "preferred";
-          position = "0x0";
-          scale = 1;
-        }
-        {
-          output = "HDMI-A-2";
-          mode = "preferred";
-          position = "1920x0";
-          scale = 1;
-        }
-      ];
       config.input = {
         kb_layout = "jp";
         follow_mouse = 1;

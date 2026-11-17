@@ -1,1 +1,1 @@
-{ ... }: { imports = [ ../desktop/hyprland.nix ]; }
+{ ... }: { imports = [ ../desktop/hyprland/packages.nix ]; }

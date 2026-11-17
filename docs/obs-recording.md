@@ -15,7 +15,7 @@ NixOS/Home Managerのswitch、OBS設定変更、chezmoi applyは実行してい�
 
 既存の `nixos/system/desktop.nix` はHyprland/UWSM、PipeWire、Polkitを有効化済み。
 固定nixpkgsのHyprlandモジュールがHyprland/GTK Portalを登録し、WirePlumberは既定で有効。
-`nixos/system/hardware.nix` の `hardware.graphics.enable` によりMesa/radeonsi VAAPIが供給される。
+`nixos/hosts/nixos/hardware.nix` の `hardware.graphics.enable` によりMesa/radeonsi VAAPIが供給される。
 AMD用の別ドライバや `obs-vaapi` を追加しない。
 
 現在のlock: nixpkgs `3ec636362e1816bc2f0888fa0fa2c69f1bc9e504`。
@@ -149,7 +149,7 @@ Nix側の変更ファイル:
 
 - `home-manager/linux/obs/default.nix`: Home ManagerのOBSモジュールと4キーバインド（Hyprlang/Lua対応）。
 - `home-manager/linux/obs/control.nix` / `control.py`: 操作用パッケージと実装。
-- `home-manager/linux/services.nix`: OBSモジュールのimport。
+- `home-manager/desktop/hyprland/default.nix`: OBSモジュールのimport。
 - `home-manager/linux/multimedia.nix`: 素のOBSをパッケージ一覧から除き、二重導入を避ける。
 - `tests/test_obs_control.py`: WebSocket認証・状態遷移・失敗時の検証。
 - `README.md` / `docs/obs-recording.md`: 案内・手順。

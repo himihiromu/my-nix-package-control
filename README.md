@@ -83,7 +83,7 @@ dotfilesの初回導入スクリプトはNixOSの場合 `#nixos` を選ぶため
 ## Hyprland の Lua 設定（0.55 以降）
 
 Home Manager の `configType = "lua"` で `~/.config/hypr/hyprland.lua` を生成する。
-共通設定は `home-manager/linux/services.nix`、MacBook 固有設定は
+共通設定は `home-manager/desktop/hyprland/default.nix`、MacBook 固有設定は
 `nixos/hosts/macbook-air/default.nix` で管理する。
 `settings.config` は `hl.config()`、`settings.bind` は `hl.bind()` の引数に対応し、
 旧形式の `bind` 文字列をそのまま渡すことはできない。
@@ -220,7 +220,7 @@ sudo nixos-rebuild switch --flake "path:$PWD#macbook-air" \
 Waybarは内蔵バッテリーを自動検出し、右端に残量を％で表示する。
 MacBookを含むノートPCで利用でき、バッテリーのないデスクトップPCでは表示しない。
 充電中は充電アイコンに切り替わる。
-設定は `home-manager/linux/waybar.nix` の `battery` にある。
+設定は `home-manager/desktop/hyprland/waybar.nix` の `battery` にある。
 
 MacBookのトラックパッドのカーソル速度は、`nixos/hosts/macbook-air/default.nix` の `settings.device` 内にある
 `bcm5974` の `sensitivity` で調整する。現在は標準速度の `0.0`。
@@ -328,7 +328,7 @@ Hyprland では **Super+Space** で Mozc と SKK を切り替える。
 Ctrl+Space や、MacBook のかな・英数キーを使う。
 Vicinae ランチャーは **Alt+Space** で起動する。
 
-`home-manager/linux/toggle-japanese-input.nix` のコマンドを Hyprland のキーに登録する。
+`home-manager/desktop/hyprland/toggle-japanese-input.nix` のコマンドを Hyprland のキーに登録する。
 Mozc / SKK の両方が利用可能で、現在の入力メソッドグループに登録済みの場合だけ切り替える。
 どちらかが不足していればエラー終了し、選択中の入力メソッドやグループの設定を変えない。
 このコマンドはインストール・自動登録を行わない。

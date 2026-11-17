@@ -1,16 +1,20 @@
-{ pkgs }:
+{
+  lib,
+  fetchurl,
+  appimageTools,
+}:
 let
   pname = "orca-ide";
   version = "1.4.224";
-  src = pkgs.fetchurl {
+  src = fetchurl {
     url = "https://github.com/stablyai/orca/releases/download/v${version}/orca-linux.AppImage";
     hash = "sha256-sf6RAtmH012X622cJ0qT2elRqtvoZPwiUaMVAj9gx0Y=";
   };
-  appimageContents = pkgs.appimageTools.extract {
+  appimageContents = appimageTools.extract {
     inherit pname version src;
   };
 in
-pkgs.appimageTools.wrapType2 {
+appimageTools.wrapType2 {
   inherit pname version src;
 
   extraInstallCommands = ''
@@ -25,7 +29,7 @@ pkgs.appimageTools.wrapType2 {
   meta = {
     description = "Agent development environment";
     homepage = "https://www.onorca.dev/";
-    license = pkgs.lib.licenses.mit;
+    license = lib.licenses.mit;
     platforms = [ "x86_64-linux" ];
     mainProgram = "orca-ide";
   };

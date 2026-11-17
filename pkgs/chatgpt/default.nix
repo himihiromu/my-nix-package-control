@@ -107,7 +107,12 @@ stdenv.mkDerivation (finalAttrs: {
     # Keep Hyprland on XWayland while upstream native Wayland is experimental.
     wrapProgram "$out/lib/chatgpt/ChatGPT" \
       --add-flags "--ozone-platform=x11" \
-      --prefix PATH : ${lib.makeBinPath [ git xdg-utils ]}
+      --prefix PATH : ${
+        lib.makeBinPath [
+          git
+          xdg-utils
+        ]
+      }
 
     # Use this package even when another chatgpt executable is present in PATH.
     substituteInPlace "$out/share/applications/chatgpt.desktop" \

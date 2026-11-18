@@ -41,12 +41,27 @@
       flake = false;
     };
   };
-  outputs = { self, nixpkgs, nixos-wsl, neovim-nightly-overlay, flake-utils, home-manager, nix-darwin, nixvim, local-options, ... }@inputs:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixos-wsl,
+      neovim-nightly-overlay,
+      flake-utils,
+      home-manager,
+      nix-darwin,
+      nixvim,
+      local-options,
+      ...
+    }@inputs:
     let
       options = import ./lib/validate-options.nix (import local-options);
       inherit (options) username isDesktop;
       # Explicit in chezmoi's input; --impure remains a migration fallback.
-      localSystem = options.system or (builtins.currentSystem or (throw "local-options: add system = \"x86_64-linux\" (or your Linux/Darwin system), or temporarily pass --impure. See README.md."));
+      localSystem =
+        options.system or (builtins.currentSystem
+          or (throw "local-options: add system = \"x86_64-linux\" (or your Linux/Darwin system), or temporarily pass --impure. See README.md.")
+        );
       localPackagesOverlay = final: prev: {
         # 同梱ライブラリを前提とする Codex のビルドで、
         # cargoSetupHook によるシステムライブラリ使用の強制を無効にする。
@@ -55,15 +70,22 @@
         });
 
         # cargoSetupHook が要求するシステムの libgit2 を fff.nvim に渡す。
-        vimPlugins = prev.vimPlugins.extend (vimFinal: vimPrev: {
-          fff-nvim = vimPrev.fff-nvim.override {
-            rustPlatform = prev.rustPlatform // {
-              buildRustPackage = args: prev.rustPlatform.buildRustPackage (args // {
-                buildInputs = (args.buildInputs or [ ]) ++ [ prev.libgit2 ];
-              });
+        vimPlugins = prev.vimPlugins.extend (
+          vimFinal: vimPrev: {
+            fff-nvim = vimPrev.fff-nvim.override {
+              rustPlatform = prev.rustPlatform // {
+                buildRustPackage =
+                  args:
+                  prev.rustPlatform.buildRustPackage (
+                    args
+                    // {
+                      buildInputs = (args.buildInputs or [ ]) ++ [ prev.libgit2 ];
+                    }
+                  );
+              };
             };
-          };
-        });
+          }
+        );
 
         bash-abbrev-alias = prev.stdenvNoCC.mkDerivation {
           pname = "bash-abbrev-alias";
@@ -112,7 +134,11 @@
           cargoHash = "sha256-AyyLl9ZLMMikaeDvJhFXwAWgivi89gOqz52eyJZQTXQ=";
 
           nativeBuildInputs = [ prev.pkg-config ];
-          buildInputs = [ prev.openssl prev.zlib prev.libssh2 ];
+          buildInputs = [
+            prev.openssl
+            prev.zlib
+            prev.libssh2
+          ];
 
           # libgit2-sys 0.17 は libgit2 1.8 系が必要なため、同梱版を使う。
           # cargoSetupHook が設定する値を configure 後に上書きする。
@@ -141,231 +167,289 @@
           cargoHash = "sha256-TZWIa4L70WpvGwTi8DIadKwXEubxn3OciSaWf9UULZA=";
         };
       };
-      overlays = [ neovim-nightly-overlay.overlays.default localPackagesOverlay ];
-      mkPkgs = system: import nixpkgs {
-        inherit system overlays;
-        config = import ./lib/nixpkgs-policy.nix {
-          inherit (nixpkgs) lib;
-        };
-      };
-      mkNixos = { hostModule, isWsl ? false, system ? "x86_64-linux" }: let pkgs = mkPkgs system; in nixpkgs.lib.nixosSystem {
-            system = system;
-            modules = [
-              {
-                _module.args = { inherit username isDesktop isWsl; };
-                # NixOS 経由の Home Manager は useGlobalPkgs により
-                # システムの pkgs を使うため、同じ overlay を適用する。
-                nixpkgs.overlays = overlays;
-              }
-              ./nixos/configuration.nix
-              hostModule
-              home-manager.nixosModules.home-manager
-              {
-                home-manager.extraSpecialArgs = { inherit inputs username isDesktop isWsl system; };
-                home-manager.users.${username} = ./home-manager/default.nix;
-              }
-            ] ++ (if isWsl then [ nixos-wsl.nixosModules.default ] else [
-              ./nixos/system/physical-services.nix
-            ]) ++ nixpkgs.lib.optionals (isDesktop && !isWsl) [
-              ./nixos/system/desktop.nix
-            ];
+      overlays = [
+        neovim-nightly-overlay.overlays.default
+        localPackagesOverlay
+      ];
+      mkPkgs =
+        system:
+        import nixpkgs {
+          inherit system overlays;
+          config = import ./lib/nixpkgs-policy.nix {
+            inherit (nixpkgs) lib;
           };
+        };
+      mkNixos =
+        {
+          hostModule,
+          isWsl ? false,
+          system ? "x86_64-linux",
+        }:
+        let
+          pkgs = mkPkgs system;
+        in
+        nixpkgs.lib.nixosSystem {
+          system = system;
+          modules = [
+            {
+              _module.args = { inherit username isDesktop isWsl; };
+              # NixOS 経由の Home Manager は useGlobalPkgs により
+              # システムの pkgs を使うため、同じ overlay を適用する。
+              nixpkgs.overlays = overlays;
+            }
+            ./nixos/configuration.nix
+            hostModule
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.extraSpecialArgs = {
+                inherit
+                  inputs
+                  username
+                  isDesktop
+                  isWsl
+                  system
+                  ;
+              };
+              home-manager.users.${username} = ./home-manager/default.nix;
+            }
+          ]
+          ++ (
+            if isWsl then
+              [ nixos-wsl.nixosModules.default ]
+            else
+              [
+                ./nixos/system/physical-services.nix
+              ]
+          )
+          ++ nixpkgs.lib.optionals (isDesktop && !isWsl) [
+            ./nixos/system/desktop.nix
+          ];
+        };
 
-      mkHome = system: home-manager.lib.homeManagerConfiguration {
-        pkgs = mkPkgs system;
-        extraSpecialArgs = {
-            isWsl = false; inherit inputs username isDesktop system; };
-        modules = [ ./home-manager/default.nix ];
-      };
-      mkDarwin = system: nix-darwin.lib.darwinSystem {
-        inherit system;
-        specialArgs = { inherit inputs username isDesktop system; };
-        modules = [
-          { system.primaryUser = username; }
-          ./nix-darwin/default.nix
-        ];
-      };
+      mkHome =
+        system:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = mkPkgs system;
+          extraSpecialArgs = {
+            isWsl = false;
+            inherit
+              inputs
+              username
+              isDesktop
+              system
+              ;
+          };
+          modules = [ ./home-manager/default.nix ];
+        };
+      mkDarwin =
+        system:
+        nix-darwin.lib.darwinSystem {
+          inherit system;
+          specialArgs = {
+            inherit
+              inputs
+              username
+              isDesktop
+              system
+              ;
+          };
+          modules = [
+            { system.primaryUser = username; }
+            ./nix-darwin/default.nix
+          ];
+        };
     in
     {
       nixosConfigurations = {
         nixos = mkNixos { hostModule = ./nixos/hosts/nixos; };
         macbook-air = mkNixos { hostModule = ./nixos/hosts/macbook-air; };
-        nixos-wsl = mkNixos { hostModule = ./nixos/hosts/nixos-wsl; isWsl = true; };
+        nixos-wsl = mkNixos {
+          hostModule = ./nixos/hosts/nixos-wsl;
+          isWsl = true;
+        };
       };
-      homeConfigurations = nixpkgs.lib.genAttrs
-        (map (system: "myHomeConfig-${system}") flake-utils.lib.defaultSystems)
-        (name: mkHome (nixpkgs.lib.removePrefix "myHomeConfig-" name))
-        // { myHomeConfig = mkHome localSystem; };
+      homeConfigurations =
+        nixpkgs.lib.genAttrs (map (system: "myHomeConfig-${system}") flake-utils.lib.defaultSystems) (
+          name: mkHome (nixpkgs.lib.removePrefix "myHomeConfig-" name)
+        )
+        // {
+          myHomeConfig = mkHome localSystem;
+        };
       darwinConfigurations = {
         mac-config-aarch64-darwin = mkDarwin "aarch64-darwin";
         mac-config-x86_64-darwin = mkDarwin "x86_64-darwin";
         mac-config = mkDarwin localSystem;
       };
-    } // flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = mkPkgs system;
-      in {
+    }
+    // flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = mkPkgs system;
+      in
+      {
         formatter = pkgs.nixfmt;
         packages = {
-        my-package = pkgs.buildEnv {
-          name = "my-packages-list";
-          paths = with pkgs; [
-            git
-            curl
-            nixfmt
-            neovim
-          ];
+          my-package = pkgs.buildEnv {
+            name = "my-packages-list";
+            paths = with pkgs; [
+              git
+              curl
+              nixfmt
+              neovim
+            ];
+          };
         };
-        };
-      devShells = rec {
-        default = zai;
-        zai = pkgs.mkShell {
-          packages = [ pkgs.claude-code ];
+        devShells = rec {
+          default = zai;
+          zai = pkgs.mkShell {
+            packages = [ pkgs.claude-code ];
 
-          ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
-          API_TIMEOUT_MS = "3000000";
-          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
-          DISABLE_AUTOUPDATER = "1";
+            ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+            API_TIMEOUT_MS = "3000000";
+            CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
+            DISABLE_AUTOUPDATER = "1";
 
-          # Secrets are read at shell startup, never during Nix evaluation.
-          shellHook = ''
-            export CLAUDE_CONFIG_DIR="''${XDG_CONFIG_HOME:-$HOME/.config}/claude-zai"
-            unset ANTHROPIC_API_KEY CLAUDE_CODE_OAUTH_TOKEN
-            unset CLAUDE_CODE_USE_BEDROCK CLAUDE_CODE_USE_VERTEX CLAUDE_CODE_USE_FOUNDRY
-            export ANTHROPIC_MODEL="''${ZAI_MODEL:-glm-5.3-flash}"
-            export ANTHROPIC_DEFAULT_OPUS_MODEL="$ANTHROPIC_MODEL"
-            export ANTHROPIC_DEFAULT_SONNET_MODEL="$ANTHROPIC_MODEL"
-            export ANTHROPIC_DEFAULT_HAIKU_MODEL="$ANTHROPIC_MODEL"
-            export CLAUDE_CODE_SUBAGENT_MODEL="$ANTHROPIC_MODEL"
+            # Secrets are read at shell startup, never during Nix evaluation.
+            shellHook = ''
+              export CLAUDE_CONFIG_DIR="''${XDG_CONFIG_HOME:-$HOME/.config}/claude-zai"
+              unset ANTHROPIC_API_KEY CLAUDE_CODE_OAUTH_TOKEN
+              unset CLAUDE_CODE_USE_BEDROCK CLAUDE_CODE_USE_VERTEX CLAUDE_CODE_USE_FOUNDRY
+              export ANTHROPIC_MODEL="''${ZAI_MODEL:-glm-5.3-flash}"
+              export ANTHROPIC_DEFAULT_OPUS_MODEL="$ANTHROPIC_MODEL"
+              export ANTHROPIC_DEFAULT_SONNET_MODEL="$ANTHROPIC_MODEL"
+              export ANTHROPIC_DEFAULT_HAIKU_MODEL="$ANTHROPIC_MODEL"
+              export CLAUDE_CODE_SUBAGENT_MODEL="$ANTHROPIC_MODEL"
 
-            export ANTHROPIC_AUTH_TOKEN="''${ZAI_API_KEY:-}"
-            if [ -z "$ANTHROPIC_AUTH_TOKEN" ] && [ -t 0 ]; then
-              read -r -s -p "Z.ai API key: " ANTHROPIC_AUTH_TOKEN
-              printf '\n'
-            fi
-            if [ -z "$ANTHROPIC_AUTH_TOKEN" ]; then
-              echo "Z.ai API key is missing. Set ZAI_API_KEY before nix develop." >&2
-              exit 1
-            fi
-            echo "Z.ai backend ready. Run: claude"
-          '';
+              export ANTHROPIC_AUTH_TOKEN="''${ZAI_API_KEY:-}"
+              if [ -z "$ANTHROPIC_AUTH_TOKEN" ] && [ -t 0 ]; then
+                read -r -s -p "Z.ai API key: " ANTHROPIC_AUTH_TOKEN
+                printf '\n'
+              fi
+              if [ -z "$ANTHROPIC_AUTH_TOKEN" ]; then
+                echo "Z.ai API key is missing. Set ZAI_API_KEY before nix develop." >&2
+                exit 1
+              fi
+              echo "Z.ai backend ready. Run: claude"
+            '';
+          };
+          python = pkgs.mkShell {
+            buildInputs = [
+              pkgs.python314
+              pkgs.uv
+            ];
+            shellHook = ''
+              echo "uv version: $(uv --version)"
+              echo "python version: $(python --version)"
+            '';
+          };
+          js = pkgs.mkShell {
+            buildInputs = [
+              pkgs.nodejs_24
+              pkgs.pnpm
+              pkgs.bun
+              pkgs.yarn
+              pkgs.typescript-language-server
+              pkgs.typescript
+            ];
+            shellHook = ''
+              echo "node version: $(node --version)"
+              echo "npm version: $(npm --version)"
+              echo "pnpm version: $(pnpm --version)"
+              echo "bun version: $(bun --version)"
+              echo "yarn version: $(yarn --version)"
+            '';
+          };
+          java21 = pkgs.mkShell {
+            buildInputs = [
+              pkgs.gradle_9
+              pkgs.maven
+              pkgs.javaPackages.compiler.semeru-bin.jdk-21
+            ];
+            shellHook = ''
+              echo "gradle version: $(gradle --version)"
+              echo "maven version: $(maven --version)"
+              echo "java version: $(java --version)"
+              echo "javac version: $(javac --version)"
+            '';
+          };
+          java8 = pkgs.mkShell {
+            buildInputs = [
+              pkgs.gradle_9
+              pkgs.maven
+              pkgs.javaPackages.compiler.semeru-bin.jdk-8
+            ];
+            shellHook = ''
+              echo "gradle version: $(gradle --version)"
+              echo "maven version: $(maven --version)"
+              echo "java version: $(java --version)"
+              echo "javac version: $(javac --version)"
+            '';
+          };
+          go = pkgs.mkShell {
+            buildInputs = [
+              pkgs.go
+              pkgs.gotools
+              pkgs.golangci-lint
+            ];
+            shellHook = ''
+              echo "go version: $(go version)"
+              echo "golangci-lint version: $(golangci-lint --version)"
+              echo $GOPATH
+            '';
+          };
+          kotlin = pkgs.mkShell {
+            buildInputs = [
+              pkgs.kotlin
+              pkgs.gradle_9
+              pkgs.maven
+              pkgs.javaPackages.compiler.semeru-bin.jdk-21
+            ];
+            shellHook = ''
+              echo "gradle version: $(gradle --version)"
+              echo "maven version: $(mvn -v)"
+              echo "java version: $(java --version)"
+              echo "javac version: $(javac --version)"
+              echo "kotlin version: $(kotlin -version)"
+            '';
+          };
+          csharp = pkgs.mkShell {
+            buildInputs = [
+              pkgs.dotnet-sdk
+              pkgs.omnisharp-roslyn
+              # pkgs.dotnet-aspnetcore  # Web開発時に追加
+            ];
+            shellHook = ''
+              echo "dotnet version: $(dotnet --version)"
+              echo "OmniSharp version: $(omnisharp --version)"
+            '';
+          };
         };
-        python = pkgs.mkShell {
-          buildInputs = [
-            pkgs.python314
-            pkgs.uv
-          ];
-          shellHook = ''
-            echo "uv version: $(uv --version)"
-            echo "python version: $(python --version)"
-          '';
+        apps.update = {
+          type = "app";
+          program = toString (
+            pkgs.writeShellScript "update-script" ''
+              set -e
+              echo "Updating flake..."
+              nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
+              echo "Updating profile..."
+              nix --extra-experimental-features nix-command --extra-experimental-features flakes profile upgrade my-packages
+              echo "Update complete!"
+            ''
+          );
         };
-        js = pkgs.mkShell {
-          buildInputs = [
-            pkgs.nodejs_24
-            pkgs.pnpm
-            pkgs.bun
-            pkgs.yarn
-            pkgs.typescript-language-server
-            pkgs.typescript
-          ];
-          shellHook = ''
-            echo "node version: $(node --version)"
-            echo "npm version: $(npm --version)"
-            echo "pnpm version: $(pnpm --version)"
-            echo "bun version: $(bun --version)"
-            echo "yarn version: $(yarn --version)"
-          '';
+        apps.install = {
+          type = "app";
+          program = toString (
+            pkgs.writeShellScript "update-script" ''
+              set -e
+              echo "Updating flake..."
+              nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
+              echo "Updating profile..."
+              nix --extra-experimental-features nix-command --extra-experimental-features flakes profile install my-packages
+              echo "Update complete!"
+            ''
+          );
         };
-        java21 = pkgs.mkShell {
-          buildInputs = [
-            pkgs.gradle_9
-            pkgs.maven
-            pkgs.javaPackages.compiler.semeru-bin.jdk-21
-          ];
-          shellHook = ''
-            echo "gradle version: $(gradle --version)"
-            echo "maven version: $(maven --version)"
-            echo "java version: $(java --version)"
-            echo "javac version: $(javac --version)"
-          '';
-        };
-        java8 = pkgs.mkShell {
-          buildInputs = [
-            pkgs.gradle_9
-            pkgs.maven
-            pkgs.javaPackages.compiler.semeru-bin.jdk-8
-          ];
-          shellHook = ''
-            echo "gradle version: $(gradle --version)"
-            echo "maven version: $(maven --version)"
-            echo "java version: $(java --version)"
-            echo "javac version: $(javac --version)"
-          '';
-        };
-        go = pkgs.mkShell {
-          buildInputs = [
-            pkgs.go
-            pkgs.gotools
-            pkgs.golangci-lint
-          ];
-          shellHook = ''
-            echo "go version: $(go version)"
-            echo "golangci-lint version: $(golangci-lint --version)"
-            echo $GOPATH
-          '';
-        };
-        kotlin = pkgs.mkShell {
-          buildInputs = [
-            pkgs.kotlin
-            pkgs.gradle_9
-            pkgs.maven
-            pkgs.javaPackages.compiler.semeru-bin.jdk-21
-          ];
-          shellHook = ''
-            echo "gradle version: $(gradle --version)"
-            echo "maven version: $(mvn -v)"
-            echo "java version: $(java --version)"
-            echo "javac version: $(javac --version)"
-            echo "kotlin version: $(kotlin -version)"
-          '';
-        };
-        csharp = pkgs.mkShell {
-          buildInputs = [
-            pkgs.dotnet-sdk
-            pkgs.omnisharp-roslyn
-            # pkgs.dotnet-aspnetcore  # Web開発時に追加
-          ];
-          shellHook = ''
-            echo "dotnet version: $(dotnet --version)"
-            echo "OmniSharp version: $(omnisharp --version)"
-          '';
-        };
-      };
-      apps.update = {
-        type = "app";
-        program = toString (
-          pkgs.writeShellScript "update-script" ''
-            set -e
-            echo "Updating flake..."
-            nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
-            echo "Updating profile..."
-            nix --extra-experimental-features nix-command --extra-experimental-features flakes profile upgrade my-packages
-            echo "Update complete!"
-          ''
-        );
-      };
-      apps.install = {
-        type = "app";
-        program = toString (
-          pkgs.writeShellScript "update-script" ''
-            set -e
-            echo "Updating flake..."
-            nix --extra-experimental-features nix-command --extra-experimental-features flakes flake update
-            echo "Updating profile..."
-            nix --extra-experimental-features nix-command --extra-experimental-features flakes profile install my-packages
-            echo "Update complete!"
-          ''
-        );
-      };
-      });
+      }
+    );
 }

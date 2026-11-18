@@ -2,6 +2,8 @@
 
 NixOS・Home Manager・nix-darwin・chezmoiでLinux/macOS環境を管理する。
 通常のモジュールと明示的なimportsを使い、独自enableオプションは必要な場合に限る。
+Nixのリストは基本的に1要素1行の縦並びにする。単一要素も縦に書き、
+整形時はこの書式を維持する通常のnixfmtを使う（`--strict` は使わない）。
 
 ## 構成の入口
 

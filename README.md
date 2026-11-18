@@ -367,3 +367,16 @@ OBSの書き込み可能な設定はchezmoi、WebSocket認証は端末ローカ�
 個人設定なしの検証には `--override-input local-options path:./tests/fixtures/local-options.nix`
 を使う。このfixtureは評価・ビルド専用で、実ユーザーへswitchしない。
 入力検査だけなら `nix-instantiate --eval --strict tests/check-local-options.nix` で実行できる。
+
+## flake output とsystemの指定
+
+ホスト構成は `nixosConfigurations.<host>`、`homeConfigurations.<name>`、
+`darwinConfigurations.<name>` に置く。`packages.<system>` はビルド可能なパッケージ専用。
+従来の `packages.<system>.*Configurations` を直接参照する独自スクリプトは更新する。
+
+`myHomeConfig` と `mac-config` の構成名は維持する。local-optionsに、そのPCの
+`system = "x86_64-linux";` 等を追加する（Linux/Darwin × x86_64/aarch64）。
+古い入力は一時的に `--impure` で実行ホストのsystemを利用できる。
+明示名 `myHomeConfig-x86_64-linux`、`myHomeConfig-aarch64-darwin`、
+`mac-config-aarch64-darwin`、`mac-config-x86_64-darwin` も利用できる。
+NixOSの各ホストのsystemは構成側で固定し、実行PCのsystemから独立させる。

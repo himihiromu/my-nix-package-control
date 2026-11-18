@@ -4,7 +4,7 @@
 
 ## 構成
 
-Minecraftの実装は `home-manager/install-package/minecraft/` にまとめる。
+Minecraftの実装は `modules/` にまとめる。
 
 ```text
 minecraft/
@@ -21,7 +21,7 @@ minecraft/
 これらを固定JSONと一緒にGitへ入れたり、適用のたびに初期状態へ戻したりしない。
 dotfiles側へMODの固定情報を重複させない。
 
-既存の `home-manager/default.nix` から、Linux かつ `isDesktop = true` の場合だけ
+親の `gaming` profileから読み込む。従来互換の選択ではLinuxかつ `isDesktop = true` の場合に
 Prismix と `install-package/minecraft/default.nix` を import する。NixOS 経由・単体 Home Manager の両方で利用できる。
 macOS と CLI 構成には追加しない。Linux Desktop の WSL では WSLg 等の GUI 環境が別途必要。
 
@@ -79,7 +79,7 @@ Prismix は `options.txt` の設定を扱えるが、ワールドのゲームモ
 
 ## 1.7.10のローカルMOD資産
 
-ファイル定義は `home-manager/install-package/minecraft/legacy-manifest.json` に置く。
+ファイル定義は `modules/legacy-manifest.json` に置く。
 元の「工業MOD」「工業と魔術」のMOD本体、`mods/1.7.10/` のライブラリ、MODの初期設定、
 `GregTech.cfg` / `GregTech.lang` をSHA-256で固定する。ミニマップの `.points`、
 セーブ、バックアップ、ログ、Microsoft認証情報は含めない。
@@ -96,8 +96,8 @@ UUID `5AB4A333B4A31115` の NTFS ディスクを登録している（設定追�
 
 ```sh
 nix shell --inputs-from . nixpkgs#python3 -c python3 \
-  home-manager/install-package/minecraft/assets.py cache \
-  --manifest home-manager/install-package/minecraft/legacy-manifest.json
+  modules/assets.py cache \
+  --manifest modules/legacy-manifest.json
 ```
 
 適用後は同じ処理を `minecraft-legacy-cache` で実行できる。
@@ -177,7 +177,7 @@ Prismix を設定から外してもワールドは残るが、`.hm_*` がなく�
 | Java パス・メモリ・MOD 定義 | セーブ・スクリーンショット・ゲーム内設定 |
 
 Minecraft を更新する場合は、ゲームを終了してワールドをバックアップし、公式のリリースと Java 要求を確認する。
-`home-manager/install-package/minecraft/default.nix` の `minecraft.version` と必要なら Java を変更し、評価・ビルド後に通常の手順で適用する。
+`modules/default.nix` の `minecraft.version` と必要なら Java を変更し、評価・ビルド後に通常の手順で適用する。
 `nix flake update` だけでは Minecraft の明示した版は変わらない。新しい版で開いたワールドの古い版への戻しは避ける。
 Prismix 自体を更新する場合は input のタグを変更して `nix flake update prismix` を実行し、API と activation の差分を確認する。
 
@@ -191,15 +191,15 @@ MOD は `mod.mods` の固定ハッシュ付きパスで追加する。Prismix �
 ## 検証
 
 ```sh
-# リポジトリのルートで実行。いずれも switch しない。
-nix-instantiate --parse home-manager/install-package/minecraft/default.nix >/dev/null
+# 親リポジトリのルートで実行。いずれも switch しない。
+nix-instantiate --parse flakes/minecraft/modules/default.nix >/dev/null
 nix eval "path:$PWD#homeConfigurations.myHomeConfig.activationPackage.drvPath" \
   --override-input local-options "path:$HOME/.config/nix/local-input/default.nix" --no-write-lock-file --raw
 nix build "path:$PWD#homeConfigurations.myHomeConfig.activationPackage" \
   --override-input local-options "path:$HOME/.config/nix/local-input/default.nix" --no-write-lock-file --no-link
 nix eval "path:$PWD#nixosConfigurations.nixos.config.system.build.toplevel.drvPath" \
   --override-input local-options "path:$HOME/.config/nix/local-input/default.nix" --no-write-lock-file --raw
-python3 tests/test_prismix_persistence.py
+python3 flakes/minecraft/tests/test_prismix_persistence.py
 ```
 
 テストは一時 HOME で、実際に生成した設定と activation 断片を使う。

@@ -1,6 +1,6 @@
 # 実ユーザーへ適用せず、Prismix の生成ファイルと activation 断片を検証する。
+{ flake }:
 let
-  flake = builtins.getFlake ("path:" + toString ../.);
   pkgs = import flake.inputs.nixpkgs {
     system = "x86_64-linux";
     config.allowUnfreePredicate =
@@ -16,8 +16,7 @@ let
     flake.inputs.home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
       modules = [
-        flake.inputs.prismix.homeModules.default
-        ../home-manager/install-package/minecraft
+        flake.homeModules.default
         {
           home.username = "prismix-test";
           home.homeDirectory = "/tmp/prismix-fixture-home";

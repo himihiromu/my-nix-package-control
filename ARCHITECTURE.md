@@ -53,6 +53,12 @@ MacBookと単体Home ManagerではHyprlandの既定のモニター検出を使�
 設定を生成する担当を変える場合は、chezmoi側の既存管理対象との競合も確認する。
 機能専用の補助プログラムは機能の近くに置き、複数用途のパッケージだけpkgs/へ移す。
 
+## Minecraft用flake
+
+flakes/minecraft/は独立したinputs・lock・モジュール・docs・永続化テストを持つ。
+親はgaming profileからhomeModules.defaultを読み込み、nixpkgsとHome Managerを共有する。
+Vanilla、1.7.10の二環境、1.20.1をすべて移管し、バージョンとデータ保持処理は維持する。
+
 ## 検証
 
 構造変更前後でパッケージ・サービス・生成設定を比較する。出力構造の評価、

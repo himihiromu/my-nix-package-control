@@ -118,7 +118,13 @@ in
           format-charging = "⚡ {capacity}%";
           format-plugged = " {capacity}%";
           format-full = " {capacity}%";
-          format-icons = [ "" "" "" "" "" ];
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
           tooltip-format = "バッテリー残量: {capacity}%";
         };
 

@@ -1,7 +1,7 @@
 { ... }: {
   imports = [
     ./hyprland-tools.nix
-    ../linux/services.nix
+    ../desktop/hyprland
     ../linux/user-dirs.nix
   ];
 }

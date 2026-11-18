@@ -32,7 +32,6 @@ in
 {
   imports = [
     ./waybar.nix
-    ./obs
   ];
 
   home.file = {

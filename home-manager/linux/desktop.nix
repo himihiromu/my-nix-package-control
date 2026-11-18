@@ -36,9 +36,6 @@
     vscode
     orca-ide
 
-    # Game launcher
-    heroic
-
     # Clipboard
     clipse
     wl-clipboard

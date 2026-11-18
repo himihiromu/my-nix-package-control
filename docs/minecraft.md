@@ -87,6 +87,13 @@ MODバイナリをGitへ格納したり、オンラインの最新版へ置き�
 
 初回は元ディスクを `/mnt/minecraft` にマウントし、リポジトリのルートで実行する。
 
+デスクトップホスト `nixos` では `nixos/system/hardware.nix` の `fileSystems` に
+UUID `5AB4A333B4A31115` の NTFS ディスクを登録している（設定追加: 2026-11-15）。
+通常の `mise nixos switch` で適用した後は、`ls /mnt/minecraft` などのアクセス時に自動マウントされる。
+移行元データを保護するため **読み取り専用**。ディスクがない場合も起動を妨げない `nofail` を指定している。
+この設定は元ファイルの読み出し用で、プレイ中のセーブ保存先は各インスタンスの `minecraft/saves` のまま。
+適用後の状態は `findmnt -T /mnt/minecraft` で確認できる。実機での適用・再起動後の動作は未確認。
+
 ```sh
 nix shell --inputs-from . nixpkgs#python3 -c python3 \
   home-manager/install-package/minecraft/assets.py cache \

@@ -399,3 +399,41 @@ local-optionsの `homeProfiles` を省略すると、従来の `isDesktop` / OS 
 
 `isDesktop` は引き続きNixOS側のGUI機能を選ぶ。homeProfilesはHome Manager側だけを選択する。
 WSLではhyprland / recordingを選べない。WSLgのGUIアプリはgui-appsで選択する。
+
+## 変更・依存更新時の検証
+
+共通の入口は `python3 scripts/verify.py`。実行ディレクトリによらずこのリポジトリを対象にし、
+匿名のlocal-optionsで純粋評価する。switchは実行しない。
+
+```sh
+python3 scripts/verify.py eval
+python3 scripts/verify.py eval --desktop
+python3 scripts/verify.py checks
+python3 scripts/verify.py packages --desktop
+python3 scripts/verify.py packages --package chatgpt
+python3 scripts/verify.py systems --host nixos-wsl
+python3 scripts/verify.py systems --desktop --host nixos
+python3 scripts/verify.py all --desktop --host nixos --minecraft
+# macOSの実行環境から
+python3 scripts/verify.py systems --host mac-config
+python3 scripts/verify.py systems --host home
+```
+
+毎回行う検査はlocal-options・profile選択・profile独立性・NixOS経由のoverlay・
+WSLのCLI/GUI両構成・Minecraft生成メタデータ・OBS制御テスト。
+CIはこれらをLinuxで実行し、実機switchやローカルMOD資産を必要とするテストは行わない。
+Minecraftの永続化テストは資産登録後に `--minecraft` で追加できる。
+日本語入力の専用D-Bus統合テストは前節の実行環境を準備して実行する。
+
+依存更新では評価→影響パッケージのビルド→対象システムのビルドの順に進める。
+`nix flake update nixpkgs` と `nix flake update takt` 等を別の差分にし、失敗した段階と
+input・パッケージ・対象ホストをPRに記録する。LinuxのCI成功をDarwin実機の検証とは扱わない。
+Darwinでは `--system` またはその実行環境のcurrentSystemを使い、macOS固有ビルドを確認する。
+キャッシュ未提供のパッケージ・ローカル資産の有無・ビルド所要時間に応じ、更新対象の範囲を選ぶ。
+
+### Intel macOSの既存制約
+
+現在固定しているNixpkgs 26.11はx86_64-darwinをサポートしないため、
+Intel macOS向けのHome Manager・nix-darwin出力は評価できない。
+構成名は残すが、利用には26.05系のNixpkgsと対応するモジュール群の別途固定が必要。
+今回の構造整理では依存バージョンを変えない。Apple Silicon向けは評価対象とする。

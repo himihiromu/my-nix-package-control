@@ -8,55 +8,39 @@
   ...
 }:
 let
-  commonPackage = (import ./install-package/common.nix { inherit pkgs isDesktop; }).installPackages;
-  isMac =
-    if (builtins.toString system) == "x86_64-darwin" then
-      true
-    else if (builtins.toString system) == "aarch64-darwin" then
-      true
-    else
-      false;
-  isLinux =
-    if (builtins.toString system) == "x86_64-linux" then
-      true
-    else if (builtins.toString system) == "aarch64-linux" then
-      true
-    else
-      false;
-  machinePackage =
-    if isMac then
-      (import ./install-package/darwin.nix { inherit pkgs; }).installPackages
-    else if isLinux && isDesktop then
-      (import ./linux { inherit pkgs; }).installPackages
-    else
-      [ ];
-  zed = ./install-package/zed.nix;
-  nix-vim-package = ./install-package/neovim.nix;
-  shell = ./shell;
-  takt-package = ./install-package/takt.nix;
+  isMac = builtins.elem system [
+    "x86_64-darwin"
+    "aarch64-darwin"
+  ];
+  isLinux = builtins.elem system [
+    "x86_64-linux"
+    "aarch64-linux"
+  ];
 in
 {
-  imports =
-    [
-      inputs.nixvim.homeModules.nixvim
-      nix-vim-package
-      shell
-      takt-package
-      zed
-    ]
-    ++ inputs.nixpkgs.lib.optionals (isLinux && isDesktop) [
-      inputs.prismix.homeModules.default
-      ./install-package/minecraft
-    ]
-    ++ (
-      if isLinux && isDesktop && !isWsl then
-        [
-          ./linux/services.nix
-          ./linux/user-dirs.nix
-        ]
-      else
-        [ ]
-    );
+  imports = [
+    inputs.nixvim.homeModules.nixvim
+    ./programs/neovim.nix
+    ./shell
+    ./programs/takt.nix
+    ./programs/zed.nix
+    ./packages/common.nix
+  ]
+  ++ inputs.nixpkgs.lib.optionals isMac [ ./packages/darwin.nix ]
+  ++ inputs.nixpkgs.lib.optionals (isLinux && isDesktop) [
+    ./linux
+    inputs.prismix.homeModules.default
+    ./install-package/minecraft
+  ]
+  ++ (
+    if isLinux && isDesktop && !isWsl then
+      [
+        ./linux/services.nix
+        ./linux/user-dirs.nix
+      ]
+    else
+      [ ]
+  );
 
   home = {
     username = username;
@@ -65,7 +49,6 @@ in
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     stateVersion = "24.05";
 
-    packages = commonPackage ++ machinePackage;
   };
 
   programs.home-manager.enable = true;

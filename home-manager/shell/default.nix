@@ -1,6 +1,6 @@
 { ... }:
 let
-  shellIntegrationPrograms = import ../install-package/integrations.nix;
+  shellIntegrationPrograms = import ./integrations.nix;
 in
 {
   _module.args = {

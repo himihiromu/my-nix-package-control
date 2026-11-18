@@ -1,8 +1,9 @@
 {
   pkgs,
+  ...
 }:
 {
-  installPackages = with pkgs; [
+  home.packages = with pkgs; [
     # Hyprland
     hyprlock
     hypridle

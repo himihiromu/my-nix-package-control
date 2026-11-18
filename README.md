@@ -288,7 +288,7 @@ Scrollingレイアウトの詳細は[Hyprland公式ドキュメント](https://w
 
 `flake.nix` の `localPackagesOverlay` が [bash-abbrev-alias](https://github.com/momo-lab/bash-abbrev-alias)
 の固定コミットとハッシュから `pkgs.bash-abbrev-alias` を定義する。
-`home-manager/install-package/common.nix` で他のパッケージと同様にインストールし、
+`home-manager/packages/common.nix` で他のパッケージと同様にインストールし、
 `home-manager/shell/bash.nix` がパッケージ内のライブラリを参照して、`$XDG_CONFIG_HOME/bash/abbrev-alias.plugin.bash`
 （既定では `~/.config/bash/abbrev-alias.plugin.bash`）を配置する。
 [dotfiles PR #16](https://github.com/himihiromu/dotfiles/pull/16) の `.bashrc` が Nix 管理の対話 Bash の
@@ -300,7 +300,7 @@ NixOS/Home Manager の通常の適用と、対応する chezmoi 設定の適用�
 ## ChatGPT Linux アプリ
 
 Linux のパッケージ一覧に公式 Debian x64 配布物を NixOS 向けに調整した `chatgpt` を含める。
-パッケージ定義は `home-manager/linux/chatgpt.nix`。
+パッケージ定義は `pkgs/chatgpt/default.nix`。
 更新される `latest` URL は使わず、公式リポジトリ内のバージョン付き URL と SHA-256 を固定する。
 更新時は `version` と `src.hash` を変更し、再ビルドと起動確認を行う。
 

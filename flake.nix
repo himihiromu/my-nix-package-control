@@ -74,7 +74,7 @@
           inherit system overlays;
           config = import ./lib/nixpkgs-policy.nix {
             inherit (nixpkgs) lib;
-            };
+          };
         };
       mkNixos =
         {

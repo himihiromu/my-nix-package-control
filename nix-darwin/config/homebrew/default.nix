@@ -1,4 +1,4 @@
-{ pkgs, isDesktop }:
+{ pkgs, isDesktop, ... }:
 let
   installPackages = (import ./cask.nix).installPackages;
 in

@@ -1,27 +1,10 @@
-{ pkgs, system, isDesktop, ... }:
-let
-#   fonts = import ./config/fonts.nix { inherit pkgs; };
-#   networking = import ./config/networking.nix;
-  # security = import ./config/security.nix { inherit username; };
-  # services = import ./config/services;
-  # time = import ./config/time.nix;
-  system_config = import ./config/system.nix { inherit pkgs; inherit system; };
-  homebrew = import ./config/homebrew/default.nix { inherit pkgs; inherit isDesktop;};
-  nixConfig = import ./config/nix-config.nix { inherit pkgs; };
-  launchd = import ./config/launchd.nix;
-
-in
+{ ... }:
 {
   imports = [
-    # fonts
-    homebrew
-    launchd
-    # networking
-    nixConfig
-    # security
-    # services
-    system_config
-    # time
+    ./config/homebrew
+    ./config/launchd.nix
+    ./config/nix-config.nix
+    ./config/system.nix
   ];
   system.stateVersion = 4;
 }

@@ -356,3 +356,14 @@ Python の `dbus-next` と、次の実行ファイルを環境変数で指定す
 物理Linuxデスクトップ向けの構成と初回GUI設定、キーバインド、実機確認は
 [OBS録画手順](docs/obs-recording.md)を参照してください。
 OBSの書き込み可能な設定はchezmoi、WebSocket認証は端末ローカルで管理します。
+
+## local-options の検証
+
+`local-options` は `username`（空でない文字列）と `isDesktop`（bool）を含む属性セット。
+環境変数からユーザー名・秘密情報を読み込まない。chezmoiが生成したファイルを従来どおり
+`--override-input local-options "path:$HOME/.config/nix/local-input/default.nix"` で渡す。
+未指定・不正な値は、入力方法を示すエラーにする。
+
+個人設定なしの検証には `--override-input local-options path:./tests/fixtures/local-options.nix`
+を使う。このfixtureは評価・ビルド専用で、実ユーザーへswitchしない。
+入力検査だけなら `nix-instantiate --eval --strict tests/check-local-options.nix` で実行できる。

@@ -3,6 +3,22 @@
 {
   # Windows NTFS volumes shared with NixOS.
   fileSystems = {
+    # Minecraft 移行元の NTFS ディスク。元データ保護のため読み取り専用。
+    "/mnt/minecraft" = {
+      device = "/dev/disk/by-uuid/5AB4A333B4A31115";
+      fsType = "ntfs3";
+      options = [
+        "ro"
+        "uid=1000"
+        "gid=100"
+        "nosuid"
+        "nodev"
+        "noexec"
+        "nofail"
+        "x-systemd.automount"
+      ];
+    };
+
     # D: Shared data drive
     "/mnt/shared" = {
       device = "/dev/disk/by-uuid/6444A92E44A903C0";

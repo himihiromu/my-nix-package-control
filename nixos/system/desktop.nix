@@ -117,5 +117,8 @@
       fcitx5-mozc
       fcitx5-gtk
     ];
+    # 変換確定の Enter をアプリへ渡すと、送信・改行なども実行される。
+    # 確定中だけ SKK が Enter を消費し、通常の Enter はアプリへ渡す。
+    fcitx5.settings.addons.skk.globalSection.EggLikeNewLine = true;
   };
 }

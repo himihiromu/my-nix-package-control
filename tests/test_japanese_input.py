@@ -21,13 +21,16 @@ CTRL = 'org.fcitx.Fcitx.Controller1'
 
 
 class JapaneseInput(unittest.IsolatedAsyncioTestCase):
-    async def start_fcitx(self, registered=('mozc', 'skk'), fcitx=FCITX):
+    async def start_fcitx(self, registered=('mozc', 'skk'), fcitx=FCITX, skk_config=None):
         """一時 HOME と専用の通信先を作り、テスト用 Fcitx5 を起動する。"""
         self.tmp = tempfile.TemporaryDirectory(prefix='fcitx-switch-test-')
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
         config = self.root / 'config/fcitx5'
         config.mkdir(parents=True)
+        if skk_config is not None:
+            (config / 'conf').mkdir()
+            (config / 'conf/skk.conf').write_text(skk_config)
         runtime = self.root / 'runtime'
         runtime.mkdir(mode=0o700)
         # 日本語・空白を含むグループ名と、入力メソッドごとの配列を使う。
@@ -118,6 +121,40 @@ Layout=jp
         proc = await asyncio.create_subprocess_exec(TOGGLE, env=self.env, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         out, err = await asyncio.wait_for(proc.communicate(), timeout=10)
         self.assertEqual(proc.returncode, expected, (out + err).decode())
+
+    async def check_skk_enter(self, egg_like_newline):
+        """確定 Enter と通常 Enter の処理、確定後の入力継続を実エンジンで確認する。"""
+        await self.start_fcitx(skk_config=f'EggLikeNewLine={egg_like_newline}\n')
+        xml = await self.bus.introspect(DEST, self.context)
+        proxy = self.bus.get_proxy_object(DEST, self.context, xml)
+        context = proxy.get_interface('org.fcitx.Fcitx.InputContext1')
+        commits = []
+        context.on_commit_string(commits.append)
+        await context.call_set_capability(2)  # クライアントでの未確定文字列表示。
+        await self.controller('SetCurrentIM', 's', ['skk'])
+
+        async def key(sym, modifiers=0):
+            handled = await context.call_process_key_event(sym, 0, modifiers, False, 0)
+            await context.call_process_key_event(sym, 0, modifiers, True, 0)
+            return handled
+
+        # ユーザー辞書を使わず、同梱辞書で「かんじ」→「漢字」を変換する。
+        for char in 'Kanji':
+            self.assertTrue(await key(ord(char), int(char.isupper())))
+        self.assertTrue(await key(ord(' ')))
+        self.assertEqual(await key(0xff0d), egg_like_newline == 'True')
+        # 後続のキーも処理でき、確定済みの Enter はアプリへ渡る。
+        self.assertTrue(await key(ord('a')))
+        self.assertFalse(await key(0xff0d))
+        self.assertEqual(commits, ['漢字', 'あ'])
+
+    async def test_skk_enter_passthrough(self):
+        """既定値では変換確定の Enter がアプリへ渡ることを再現する。"""
+        await self.check_skk_enter('False')
+
+    async def test_skk_enter_commit_only(self):
+        """変更後は確定時だけ Enter を消費し、入力を続けられる。"""
+        await self.check_skk_enter('True')
 
     async def test_toggle_and_existing_layout(self):
         """登録済みのエンジンを往復しても、一覧・配列が変わらないことを確認する。"""

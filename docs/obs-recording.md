@@ -37,10 +37,11 @@ OBS **32.2.2**、音声プラグイン **1.2.2**。OBSのビルドはLinuxでPip
    プロファイルを `GameRecording`、シーンコレクションを `GameRecording` として作る。
 2. 設定 → 音声: **48 kHz、ステレオ**。グローバルのデスクトップ音声とマイクを全て無効化し、
    必要な音声だけシーンソースに追加する。他アプリの通知音・音声が混ざるのを避ける。
-3. ゲームを起動し、ソースに **ウィンドウキャプチャ (PipeWire)** を追加する。
-   OBS 32.2.2の `pipewire-window-capture-source` はPortalにウィンドウ型のみ要求する。
-   Portal選択画面から対象ゲームだけを選ぶ。ソース候補にウィンドウキャプチャがない場合は
-   Portalがウィンドウ共有を提示できているか調査し、録画を開始しない。
+3. ゲーム本体を起動し、ソースに **画面キャプチャ (PipeWire)** を追加する。
+   OBS 32.2.2では `pipewire-screen-capture-source` が通常のソースで、
+   ウィンドウ専用の旧ソースはobsolete扱いのため、通常の追加候補には表示されない。
+   ソースのプロパティからPortal選択画面を開き、**ウィンドウ**として対象ゲームだけを選ぶ。
+   ゲームをまだ起動していない場合は選択を完了せず、起動後に選び直す。
    モニター/領域キャプチャや画面を切り抜く方法を使わない。
    対象を閉じた後もモニター全体へ切り替わらないことを確認する。
    OBSのソース名だけでは選択対象を保証できないので、録画前にプレビューを確認する。
@@ -118,7 +119,7 @@ AMDデバイスの `VAProfileAV1Profile0` のエンコードエントリを確�
 - `systemctl --user status pipewire wireplumber xdg-desktop-portal xdg-desktop-portal-hyprland`、
   `journalctl --user -b -u xdg-desktop-portal-hyprland` を確認。
   `systemctl --user show-environment` の `WAYLAND_DISPLAY` / `XDG_CURRENT_DESKTOP` が正しいこと。
-- OBSのウィンドウキャプチャ (PipeWire) ソースでMinecraftのWayland/XWayland、Steamのネイティブ/Protonそれぞれを選択。
+- OBSの画面キャプチャ (PipeWire) ソースからウィンドウを選び、MinecraftのWayland/XWayland、Steamのネイティブ/Protonそれぞれを選択。
   別ウィンドウを重ねる、フォーカスを他アプリに移す、ワークスペースを切り替える、
   ゲームを閉じる、再起動する、全画面化する操作を行い、プレビューと保存動画を確認。
   他のウィンドウ/画面全体が映る場合は録画せず、ソースを削除して対象を選び直す。
@@ -135,7 +136,7 @@ Portalのトークンやゲームの音声識別子は端末をまたいだ復�
 ## 出典
 
 - [固定nixpkgsのOBS](https://github.com/NixOS/nixpkgs/blob/3ec636362e1816bc2f0888fa0fa2c69f1bc9e504/pkgs/applications/video/obs-studio/default.nix)
-- [OBS 32.2.2のウィンドウ専用PipeWireソース](https://github.com/obsproject/obs-studio/blob/32.2.2/plugins/linux-pipewire/screencast-portal.c)
+- [OBS 32.2.2のPipeWireソース（旧ソースのobsolete指定を含む）](https://github.com/obsproject/obs-studio/blob/32.2.2/plugins/linux-pipewire/screencast-portal.c)
 - [OBS 32.2.2 VAAPI実装（CQP/QP既定値を含む）](https://github.com/obsproject/obs-studio/blob/32.2.2/plugins/obs-ffmpeg/obs-ffmpeg-vaapi.c)
 - [obs-vaapi作者によるOBS本体エンコーダーの案内](https://github.com/fzwoch/obs-vaapi)
 - [PipeWire音声プラグイン](https://github.com/dimtpap/obs-pipewire-audio-capture)
